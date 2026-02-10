@@ -31,13 +31,13 @@ export async function getShippingRates(
         country: string;
         email?: string;
     } = {
-            name: "Novexa Store",
+            name: "Aethelona Store",
             street1: "123 Fashion St",
             city: "San Francisco",
             state: "CA",
             zip: "94105",
             country: "US",
-            email: "support@novexa.com",
+            email: "support@aethelona.com",
         },
     totalWeight: number = 2
 ) {

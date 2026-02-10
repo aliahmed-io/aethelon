@@ -94,7 +94,7 @@ export function CreateCampaignForm({ products }: { products: Product[] }) {
                                 <UploadDropzone
                                     className="ut-label:text-white/70 ut-button:bg-white/10 ut-button:text-white ut-button:hover:bg-white/20 border-white/10 bg-black/20"
                                     endpoint="imageUploader"
-                                    onClientUploadComplete={(res: any) => {
+                                    onClientUploadComplete={(res: { url: string }[]) => {
                                         setImage(res[0].url);
                                     }}
                                     onUploadError={() => {

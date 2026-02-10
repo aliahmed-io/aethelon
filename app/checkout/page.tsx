@@ -7,7 +7,7 @@ import { ShippingForm } from "./ShippingForm"; // We will create this next
 import { Lock } from "lucide-react";
 
 export const metadata = {
-    title: "Secure Checkout | Velorum",
+    title: "Secure Checkout | Aethelon",
 };
 
 export default async function CheckoutPage() {

@@ -5,16 +5,16 @@ import { PrismaClient } from "@prisma/client";
 const DATABASE_URL = "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfaWQiOjEsInNlY3VyZV9rZXkiOiJza196UGJua3ZYMjN6c0ZXOGdJYk1iSHciLCJhcGlfa2V5IjoiMDFLRjYzVFRaQk1TNThWNFozVktZMVNXQzUiLCJ0ZW5hbnRfaWQiOiI5NThhZDU4NThmOWQ1MGIwOWQxYTM1Mjc1ZmU1NTdhYjg2NzEyOTUxNWFhNmRlZmY5NTJlMThmYjY3NDJkNzVhIiwiaW50ZXJuYWxfc2VjcmV0IjoiMTkzYmJkMzEtNGViMS00MWExLTgwZTUtYTBmMWEzOWExMGUxIn0.txXDqLIka8Q24nM5WrkO9PiRyX8TFjMB6HMgE34qEpw&connect_timeout=60";
 
 const ASSETS = {
-    chronoFront: "/assets/products/velorum_chrono_front_black.png",
-    chronoAngle: "/assets/products/velorum_chrono_angle_black.png",
-    chronoGold: "/assets/products/velorum_chrono_gold_black.png",
-    aviator: "/assets/products/velorum_aviator_green.png",
-    horizon: "/assets/products/velorum_horizon_titanium.png",
-    perpetual: "/assets/products/velorum_perpetual_gold.png",
-    legacy: "/assets/products/velorum_legacy_classic.png",
-    concept: "/assets/products/velorum_concept_digital.png",
-    regatta: "/assets/products/velorum_regatta_yacht.png",
-    stealth: "/assets/products/velorum_stealth_black.png",
+    chronoFront: "/assets/products/chrono_front_black.png",
+    chronoAngle: "/assets/products/chrono_angle_black.png",
+    chronoGold: "/assets/products/chrono_gold_black.png",
+    aviator: "/assets/products/aviator_green.png",
+    horizon: "/assets/products/horizon_titanium.png",
+    perpetual: "/assets/products/perpetual_gold.png",
+    legacy: "/assets/products/legacy_classic.png",
+    concept: "/assets/products/concept_digital.png",
+    regatta: "/assets/products/regatta_yacht.png",
+    stealth: "/assets/products/stealth_black.png",
 };
 
 function slugify(value: string) {
@@ -59,16 +59,16 @@ async function main() {
 
         // 2. Upsert Products
         const productsData = [
-            { name: "Velorum Chronograph Steel", price: 8900, cat: "Chronographs", img: [ASSETS.chronoFront, ASSETS.chronoAngle], desc: "The quintessential tool watch.", feat: true },
-            { name: "Velorum Chronograph Gold", price: 18500, cat: "Chronographs", img: [ASSETS.chronoGold, ASSETS.chronoAngle], desc: "A statement of elegance.", feat: false },
-            { name: "Velorum Regatta Master", price: 12400, cat: "Diving", img: [ASSETS.regatta], desc: "Precision yachting timer.", feat: true },
-            { name: "Velorum Aviator Mk II", price: 6500, cat: "Aviation", img: [ASSETS.aviator], desc: "Vintage inspired pilot's watch.", feat: false },
-            { name: "Velorum Horizon Titanium", price: 7200, cat: "Aviation", img: [ASSETS.horizon], desc: "Modern field watch.", feat: false },
-            { name: "Velorum Leagcy Automatic", price: 5400, cat: "Dress", img: [ASSETS.legacy], desc: "Pure minimalism.", feat: false },
-            { name: "Velorum Perpetual Calendar", price: 45000, cat: "Grand Complications", img: [ASSETS.perpetual], desc: "The pinnacle of horology.", feat: true },
-            { name: "Velorum Concept One", price: 28000, cat: "Concept", img: [ASSETS.concept], desc: "Avant-garde.", feat: true },
-            { name: "Velorum Stealth Ops", price: 9800, cat: "Concept", img: [ASSETS.stealth], desc: "Full DLC black coating.", feat: false },
-            { name: "Velorum Deep Sea", price: 7200, cat: "Diving", img: [ASSETS.chronoAngle], desc: "Professional diver.", feat: false },
+            { name: "Aethelon Chronograph Steel", price: 8900, cat: "Chronographs", img: [ASSETS.chronoFront, ASSETS.chronoAngle], desc: "The quintessential tool watch.", feat: true },
+            { name: "Aethelon Chronograph Gold", price: 18500, cat: "Chronographs", img: [ASSETS.chronoGold, ASSETS.chronoAngle], desc: "A statement of elegance.", feat: false },
+            { name: "Aethelon Regatta Master", price: 12400, cat: "Diving", img: [ASSETS.regatta], desc: "Precision yachting timer.", feat: true },
+            { name: "Aethelon Aviator Mk II", price: 6500, cat: "Aviation", img: [ASSETS.aviator], desc: "Vintage inspired pilot's watch.", feat: false },
+            { name: "Aethelon Horizon Titanium", price: 7200, cat: "Aviation", img: [ASSETS.horizon], desc: "Modern field watch.", feat: false },
+            { name: "Aethelon Leagcy Automatic", price: 5400, cat: "Dress", img: [ASSETS.legacy], desc: "Pure minimalism.", feat: false },
+            { name: "Aethelon Perpetual Calendar", price: 45000, cat: "Grand Complications", img: [ASSETS.perpetual], desc: "The pinnacle of horology.", feat: true },
+            { name: "Aethelon Concept One", price: 28000, cat: "Concept", img: [ASSETS.concept], desc: "Avant-garde.", feat: true },
+            { name: "Aethelon Stealth Ops", price: 9800, cat: "Concept", img: [ASSETS.stealth], desc: "Full DLC black coating.", feat: false },
+            { name: "Aethelon Deep Sea", price: 7200, cat: "Diving", img: [ASSETS.chronoAngle], desc: "Professional diver.", feat: false },
         ];
 
         const productMap = [];

@@ -1,67 +1,35 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export const navbarLinks = [
-  {
-    id: 0,
-    name: "Home",
-    href: "/store/shop",
-  },
-  {
-    id: 1,
-    name: "All Products",
-    href: "/store/products/all",
-  },
-  {
-    id: 2,
-    name: "Men",
-    href: "/store/products/men",
-  },
-  {
-    id: 3,
-    name: "Women",
-    href: "/store/products/women",
-  },
-  {
-    id: 4,
-    name: "Kids",
-    href: "/store/products/kids",
-  },
-  {
-    id: 5,
-    name: "Dressing Room",
-    href: "/store/try-on",
-    badge: "Beta",
-  },
+    { id: 0, name: "Shop", href: "/shop" },
+    { id: 1, name: "Try-On", href: "/try-on" },
+    { id: 2, name: "Return Policy", href: "/legal/returns" },
+    { id: 3, name: "Contact", href: "/contact" },
 ];
 
-export function NavbarLinks() {
-  const location = usePathname();
-  return (
-    <div className="flex flex-col gap-y-3 md:flex-row md:items-center md:gap-x-2">
-      {navbarLinks.map((item: any) => (
-        <Link
-          href={item.href}
-          key={item.id}
-          prefetch={false}
-          className={cn(
-            location === item.href
-              ? "bg-muted"
-              : "hover:bg-muted hover:bg-opacity-75",
-            "group p-2 font-medium rounded-md flex items-center gap-1"
-          )}
-        >
-          <span>{item.name}</span>
-          {item.badge && (
-            <span className="text-[10px] uppercase text-yellow-700 bg-yellow-100 px-1 py-0.5 rounded">
-              {item.badge}
-            </span>
-          )}
-        </Link>
-      ))}
-    </div>
-  );
+export function NavbarLinks({ className }: { className?: string }) {
+    const location = usePathname();
+
+    return (
+        <div className={cn("flex flex-col md:flex-row gap-6", className)}>
+            {navbarLinks.map((item) => (
+                <Link
+                    key={item.id}
+                    href={item.href}
+                    className={cn(
+                        "text-sm uppercase tracking-widest transition-colors duration-300",
+                        location === item.href
+                            ? "text-white font-bold"
+                            : "text-white/60 hover:text-white"
+                    )}
+                >
+                    {item.name}
+                </Link>
+            ))}
+        </div>
+    );
 }

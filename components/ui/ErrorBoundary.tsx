@@ -1,48 +1,36 @@
 "use client";
 
-import React from "react";
-import { Button } from "@/components/ui/button";
+import React, { Component, ErrorInfo, ReactNode } from "react";
 
-interface ErrorBoundaryProps {
-    children: React.ReactNode;
-    fallback?: React.ReactNode;
+interface Props {
+    children: ReactNode;
+    fallback?: ReactNode;
     onError?: () => void;
 }
 
-interface ErrorBoundaryState {
+interface State {
     hasError: boolean;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-    constructor(props: ErrorBoundaryProps) {
-        super(props);
-        this.state = { hasError: false };
-    }
+export class ErrorBoundary extends Component<Props, State> {
+    public state: State = {
+        hasError: false,
+    };
 
-    static getDerivedStateFromError(_error: Error) {
+    public static getDerivedStateFromError(error: Error): State {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        error;
         return { hasError: true };
     }
 
-    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        console.error("ErrorBoundary caught an error:", error, errorInfo);
-        if (this.props.onError) {
-            this.props.onError();
-        }
+    public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+        console.error("Uncaught error:", error, errorInfo);
+        this.props.onError?.();
     }
 
-    render() {
+    public render() {
         if (this.state.hasError) {
-            if (this.props.fallback) {
-                return this.props.fallback;
-            }
-            return (
-                <div className="flex flex-col items-center justify-center h-full min-h-[200px] bg-gray-50 dark:bg-gray-900 rounded-lg p-6 text-center">
-                    <p className="text-red-500 font-medium mb-2">Something went wrong</p>
-                    <Button variant="outline" size="sm" onClick={() => this.setState({ hasError: false })}>
-                        Try Again
-                    </Button>
-                </div>
-            );
+            return this.props.fallback || <h1>Something went wrong.</h1>;
         }
 
         return this.props.children;

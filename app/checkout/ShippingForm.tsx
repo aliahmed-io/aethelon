@@ -26,7 +26,7 @@ type ShippingFormProps = {
 export function ShippingForm({ }: ShippingFormProps) {
     // For this migration, we're simplifying to a direct checkout redirect since Stripe handles address in checkout session usually, 
     // or we'd post to an API. 
-    // To match Novexa logic, it seemed to post to /api/checkout.
+    // To match Aethelona logic, it seemed to post to /api/checkout.
     // However, I just implemented `checkOut` server action above which creates a session.
     // Let's use that for simplicity and robustness.
 

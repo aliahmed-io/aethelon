@@ -46,7 +46,7 @@ export default function Loading() {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="absolute bottom-12 text-[10px] uppercase tracking-[0.5em] text-white/50 font-mono"
             >
-                Velorum System
+                Aethelon System
             </motion.p>
         </div>
     );

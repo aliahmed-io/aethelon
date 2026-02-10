@@ -1,12 +1,12 @@
 import { ReactNode } from "react";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import { AdminSidebar } from "@/app/components/dashboard/AdminSidebar";
+import { AdminSidebar } from "@/components/dashboard/AdminSidebar";
 
 // Basic admin check - in production you should use RBAC
 function isAdminEmail(email?: string | null) {
     if (!email) return false;
-    return email === "alihassan182006@gmail.com" || email.endsWith("@velorum.geneve.com");
+    return email === "alihassan182006@gmail.com" || email.endsWith("@aethelon.geneve.com");
 }
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {

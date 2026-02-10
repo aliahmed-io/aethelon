@@ -10,7 +10,7 @@ export function About() {
                     <div className="relative h-[400px] lg:h-[600px] rounded-3xl overflow-hidden group">
                         <Image
                             src="/men.jpeg"
-                            alt="About Novexa"
+                            alt="About Aethelona"
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
@@ -24,7 +24,7 @@ export function About() {
                             Crafting the Future of <span className="text-primary">Style</span>
                         </h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            At Novexa, we believe that headwear is more than just an accessory—it&apos;s a statement.
+                            At Aethelona, we believe that headwear is more than just an accessory—it&apos;s a statement.
                             Born from a passion for design and a commitment to quality, we&apos;ve set out to redefine
                             what it means to wear a hat.
                         </p>

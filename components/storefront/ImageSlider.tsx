@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { ThreeDViewer } from "../product/ThreeDViewer";
+import { ThreeDViewer } from "@/components/product/ThreeDViewer";
 
 interface iAppProps {
   images: string[];

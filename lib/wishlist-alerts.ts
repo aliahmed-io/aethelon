@@ -102,6 +102,7 @@ export function generateLowStockEmailHtml(customerName: string, products: LowSto
         <tr>
             <td style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1);">
                 <div style="display: flex; align-items: center; gap: 16px;">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="${p.image}" alt="${p.name}" style="width: 60px; height: 60px; object-fit: cover;" />
                     <div>
                         <p style="margin: 0; font-size: 14px; font-weight: 500;">${p.name}</p>
@@ -110,7 +111,7 @@ export function generateLowStockEmailHtml(customerName: string, products: LowSto
                 </div>
             </td>
             <td style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: right;">
-                <a href="https://velorum.geneve.com/shop/${p.id}" 
+                <a href="https://aethelon.geneve.com/shop/${p.id}" 
                    style="display: inline-block; padding: 8px 16px; background: #fff; color: #000; text-decoration: none; font-size: 10px; font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase;">
                     View
                 </a>
@@ -125,7 +126,7 @@ export function generateLowStockEmailHtml(customerName: string, products: LowSto
         <body style="font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #050505; color: #ffffff; margin: 0; padding: 40px 20px;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #0A0A0C; border: 1px solid rgba(255,255,255,0.1); padding: 40px;">
                 <div style="text-align: center; margin-bottom: 32px;">
-                    <h1 style="font-size: 14px; letter-spacing: 0.2em; font-weight: bold; margin: 0;">VELORUM GENEVE</h1>
+                    <h1 style="font-size: 14px; letter-spacing: 0.2em; font-weight: bold; margin: 0;">AETHELON GENEVE</h1>
                 </div>
                 
                 <h2 style="font-size: 24px; font-weight: 300; margin-bottom: 16px;">
@@ -138,7 +139,7 @@ export function generateLowStockEmailHtml(customerName: string, products: LowSto
                 <table style="width: 100%; border-collapse: collapse;">${productRows}</table>
                 
                 <div style="margin-top: 32px; text-align: center;">
-                    <a href="https://velorum.geneve.com/account/wishlist" 
+                    <a href="https://aethelon.geneve.com/account/wishlist" 
                        style="display: inline-block; padding: 14px 32px; background: #fff; color: #000; text-decoration: none; font-size: 12px; font-weight: bold; letter-spacing: 0.15em; text-transform: uppercase;">
                         View Wishlist
                     </a>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/app/components/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import { TryOnForm } from "./TryOnForm";
 import { HistoryPanel } from "./HistoryPanel";
 

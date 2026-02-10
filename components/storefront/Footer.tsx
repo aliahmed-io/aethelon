@@ -6,7 +6,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <h3 className="text-xl font-bold">Novexa</h3>
+            <h3 className="text-xl font-bold">Aethelona</h3>
             <p className="text-sm leading-6 text-gray-600">
               Premium clothing and accessories for the modern lifestyle.
             </p>
@@ -17,7 +17,7 @@ export function Footer() {
               <a href="/legal/returns" className="hover:text-gray-900 transition-colors">Returns &amp; Refunds</a>
             </div>
             <p className="text-xs leading-5 text-gray-700">
-              &copy; 2025 Novexa. All Rights Reserved.
+              &copy; 2025 Aethelona. All Rights Reserved.
             </p>
           </div>
           <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">

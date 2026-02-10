@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Navbar } from "@/app/components/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowDown } from "lucide-react";
@@ -127,7 +127,7 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
             {/* FOOTER */}
             <footer className="min-h-[40vh] flex items-center justify-center border-t border-white/5">
                 <div className="text-center">
-                    <p className="text-white/30 text-sm uppercase tracking-widest mb-4">Velorum Geneve</p>
+                    <p className="text-white/30 text-sm uppercase tracking-widest mb-4">Aethelon Geneve</p>
                     <Link href="/shop" className="text-amber-400 hover:text-amber-300 text-sm uppercase tracking-widest flex items-center gap-2 justify-center">
                         View All Timepieces <ArrowRight className="w-4 h-4" />
                     </Link>

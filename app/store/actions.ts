@@ -307,14 +307,14 @@ export async function chatWithBusinessAdvisor(history: { role: string; message?:
                 {
                     role: "user",
                     parts: [{
-                        text: `You are an AI Business Advisor for Velorum, a luxury watch store. 
+                        text: `You are an AI Business Advisor for Aethelon, a luxury watch store. 
                     Be concise, professional, and strategic. 
                     Here is the live data: ${context}`
                     }],
                 },
                 {
                     role: "model",
-                    parts: [{ text: "Understood. I am ready to advise on Velorum's operations." }],
+                    parts: [{ text: "Understood. I am ready to advise on Aethelon's operations." }],
                 },
                 ...history.map((msg) => ({
                     role: msg.role === "admin" ? "user" : "model",

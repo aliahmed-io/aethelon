@@ -1,6 +1,6 @@
 import Prisma from "@/lib/db";
 export const dynamic = "force-dynamic";
-import { ProductForm } from "@/app/components/dashboard/ProductForm";
+import { ProductForm } from "@/components/dashboard/ProductForm";
 
 async function getCategories() {
     return await Prisma.category.findMany({

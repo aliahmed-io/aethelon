@@ -34,7 +34,7 @@ export function ConsoleView({ messages, input, setInput, isLoading, onSend }: Co
                 <h2 className="text-2xl font-light uppercase tracking-tight text-white flex items-center gap-3">
                     <Brain className="w-6 h-6 text-white/60" /> Live Console
                 </h2>
-                <p className="text-white/40 text-xs mt-1">Direct Interface to Velorum Intelligence Core</p>
+                <p className="text-white/40 text-xs mt-1">Direct Interface to Aethelon Intelligence Core</p>
             </div>
 
             <div className="flex-1 bg-black/40 border border-white/10 rounded-sm overflow-hidden flex flex-col relative">
@@ -64,7 +64,7 @@ export function ConsoleView({ messages, input, setInput, isLoading, onSend }: Co
                             >
                                 {msg.role === "assistant" && (
                                     <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/10 text-[10px] uppercase tracking-widest opacity-40">
-                                        <Brain className="w-3 h-3" /> Velorum Intelligence
+                                        <Brain className="w-3 h-3" /> Aethelon Intelligence
                                     </div>
                                 )}
                                 <div className="text-sm leading-relaxed font-light markdown-prose">

@@ -47,7 +47,7 @@ export function OrderShippedEmail({
                             fontWeight: "bold",
                             margin: 0
                         }}>
-                            VELORUM GENEVE
+                            AETHELON GENEVE
                         </h1>
                     </div>
 
@@ -160,7 +160,7 @@ export function OrderShippedEmail({
                             QUESTIONS? REPLY TO THIS EMAIL
                         </p>
                         <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
-                            © {new Date().getFullYear()} Velorum Geneve. All rights reserved.
+                            © {new Date().getFullYear()} Aethelon Geneve. All rights reserved.
                         </p>
                     </div>
                 </div>

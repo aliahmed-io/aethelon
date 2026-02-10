@@ -2,90 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --font-inter: 'Inter', sans-serif;
-}
-
-body {
-    color: #ededed;
-    background: #050505;
-    font-family: var(--font-inter);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-}
-
-@layer utilities {
-    .text-balance {
-        text-wrap: balance;
-    }
-}
-
-
-
 @layer base {
   :root {
-        --background: 0 0% 100%;
-        --foreground: 0 0% 3.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 0 0% 3.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 3.9%;
-        --primary: 0 0% 9%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 0 0% 96.1%;
-        --secondary-foreground: 0 0% 9%;
-        --muted: 0 0% 96.1%;
-        --muted-foreground: 0 0% 45.1%;
-        --accent: 0 0% 96.1%;
-        --accent-foreground: 0 0% 9%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 89.8%;
-        --input: 0 0% 89.8%;
-        --ring: 0 0% 3.9%;
-        --chart-1: 12 76% 61%;
-        --chart-2: 173 58% 39%;
-        --chart-3: 197 37% 24%;
-        --chart-4: 43 74% 66%;
-        --chart-5: 27 87% 67%;
-        --radius: 0.5rem;
-    }
-  .dark {
-        --background: 0 0% 3.9%;
-        --foreground: 0 0% 98%;
-        --card: 0 0% 3.9%;
-        --card-foreground: 0 0% 98%;
-        --popover: 0 0% 3.9%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 0 0% 9%;
-        --secondary: 0 0% 14.9%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
-        --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
-        --ring: 0 0% 83.1%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
-    }
+    /* Aethelon Creamy Luxury Palette */
+    --background: 40 33% 98%;
+    /* #FAF9F5 - Cream White */
+    --foreground: 30 15% 15%;
+    /* #2C2416 - Deep Espresso */
+
+    --card: 40 33% 100%;
+    /* #FFFFFF */
+    --card-foreground: 30 15% 15%;
+
+    --popover: 40 33% 100%;
+    --popover-foreground: 30 15% 15%;
+
+    --primary: 30 15% 15%;
+    /* Deep Espresso */
+    --primary-foreground: 40 33% 98%;
+
+    --secondary: 40 20% 94%;
+    /* #F2F0E9 - Warm Surface */
+    --secondary-foreground: 30 15% 15%;
+
+    --muted: 40 10% 90%;
+    /* #EBE9E4 */
+    --muted-foreground: 30 10% 40%;
+    /* #6E685E */
+
+    --accent: 42 65% 48%;
+    /* #C9912B - Burnished Gold */
+    --accent-foreground: 40 33% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 33% 98%;
+
+    --border: 40 10% 90%;
+    --input: 40 10% 90%;
+    --ring: 42 65% 48%;
+
+    --radius: 0.75rem;
+  }
 }
-
-
 
 @layer base {
   * {
     @apply border-border;
-    }
+  }
+
   body {
-    @apply bg-background text-foreground;
-    }
+    @apply bg-background text-foreground selection:bg-accent/20 selection:text-accent font-sans;
+    /* Custom cursor hide if needed, but managing via component */
+  }
+
+  /* Glassmorphism Utilities */
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+  }
+
+  .glass-dark {
+    @apply bg-black/70 backdrop-blur-md border border-white/10 shadow-sm text-white;
+  }
+}
+
+/* Custom Cursor Styles */
+body.custom-cursor {
+  cursor: none;
+}
+
+body.custom-cursor a,
+body.custom-cursor button,
+body.custom-cursor [role="button"] {
+  cursor: none;
 }

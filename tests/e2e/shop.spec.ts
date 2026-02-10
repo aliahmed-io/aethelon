@@ -5,7 +5,7 @@ test.describe('Storefront Smoke Tests', () => {
 
     test('homepage loads and shows hero', async ({ page }) => {
         await page.goto('/');
-        await expect(page).toHaveTitle(/Novexa/);
+        await expect(page).toHaveTitle(/Aethelona/);
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     });
 

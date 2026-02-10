@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-const STORAGE_KEY = "novexa_cookie_consent";
+const STORAGE_KEY = "aethelona_cookie_consent";
 
 export function CookieConsentBanner() {
     const [visible, setVisible] = useState(false);

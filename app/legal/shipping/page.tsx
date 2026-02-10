@@ -1,7 +1,7 @@
-import { TextPageLayout } from "@/app/components/TextPageLayout";
+import { TextPageLayout } from "@/components/layout/TextPageLayout";
 
 export const metadata = {
-    title: "Shipping Policy | Velorum",
+    title: "Shipping Policy | Aethelon",
 };
 
 export default function ShippingPage() {

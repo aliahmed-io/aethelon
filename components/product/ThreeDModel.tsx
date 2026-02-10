@@ -3,7 +3,9 @@
 import { useEffect, useMemo, Suspense } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useGLTF, OrbitControls, Environment } from "@react-three/drei";
-import { Box3, Vector3 } from "three";
+import { Box3, Vector3, MeshStandardMaterial, Color } from "three";
+
+
 
 interface ThreeDModelProps {
     modelUrl: string;
@@ -23,12 +25,14 @@ function Model({ url, onBounds }: { url: string; onBounds: (center: Vector3, rad
         box.getCenter(center);
         box.getSize(size);
 
-        // Recenter model to (0,0,0) so orbit always rotates around the shoe's true center.
+        // Recenter model
         scene.position.sub(center);
 
         const radius = Math.max(size.x, size.y, size.z) / 2;
         onBounds(new Vector3(0, 0, 0), radius);
     }, [scene, onBounds]);
+
+
 
     return <primitive object={scene} />;
 }
@@ -48,7 +52,6 @@ function CenteredOrbitControls({
 
     useEffect(() => {
         if (!target || !radius) return;
-
         camera.position.set(target.x, target.y, target.z + radius * 3);
         camera.near = Math.max(0.1, radius / 100);
         camera.far = Math.max(1000, radius * 100);
@@ -76,12 +79,10 @@ export default function ThreeDModel({ modelUrl, onBounds, orbitTarget, orbitRadi
                 <ambientLight intensity={0.6} />
                 <directionalLight position={[5, 8, 5]} intensity={1.2} />
                 <Model url={modelUrl} onBounds={onBounds} />
-                <CenteredOrbitControls
-                    target={orbitTarget}
-                    radius={orbitRadius}
-                />
+                <CenteredOrbitControls target={orbitTarget} radius={orbitRadius} />
                 <Environment preset="city" />
             </Suspense>
         </Canvas>
     );
 }
+

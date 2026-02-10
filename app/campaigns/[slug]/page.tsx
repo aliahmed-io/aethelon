@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     if (!campaign) return { title: "Campaign Not Found" };
 
     return {
-        title: `${campaign.title} | Velorum`,
+        title: `${campaign.title} | Aethelon`,
         description: campaign.description || "View our latest collection.",
     };
 }

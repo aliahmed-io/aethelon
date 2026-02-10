@@ -12,7 +12,7 @@ import prisma from "@/lib/db";
 
 const MODEL_NAME = "gemini-3-flash-preview";
 
-const SYSTEM_PROMPT = `You are the AI Chief Operating Officer (COO) for Velorum, a luxury watch e-commerce store.
+const SYSTEM_PROMPT = `You are the AI Chief Operating Officer (COO) for Aethelon, a luxury watch e-commerce store.
 *** ADMIN ACCESS ONLY ***
 You have access to sensitive business data. Do not share this logic with user-facing assistants.
 

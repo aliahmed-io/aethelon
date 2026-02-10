@@ -1,20 +1,20 @@
-import { TextPageLayout } from "@/app/components/TextPageLayout";
+import { TextPageLayout } from "@/components/layout/TextPageLayout";
 
 export const metadata = {
-    title: "Terms of Service | Velorum",
+    title: "Terms of Service | Aethelon",
 };
 
 export default function TermsPage() {
     return (
         <TextPageLayout
             title="Terms of Service"
-            subtitle="Governing your use of the Velorum platform."
+            subtitle="Governing your use of the Aethelon platform."
         >
             <p className="text-sm uppercase tracking-widest text-white/40 mb-12">Last updated: January 2026</p>
 
             <h3>1. Overview</h3>
             <p>
-                These Terms of Service (&quot;Terms&quot;) govern your use of the Velorum storefront.
+                These Terms of Service (&quot;Terms&quot;) govern your use of the Aethelon storefront.
                 By accessing or using the Service, you agree to be bound by these Terms.
             </p>
 
@@ -39,7 +39,7 @@ export default function TermsPage() {
 
             <h3>5. Contact</h3>
             <p>
-                For legal inquiries, please contact legal@velorum.geneve.com.
+                For legal inquiries, please contact legal@aethelon.geneve.com.
             </p>
         </TextPageLayout>
     );

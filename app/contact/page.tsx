@@ -1,6 +1,6 @@
 "use client";
 
-import { TextPageLayout } from "@/app/components/TextPageLayout";
+import { TextPageLayout } from "@/components/layout/TextPageLayout";
 import { submitContactForm } from "./actions";
 import { useFormStatus } from "react-dom";
 import { useEffect, useRef, useActionState } from "react";
@@ -51,7 +51,7 @@ export default function ContactPage() {
                         </div>
                         <div>
                             <h4 className="text-white font-bold uppercase tracking-widest mb-1">Email</h4>
-                            <p className="text-white/50">concierge@velorum.geneve.com</p>
+                            <p className="text-white/50">concierge@aethelon.geneve.com</p>
                         </div>
                     </div>
                 </div>

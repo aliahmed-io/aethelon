@@ -63,7 +63,7 @@ export async function DashboardStats() {
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-bold">+{order.length}</p>
-          <p className="text-xs text-muted-foreground">Total Completed Sales on Novexa</p>
+          <p className="text-xs text-muted-foreground">Total Completed Sales on Aethelona</p>
         </CardContent>
       </Card>
       <Card>

@@ -6,7 +6,7 @@ const f = createUploadthing();
 
 // Helper to check admin (simplified for now if admin lib missing)
 // const _isAdmin = (email: string | undefined | null) => {
-//    return email === "aliha@novexa.com"; // Replace with actual admin logic or import
+//    return email === "aliha@aethelona.com"; // Replace with actual admin logic or import
 // };
 
 export const ourFileRouter = {

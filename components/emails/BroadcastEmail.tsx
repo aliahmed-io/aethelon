@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+
 import * as React from "react";
 import {
     Body,
@@ -10,6 +10,8 @@ import {
     Section,
     Text,
     Tailwind,
+    Img,
+    Link,
 } from "@react-email/components";
 
 interface BroadcastEmailProps {
@@ -25,40 +27,39 @@ export const BroadcastEmail = ({ subject, message, imageUrl, recipientEmail }: B
             <Head />
             <Preview>{subject}</Preview>
             <Tailwind>
-                <Body className="bg-white my-auto mx-auto font-sans">
-                    <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
+                <Body className="bg-white my-auto mx-auto font-sans text-stone-900">
+                    <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[32px] w-[560px] shadow-sm">
                         {imageUrl && (
-                            <Section className="mt-[20px]">
-                                <img
+                            <Section className="mb-[24px]">
+                                <Img
                                     src={imageUrl}
                                     alt="Announcement"
-                                    className="w-full h-auto rounded-md object-cover"
+                                    className="w-full h-auto rounded-sm object-cover border border-stone-200"
+                                    width="560"
+                                    height="300"
                                 />
                             </Section>
                         )}
-                        <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
+                        <Heading className="text-[24px] font-bold text-center m-0 mb-[24px] text-stone-900 leading-tight">
                             {subject}
                         </Heading>
-                        <Text className="text-black text-[14px] leading-[24px] whitespace-pre-wrap">
+                        <Text className="text-[16px] leading-[26px] text-stone-600 whitespace-pre-wrap">
                             {message}
                         </Text>
-                        <Section className="text-center mt-[32px] mb-[32px]">
-                            <Text className="text-[#666666] text-[12px] leading-[24px]">
-                                This is an automated announcement from Novexa.
+                        <Section className="text-center mt-[40px] pt-[24px] border-t border-stone-100">
+                            <Text className="text-stone-400 text-[12px] leading-[20px] uppercase tracking-wider">
+                                Aethelon Geneve Announcement
                             </Text>
                             {recipientEmail && (
-                                <Text className="text-[#999999] text-[11px] leading-[20px] mt-2">
-                                    If you no longer wish to receive these emails, you can
-                                    {" "}
-                                    <a
+                                <Text className="text-stone-400 text-[11px] leading-[20px] mt-2">
+                                    <Link
                                         href={`${process.env.NEXT_PUBLIC_URL || ""}/newsletter/unsubscribe?email=${encodeURIComponent(
                                             recipientEmail
                                         )}`}
-                                        style={{ color: "#2563EB", textDecoration: "underline" }}
+                                        className="text-stone-500 underline decoration-stone-300 hover:text-stone-900"
                                     >
-                                        unsubscribe here
-                                    </a>
-                                    .
+                                        Unsubscribe
+                                    </Link>
                                 </Text>
                             )}
                         </Section>
@@ -68,3 +69,5 @@ export const BroadcastEmail = ({ subject, message, imageUrl, recipientEmail }: B
         </Html>
     );
 };
+
+export default BroadcastEmail;

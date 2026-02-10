@@ -79,7 +79,7 @@ ${e.map(m=>`${d}${this.prettyPrintObject(m,i,s+1)}`).join(`,
 ${f}]`}if(Object.keys(e).length===0)return"{}";const l=" ".repeat(s*i),o=" ".repeat((s+1)*i);return`{
 ${Object.entries(e).map(([f,d])=>{const p=this.prettyPrintObject(d,i,s+1),m=/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(f)?f:this.stringLiteral(f);return`${o}${m}: ${p}`}).join(`,
 `)}
-${l}}`}stringLiteral(e){return e=e.replace(/\\/g,"\\\\").replace(/'/g,"\\'"),e.includes(`
+${l}}`}stringLiteral(e){return e=e.replace(/\\/g,"\\\\").replace(/'/g,'\\'"),e.includes(`
 `)||e.includes("\r")||e.includes("	")?"`"+e+"`":`'${e}'`}}class U_{generatePlaywrightRequestCall(e,i){const s=new URL(e.url),o=[`"${`${s.origin}${s.pathname}`}"`];let u=e.method.toLowerCase();["delete","get","head","post","put","patch"].includes(u)||(o.push(`method="${u}"`),u="fetch"),s.searchParams.size&&o.push(`params=${this.prettyPrintObject(Object.fromEntries(s.searchParams.entries()))}`),i&&o.push(`data=${this.prettyPrintObject(i)}`),e.headers.length&&o.push(`headers=${this.prettyPrintObject(Object.fromEntries(e.headers.map(d=>[d.name,d.value])))}`);const f=o.length===1?o[0]:`
 ${o.map(d=>this.indent(d,2)).join(`,
 `)}

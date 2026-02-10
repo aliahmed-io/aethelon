@@ -1,53 +1,98 @@
-import * as React from "react";
 import {
     Body,
     Container,
+    Column,
     Head,
     Heading,
+    Hr,
     Html,
     Preview,
+    Row,
     Section,
     Text,
     Tailwind,
 } from "@react-email/components";
-import { formatCurrency } from "@/lib/formatters";
+import * as React from "react";
 
 interface OrderConfirmationEmailProps {
+    firstName: string;
     orderId: string;
-    amount: number;
+    orderDate: string;
+    shippingAddress: any;
+    items: any[];
 }
 
 export const OrderConfirmationEmail = ({
+    firstName,
     orderId,
-    amount,
+    orderDate,
+    items,
 }: OrderConfirmationEmailProps) => {
     return (
         <Html>
             <Head />
-            <Preview>Order Confirmation - {orderId}</Preview>
+            <Preview>Your Aethelon Geneve Order Confirmation</Preview>
             <Tailwind>
-                <Body className="bg-white my-auto mx-auto font-sans">
-                    <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
-                        <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-                            Order Confirmed!
-                        </Heading>
-                        <Text className="text-black text-[14px] leading-[24px]">
-                            Thank you for your order. We have received your payment and are processing your order.
-                        </Text>
-                        <Section className="bg-gray-100 p-4 rounded-lg my-4">
-                            <Text className="text-black text-[14px] m-0">
-                                <strong>Order ID:</strong> {orderId}
-                            </Text>
-                            <Text className="text-black text-[14px] m-0 mt-2">
-                                <strong>Total Amount:</strong> {formatCurrency(amount / 100)}
+                <Body className="bg-white font-sans text-stone-900 antialiased">
+                    <Container className="mx-auto my-[40px] w-[560px] rounded border border-[#E5E5E5] p-0 shadow-sm">
+                        <Section className="px-[32px] py-[32px]">
+                            <Heading className="m-0 text-[24px] font-bold leading-[32px] tracking-tight text-stone-900">
+                                Order Confirmation
+                            </Heading>
+                            <Text className="mt-[8px] text-[16px] leading-[24px] text-stone-500">
+                                Thank you for your purchase, {firstName}. We&apos;ve received your order and representives are preparing it for shipment.
                             </Text>
                         </Section>
-                        <Text className="text-black text-[14px] leading-[24px]">
-                            We will notify you once your order has been shipped.
-                        </Text>
+                        <Hr className="border-[#E5E5E5] my-0 mx-0 w-full" />
+                        <Section className="px-[32px] py-[32px]">
+                            <Row>
+                                <Column>
+                                    <Text className="m-0 text-[12px] font-semibold uppercase tracking-wider text-stone-500">
+                                        Order Number
+                                    </Text>
+                                    <Text className="mt-[4px] text-[16px] font-medium text-stone-900">
+                                        {orderId}
+                                    </Text>
+                                </Column>
+                                <Column align="right">
+                                    <Text className="m-0 text-[12px] font-semibold uppercase tracking-wider text-stone-500">
+                                        Order Date
+                                    </Text>
+                                    <Text className="mt-[4px] text-[16px] font-medium text-stone-900">
+                                        {orderDate}
+                                    </Text>
+                                </Column>
+                            </Row>
+                        </Section>
+                        <Hr className="border-[#E5E5E5] my-0 mx-0 w-full" />
+                        <Section className="px-[32px] py-[32px]">
+                            <Text className="m-0 mb-4 text-[12px] font-semibold uppercase tracking-wider text-stone-500">
+                                Items
+                            </Text>
+                            {items && items.map((item, index) => (
+                                <Row key={index} className="mb-4 last:mb-0">
+                                    <Column>
+                                        <Text className="m-0 text-[14px] font-medium text-stone-900">
+                                            {item.name} x {item.quantity}
+                                        </Text>
+                                        <Text className="m-0 text-[12px] text-stone-500">
+                                            Size: {item.size}
+                                        </Text>
+                                    </Column>
+                                </Row>
+                            ))}
+                        </Section>
+                        <Hr className="border-[#E5E5E5] my-0 mx-0 w-full" />
+                        <Section className="px-[32px] py-[32px] bg-stone-50 rounded-b">
+                            <Text className="text-[12px] text-stone-500 text-center">
+                                If you have any questions, reply to this email or verify your order status on your account dashboard.
+                            </Text>
+                        </Section>
                     </Container>
                 </Body>
             </Tailwind>
         </Html>
     );
 };
+
+export default OrderConfirmationEmail;

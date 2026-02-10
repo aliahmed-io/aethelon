@@ -25,7 +25,7 @@ export function CategoriesSelection() {
         <div className="group relative h-[300px] sm:h-auto sm:aspect-square sm:row-span-2 rounded-xl overflow-hidden">
           <Image
             src={all}
-            alt="Novexa Full Collection"
+            alt="Aethelona Full Collection"
             className="object-cover object-center w-full h-full"
             fill
           />
@@ -41,7 +41,7 @@ export function CategoriesSelection() {
         <div className="group relative h-[300px] sm:h-auto sm:aspect-[2/1] rounded-lg overflow-hidden">
           <Image
             src={men}
-            alt="Novexa Men's Collection"
+            alt="Aethelona Men's Collection"
             className="object-cover object-center w-full h-full"
             fill
           />
@@ -57,7 +57,7 @@ export function CategoriesSelection() {
         <div className="group relative h-[300px] sm:h-auto sm:aspect-[2/1] rounded-lg overflow-hidden">
           <Image
             src={women}
-            alt="Novexa Women's Collection"
+            alt="Aethelona Women's Collection"
             className="object-cover object-center w-full h-full"
             fill
           />

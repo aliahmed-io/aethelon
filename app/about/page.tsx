@@ -1,10 +1,10 @@
 
-import { Navbar } from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
+import { Navbar } from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 
 export const metadata = {
-    title: "About Us | Velorum",
+    title: "About Us | Aethelon",
 };
 
 export default function AboutPage() {
@@ -37,7 +37,7 @@ export default function AboutPage() {
                         <h2 className="text-2xl font-light uppercase tracking-tight mb-6">The Engineer&apos;s Spirit</h2>
                         <div className="w-12 h-1 bg-white mb-8"></div>
                         <p className="text-white/70 leading-relaxed mb-6">
-                            Velorum was founded on a simple premise: instruments for professionals. We don&apos;t just make watches; we create redundant systems for aerial navigation.
+                            Aethelon was founded on a simple premise: instruments for professionals. We don&apos;t just make watches; we create redundant systems for aerial navigation.
                             Our timepieces are designed to withstand the G-forces of modern jet combat and the magnetic fields of electronic cockpits.
                         </p>
                         <p className="text-white/70 leading-relaxed">
@@ -52,7 +52,7 @@ export default function AboutPage() {
                         <h2 className="text-2xl font-light uppercase tracking-tight mb-6">Sustainable Aviation</h2>
                         <div className="w-12 h-1 bg-white mb-8"></div>
                         <p className="text-white/70 leading-relaxed mb-6">
-                            We believe the sky belongs to everyone. That&apos;s why Velorum is pioneering the use of Ceratanium® and recycled aerospace-grade titanium.
+                            We believe the sky belongs to everyone. That&apos;s why Aethelon is pioneering the use of Ceratanium® and recycled aerospace-grade titanium.
                             Our manufacturing facility operates on 100% renewable hydroelectric power from the Rhine Falls.
                         </p>
                     </div>

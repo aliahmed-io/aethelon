@@ -34,7 +34,7 @@ export async function Navbar() {
         <Link href="/store/shop" prefetch={false}>
           <Image
             src="/logo.svg"
-            alt="Novexa Logo"
+            alt="Aethelona Logo"
             height={120}
             width={120}
             style={{ width: "auto", height: "auto" }}

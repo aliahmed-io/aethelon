@@ -15,7 +15,7 @@ export const options = {
 };
 
 export function setup() {
-    const BASE_URL = 'https://novexa-ten.vercel.app';
+    const BASE_URL = 'https://aethelona-ten.vercel.app';
     const res = http.post(
         `${BASE_URL}/api/search`,
         JSON.stringify({ query: '', searchType: 'standard' }),
@@ -28,7 +28,7 @@ export function setup() {
 }
 
 export default function stressTest(data) {
-    const BASE_URL = 'https://novexa-ten.vercel.app';
+    const BASE_URL = 'https://aethelona-ten.vercel.app';
     const productIds = data.productIds || [];
 
     // 1. Home

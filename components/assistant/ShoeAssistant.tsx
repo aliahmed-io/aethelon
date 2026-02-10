@@ -89,7 +89,7 @@ export function ShoeAssistant() {
         id: crypto.randomUUID(),
         role: "assistant",
         content:
-          "I couldn’t reach the Novexa shoe expert right now. Please check your connection and try again.",
+          "I couldn’t reach the Aethelona shoe expert right now. Please check your connection and try again.",
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } finally {
@@ -146,7 +146,7 @@ export function ShoeAssistant() {
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
             className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl hover:scale-110 transition-transform"
-            aria-label="Open Novexa shoe expert chat"
+            aria-label="Open Aethelona shoe expert chat"
           >
             <MessageCircle className="h-6 w-6" />
           </motion.button>
@@ -194,7 +194,7 @@ export function ShoeAssistant() {
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
                 <div>
-                  <p className="text-sm font-semibold">Novexa Expert</p>
+                  <p className="text-sm font-semibold">Aethelona Expert</p>
                   <p className="text-[10px] text-muted-foreground">
                     {mode === "basic" ? "Basic Mode" : "Advanced Mode"}
                   </p>

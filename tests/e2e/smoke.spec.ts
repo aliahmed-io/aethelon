@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('visitor can browse and view product', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Velorum/);
+    await expect(page).toHaveTitle(/Aethelon/);
 
     // Navigate to shop
     await page.goto('/shop');

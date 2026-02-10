@@ -1,12 +1,12 @@
 
-import { Navbar } from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
+import { Navbar } from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 export const metadata = {
-    title: "Contact | Velorum",
+    title: "Contact | Aethelon",
 };
 
 export default function ContactPage() {
@@ -33,7 +33,7 @@ export default function ContactPage() {
                                 Headquarters
                             </h3>
                             <p className="text-white/60 text-sm leading-7">
-                                Velorum SA<br />
+                                Aethelon SA<br />
                                 Baumgartenstrasse 15<br />
                                 8201 Schaffhausen<br />
                                 Switzerland

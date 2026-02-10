@@ -103,7 +103,7 @@ export function CreateBannerForm({ campaigns }: { campaigns: Campaign[] }) {
                             ) : (
                                 <UploadDropzone
                                     endpoint="imageUploader"
-                                    onClientUploadComplete={(res: any) => {
+                                    onClientUploadComplete={(res: { url: string }[]) => {
                                         setImage(res[0].url);
                                     }}
                                     onUploadError={() => {

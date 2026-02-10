@@ -7,11 +7,11 @@ import { redirect } from "next/navigation";
 import { delItem } from "@/app/store/actions";
 import { redis } from "@/lib/redis";
 import { Cart } from "@/lib/interfaces";
-import { Navbar } from "@/app/components/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import { formatPrice } from "@/lib/utils";
 
 export const metadata = {
-    title: "Your Bag | Velorum",
+    title: "Your Bag | Aethelon",
 };
 
 export default async function BagPage() {

@@ -1,72 +1,63 @@
-import prisma from "@/lib/db";
+import Prisma from "@/lib/db";
 import { Suspense } from "react";
-import { unstable_cache } from "next/cache";
-import { LoadingProductCard, ProductCard } from "./ProductCard";
+import { ProductCard, LoadingProductCard } from "@/components/storefront/ProductCard";
 
 async function getData() {
-  try {
-    const data = await unstable_cache(
-      async () => {
-        return await prisma.product.findMany({
-          where: {
+    const data = await Prisma.product.findMany({
+        where: {
             status: "published",
             isFeatured: true,
-          },
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            images: true,
-            price: true,
-            discountPercentage: true,
-            modelUrl: true,
-          },
-          orderBy: {
+        },
+        take: 3,
+        orderBy: {
             createdAt: "desc",
-          },
-          take: 3,
-        });
-      },
-      ["featured-products"],
-      { revalidate: 3600 }
-    )();
+        },
+    });
 
     return data;
-  } catch (error) {
-    console.error("Error fetching featured products:", error);
-    return [];
-  }
 }
 
 export function FeaturedProducts() {
-  return (
-    <>
-      <h2 className="text-2xl font-extrabold tracking-tight">Featured Items</h2>
-      <Suspense fallback={<LoadingRows />}>
-        <LoadFeaturedproducts />
-      </Suspense>
-    </>
-  );
+    return (
+        <section className="py-24 px-4 md:px-8 border-t border-white/5">
+            <div className="container mx-auto">
+                <div className="flex items-end justify-between mb-12">
+                    <div>
+                        <h2 className="text-3xl font-light uppercase tracking-tight text-white mb-2">Featured Collection</h2>
+                        <p className="text-white/40 max-w-md">Curated selection of our finest timepieces.</p>
+                    </div>
+                </div>
+
+                <Suspense fallback={<LoadingRows />}>
+                    <LoadFeaturedProducts />
+                </Suspense>
+            </div>
+        </section>
+    );
 }
 
-async function LoadFeaturedproducts() {
-  const data = await getData();
+async function LoadFeaturedProducts() {
+    const data = await getData();
 
-  return (
-    <div className="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {data.map((item, index) => (
-        <ProductCard key={item.id} item={item} priority={index < 2} />
-      ))}
-    </div>
-  );
+    if (data.length === 0) {
+        return <div className="text-white/30 text-center py-20">No featured products available.</div>
+    }
+
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {data.map((item) => (
+                <ProductCard key={item.id} item={item as any} />
+            ))}
+        </div>
+    );
 }
 
 function LoadingRows() {
-  return (
-    <div className="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <LoadingProductCard />
-      <LoadingProductCard />
-      <LoadingProductCard />
-    </div>
-  );
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <LoadingProductCard />
+            <LoadingProductCard />
+            <LoadingProductCard />
+        </div>
+    );
 }

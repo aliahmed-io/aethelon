@@ -13,7 +13,7 @@ export const options = {
 };
 
 export default function smokeTest() {
-    const BASE_URL = 'https://novexa-ten.vercel.app';
+    const BASE_URL = 'https://aethelona-ten.vercel.app';
 
     // 1. Visit Home
     const homeRes = http.get(`${BASE_URL}/`, { tags: { name: 'Home' } });

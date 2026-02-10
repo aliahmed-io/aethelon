@@ -1,4 +1,4 @@
-# Velorum Test Suite Report
+# Aethelon Test Suite Report
 
 ## Overall Score Summary
 
@@ -64,7 +64,7 @@
 
 Updated load test configuration:
 - Uses environment variable `BASE_URL`
-- Correct Velorum routes (`/shop`, `/bag`, `/about`)
+- Correct Aethelon routes (`/shop`, `/bag`, `/about`)
 - Scaled VUs for local testing (100 total vs 800 production)
 
 ---

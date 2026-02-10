@@ -99,7 +99,7 @@ export async function getUserContext(userId: string): Promise<ShopContext> {
 // ASSISTANT LOGIC
 // ------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are a helpful Personal Shopping Assistant for Velorum.
+const SYSTEM_PROMPT = `You are a helpful Personal Shopping Assistant for Aethelon.
 You assist customers with their orders and product selection.
 
 ## RESTRICTIONS

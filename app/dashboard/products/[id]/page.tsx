@@ -1,5 +1,5 @@
 import Prisma from "@/lib/db";
-import { ProductForm } from "@/app/components/dashboard/ProductForm";
+import { ProductForm } from "@/components/dashboard/ProductForm";
 import { notFound } from "next/navigation";
 
 // Correct syntax for params in Next.js 15+ (server components)

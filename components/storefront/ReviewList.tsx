@@ -1,108 +1,55 @@
 import prisma from "@/lib/db";
-import { Star } from "lucide-react";
+import { StarRating } from "./StarRating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { isAdminEmail } from "@/lib/admin";
-import { toggleReviewHidden } from "@/app/store/actions";
-import { unstable_cache } from "next/cache";
+import { formatDistance } from "date-fns";
 
-// Cached review fetching - 60s per product
-const getReviews = unstable_cache(
-    async (productId: string, includeHidden: boolean) => {
-        const data = await prisma.review.findMany({
-            where: {
-                productId: productId,
-                ...(includeHidden ? {} : { isHidden: false }),
-            },
-            select: {
-                id: true,
-                rating: true,
-                comment: true,
-                createdAt: true,
-                isHidden: true,
-                User: {
-                    select: {
-                        firstName: true,
-                        profileImage: true,
-                    },
-                },
-            },
-            orderBy: {
-                createdAt: "desc",
-            },
-        });
-
-        return data;
-    },
-    ["reviews"],
-    { revalidate: 60, tags: ["reviews"] }
-);
+async function getReviews(productId: string) {
+    const data = await prisma.review.findMany({
+        where: { productId },
+        include: { User: true },
+        orderBy: { createdAt: "desc" },
+    });
+    return data;
+}
 
 export async function ReviewList({ productId }: { productId: string }) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-    const isAdmin = !!user?.email && isAdminEmail(user.email);
-
-    const reviews = await getReviews(productId, isAdmin);
+    const reviews = await getReviews(productId);
 
     if (reviews.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-10">
-                <p className="text-muted-foreground">No reviews yet. Be the first to review!</p>
+            <div className="py-12 text-center border border-dashed border-white/10 rounded-sm">
+                <p className="text-white/40 italic">No reviews yet. Be the first to share your experience.</p>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="space-y-6">
             {reviews.map((review) => (
-                <div key={review.id} className="flex gap-4 border-b pb-6 last:border-b-0">
-                    <Avatar>
-                        <AvatarImage src={review.User.profileImage} alt={review.User.firstName} />
-                        <AvatarFallback>{review.User.firstName.slice(0, 1)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                            <p className="font-semibold">{review.User.firstName}</p>
-                            <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        className={`w-4 h-4 ${i < review.rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
-                                            }`}
-                                    />
-                                ))}
+                <div key={review.id} className="bg-white/[0.02] border border-white/5 p-6 rounded-sm backdrop-blur-sm">
+                    <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10 border border-white/10">
+                                <AvatarImage src={review.User?.profileImage} />
+                                <AvatarFallback className="bg-white/10 text-white text-xs">
+                                    {review.User?.firstName?.slice(0, 1) || "U"}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="text-sm font-medium text-white">
+                                    {review.User?.firstName || "Anonymous User"}
+                                </p>
+                                <p className="text-xs text-white/40">
+                                    {formatDistance(new Date(review.createdAt), new Date(), { addSuffix: true })}
+                                </p>
                             </div>
-                            {isAdmin && review.isHidden && (
-                                <p className="text-xs text-red-500 font-medium">Hidden</p>
-                            )}
                         </div>
-                        <p className="text-sm text-gray-500">
-                            {(() => {
-                                try {
-                                    const date = new Date(review.createdAt);
-                                    if (isNaN(date.getTime())) return "Unknown date";
-                                    return new Intl.DateTimeFormat("en-US", {
-                                        dateStyle: "medium",
-                                    }).format(date);
-                                } catch {
-                                    return "Unknown date";
-                                }
-                            })()}
-                        </p>
-                        <p className="mt-2 text-gray-700">{review.comment}</p>
-
-                        {isAdmin && (
-                            <form action={toggleReviewHidden.bind(null, review.id, productId)}>
-                                <button
-                                    type="submit"
-                                    className="mt-2 text-xs font-medium text-blue-600 hover:underline"
-                                >
-                                    {review.isHidden ? "Unhide" : "Hide"}
-                                </button>
-                            </form>
-                        )}
+                        <StarRating rating={review.rating} size={4} />
                     </div>
+
+                    <p className="text-white/80 text-sm leading-relaxed font-light">
+                        {review.comment}
+                    </p>
                 </div>
             ))}
         </div>

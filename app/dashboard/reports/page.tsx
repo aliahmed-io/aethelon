@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Wallet, DollarSign, Users, RefreshCcw, MoreHorizontal, Download, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { SellerStatChart, TotalSaleChart, MixedReturnChart, SparklineChart } from "@/app/components/dashboard/NewReportCharts";
+import { SellerStatChart, TotalSaleChart, MixedReturnChart, SparklineChart } from "@/components/dashboard/NewReportCharts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RevenueChart } from "../components/AnalyticsCharts";
 import { ConversionFunnelChart } from "../components/ConversionFunnelChart";

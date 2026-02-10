@@ -130,7 +130,7 @@ export async function generateCooBrief(): Promise<CooBrief> {
         .join("; ");
 
     const prompt = `
-    You are the AI Chief Operating Officer (COO) for "Novexa", a shoe store.
+    You are the AI Chief Operating Officer (COO) for "Aethelona", a shoe store.
     Analyze the following metrics and provide a brief executive summary and 3 actionable suggestions.
     
     METRICS (Last 30 Days):
@@ -208,7 +208,7 @@ export async function draftEmailCampaign(context: string, products: { name: stri
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
 
     const prompt = `
-        You are an expert e-commerce copywriter for "Novexa".
+        You are an expert e-commerce copywriter for "Aethelona".
         
         TASK:
         Generate a high-converting marketing email based on the context below.

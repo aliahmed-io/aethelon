@@ -1,7 +1,7 @@
-import { TextPageLayout } from "@/app/components/TextPageLayout";
+import { TextPageLayout } from "@/components/layout/TextPageLayout";
 
 export const metadata = {
-    title: "Returns Policy | Velorum",
+    title: "Returns Policy | Aethelon",
 };
 
 export default function ReturnsPage() {

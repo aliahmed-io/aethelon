@@ -51,7 +51,7 @@ export default function NotFound() {
                 {/* Decorative Line */}
                 <div className="flex items-center justify-center gap-4 text-white/20">
                     <div className="h-px w-16 bg-white/10" />
-                    <span className="text-[10px] uppercase tracking-widest">Velorum</span>
+                    <span className="text-[10px] uppercase tracking-widest">Aethelon</span>
                     <div className="h-px w-16 bg-white/10" />
                 </div>
             </div>

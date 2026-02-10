@@ -6,7 +6,7 @@ export function getResendFromEmail() {
     const from = process.env.RESEND_FROM;
     if (from) return from;
     if (process.env.NODE_ENV !== "production") {
-        return "Novexa <onboarding@resend.dev>";
+        return "Aethelona <onboarding@resend.dev>";
     }
     throw new Error("Missing RESEND_FROM in environment variables.");
 }

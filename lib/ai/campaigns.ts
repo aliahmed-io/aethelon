@@ -24,7 +24,7 @@ export async function generateCampaignDraft(context: string): Promise<CampaignDr
     const productsContext = topProducts.map(p => `${p.name} ($${p.price})`).join(", ");
 
     const prompt = `
-        You are an expert email marketer for "Novexa" shoe store.
+        You are an expert email marketer for "Aethelona" shoe store.
         Draft a broadcast email based on the following context.
         
         USER CONTEXT/THEME: "${context}"
@@ -47,7 +47,7 @@ export async function generateCampaignDraft(context: string): Promise<CampaignDr
     } catch (e) {
         console.error("Campaign AI Error:", e);
         return {
-            subject: "Special Announcement from Novexa",
+            subject: "Special Announcement from Aethelona",
             message: "We have some exciting updates for you. Check out our store for the latest collection!"
         };
     }

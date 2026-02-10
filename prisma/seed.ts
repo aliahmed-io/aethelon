@@ -9,18 +9,18 @@ const envPath = path.resolve(process.cwd(), ".env.local");
 dotenv.config({ path: envPath });
 
 const ASSETS = {
-    chronoFront: "/assets/products/velorum_chrono_front_black.png",
-    chronoAngle: "/assets/products/velorum_chrono_angle_black.png",
-    chronoGold: "/assets/products/velorum_chrono_gold_black.png",
-    aviator: "/assets/products/velorum_aviator_green.png",
-    horizon: "/assets/products/velorum_horizon_titanium.png",
-    perpetual: "/assets/products/velorum_perpetual_gold.png",
-    legacy: "/assets/products/velorum_legacy_classic.png",
-    concept: "/assets/products/velorum_concept_digital.png",
-    regatta: "/assets/products/velorum_regatta_yacht.png",
-    stealth: "/assets/products/velorum_stealth_black.png",
-    deepSea: "/assets/products/velorum_deep_sea.png",
-    goldLeather: "/assets/products/velorum_gold_leather.png",
+    chronoFront: "/assets/products/chrono_front_black.png",
+    chronoAngle: "/assets/products/chrono_angle_black.png",
+    chronoGold: "/assets/products/chrono_gold_black.png",
+    aviator: "/assets/products/aviator_green.png",
+    horizon: "/assets/products/horizon_titanium.png",
+    perpetual: "/assets/products/perpetual_gold.png",
+    legacy: "/assets/products/legacy_classic.png",
+    concept: "/assets/products/concept_digital.png",
+    regatta: "/assets/products/regatta_yacht.png",
+    stealth: "/assets/products/stealth_black.png",
+    deepSea: "/assets/products/deep_sea.png",
+    goldLeather: "/assets/products/gold_leather.png",
 };
 
 function slugify(value: string): string {
@@ -129,17 +129,17 @@ async function main() {
 
         console.log("[Seed] Upserting 10 Premium Products...");
         const productsData: ProductSeedData[] = [
-            { name: "Velorum Chronograph Steel", price: 8900, cat: "Chronographs", img: [ASSETS.chronoFront, ASSETS.chronoAngle], desc: "The quintessential tool watch. Brushed 316L stainless steel case.", feat: true },
-            { name: "Velorum Chronograph Gold", price: 18500, cat: "Chronographs", img: [ASSETS.chronoGold, ASSETS.chronoAngle], desc: "A statement of elegance. 18k Rose Gold case.", feat: false },
-            { name: "Velorum Regatta Master", price: 12400, cat: "Diving", img: [ASSETS.regatta], desc: "Precision yachting timer with countdown complication.", feat: true },
-            { name: "Velorum Aviator Mk II", price: 6500, cat: "Aviation", img: [ASSETS.aviator], desc: "Vintage inspired pilot's watch with bronze case.", feat: false },
-            { name: "Velorum Horizon Titanium", price: 7200, cat: "Aviation", img: [ASSETS.horizon], desc: "Modern field watch. Grade 5 titanium.", feat: false },
-            { name: "Velorum Leagcy Automatic", price: 5400, cat: "Dress", img: [ASSETS.legacy], desc: "Pure minimalism. Porcelain dial.", feat: false },
-            { name: "Velorum Perpetual Calendar", price: 45000, cat: "Grand Complications", img: [ASSETS.perpetual], desc: "The pinnacle of horology. Moonphase.", feat: true },
-            { name: "Velorum Concept One", price: 28000, cat: "Concept", img: [ASSETS.concept], desc: "Avant-garde digital-mechanical hybrid.", feat: true },
-            { name: "Velorum Stealth Ops", price: 9800, cat: "Concept", img: [ASSETS.stealth], desc: "Full DLC black coating. Phantom hands.", feat: false },
-            { name: "Velorum Deep Sea", price: 7200, cat: "Diving", img: [ASSETS.deepSea], desc: "Professional diver. Helium escape valve.", feat: false },
-            { name: "Velorum Heritage Gold", price: 14500, cat: "Chronographs", img: [ASSETS.goldLeather], desc: "Timeless elegance with a cream sunburst dial and genuine alligator leather strap. 18k Gold case.", feat: true, modelUrl: "/assets/models/velorum_gold_leather.glb" },
+            { name: "Aethelon Chronograph Steel", price: 8900, cat: "Chronographs", img: [ASSETS.chronoFront, ASSETS.chronoAngle], desc: "The quintessential tool watch. Brushed 316L stainless steel case.", feat: true },
+            { name: "Aethelon Chronograph Gold", price: 18500, cat: "Chronographs", img: [ASSETS.chronoGold, ASSETS.chronoAngle], desc: "A statement of elegance. 18k Rose Gold case.", feat: false },
+            { name: "Aethelon Regatta Master", price: 12400, cat: "Diving", img: [ASSETS.regatta], desc: "Precision yachting timer with countdown complication.", feat: true },
+            { name: "Aethelon Aviator Mk II", price: 6500, cat: "Aviation", img: [ASSETS.aviator], desc: "Vintage inspired pilot's watch with bronze case.", feat: false },
+            { name: "Aethelon Horizon Titanium", price: 7200, cat: "Aviation", img: [ASSETS.horizon], desc: "Modern field watch. Grade 5 titanium.", feat: false },
+            { name: "Aethelon Leagcy Automatic", price: 5400, cat: "Dress", img: [ASSETS.legacy], desc: "Pure minimalism. Porcelain dial.", feat: false },
+            { name: "Aethelon Perpetual Calendar", price: 45000, cat: "Grand Complications", img: [ASSETS.perpetual], desc: "The pinnacle of horology. Moonphase.", feat: true },
+            { name: "Aethelon Concept One", price: 28000, cat: "Concept", img: [ASSETS.concept], desc: "Avant-garde digital-mechanical hybrid.", feat: true },
+            { name: "Aethelon Stealth Ops", price: 9800, cat: "Concept", img: [ASSETS.stealth], desc: "Full DLC black coating. Phantom hands.", feat: false },
+            { name: "Aethelon Deep Sea", price: 7200, cat: "Diving", img: [ASSETS.deepSea], desc: "Professional diver. Helium escape valve.", feat: false },
+            { name: "Aethelon Heritage Gold", price: 14500, cat: "Chronographs", img: [ASSETS.goldLeather], desc: "Timeless elegance with a cream sunburst dial and genuine alligator leather strap. 18k Gold case.", feat: true, modelUrl: "/assets/models/gold_leather.glb" },
         ];
 
         const productMap: { id: string; name: string; price: number; images: string[] }[] = [];
@@ -276,7 +276,7 @@ async function main() {
         // 2. Products
         const campaignProducts = [
             {
-                name: "Velorum Deep Dive",
+                name: "Aethelon Deep Dive",
                 description: "Professional diver watch, 500m water resistance. Ceramic bezel.",
                 price: 12500,
                 images: ["/assets/generated/diver.png"],
@@ -284,7 +284,7 @@ async function main() {
                 isFeatured: true
             },
             {
-                name: "Velorum Carbon Pilot",
+                name: "Aethelon Carbon Pilot",
                 description: "Ultra-lightweight carbon fiber pilot watch. Chronometer certified.",
                 price: 18900,
                 images: ["/assets/generated/carbon.png"],
@@ -315,7 +315,7 @@ async function main() {
             }
         }
 
-        console.log("Velorum Seeding Successfully Completed.");
+        console.log("Aethelon Seeding Successfully Completed.");
 
     } catch (e) {
         console.error("[Seed] Error:", e);

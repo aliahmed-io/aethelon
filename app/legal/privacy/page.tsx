@@ -1,7 +1,7 @@
-import { TextPageLayout } from "@/app/components/TextPageLayout";
+import { TextPageLayout } from "@/components/layout/TextPageLayout";
 
 export const metadata = {
-    title: "Privacy Policy | Velorum",
+    title: "Privacy Policy | Aethelon",
 };
 
 export default function PrivacyPage() {
@@ -38,7 +38,7 @@ export default function PrivacyPage() {
             <h3>4. Your Rights</h3>
             <p>
                 You have the right to access, correct, or delete your personal data.
-                Contact privacy@velorum.geneve.com for assistance.
+                Contact privacy@aethelon.geneve.com for assistance.
             </p>
         </TextPageLayout>
     );

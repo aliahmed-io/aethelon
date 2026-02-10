@@ -1,8 +1,8 @@
-# PROPOSAL: Native WebAR Integration ("Velorum AR")
+# PROPOSAL: Native WebAR Integration ("Aethelon AR")
 
 ## Executive Summary
 This document outlines the technical implementation for **Tier 1: "Atelier View" (Place in World)**. 
-We will leverage the native AR capabilities of iOS (QuickLook) and Android (Scene Viewer) to allow users to place true-to-scale 3D models of Velorum timepieces in their physical environment without installing any application.
+We will leverage the native AR capabilities of iOS (QuickLook) and Android (Scene Viewer) to allow users to place true-to-scale 3D models of Aethelon timepieces in their physical environment without installing any application.
 
 ---
 
@@ -47,14 +47,14 @@ export function ARButton({ modelUrl, posterUrl }: { modelUrl: string, posterUrl:
       src={modelUrl}
       ios-src="" // Left empty, model-viewer attempts auto-conversion or we provide a separate field if needed
       poster={posterUrl}
-      alt="Velorum Timepiece AR"
+      alt="Aethelon Timepiece AR"
       shadow-intensity="1"
       camera-controls
       auto-rotate
       ar
       ar-modes="webxr scene-viewer quick-look"
       style={{ display: 'none' }} // Hidden, we only use it for the button trigger
-      id="velorum-ar-viewer"
+      id="aethelon-ar-viewer"
     >
       <button slot="ar-button" id="ar-trigger">
         View in Your Space
@@ -69,7 +69,7 @@ We don't want to show the bulky default `<model-viewer>` UI. instead, we keep ou
 
 ```javascript
 const openAR = () => {
-  const viewer = document.querySelector("#velorum-ar-viewer");
+  const viewer = document.querySelector("#aethelon-ar-viewer");
   viewer.activateAR();
 }
 ```
@@ -102,7 +102,7 @@ None. We use the existing `modelUrl`.
 
 ## Conclusion
 This approach provides a "best of both worlds" solution: 
-- **Desktop**: Cinematic, custom-lit WebGL (Velorum style).
+- **Desktop**: Cinematic, custom-lit WebGL (Aethelon style).
 - **Mobile**: Native, highly optimzed OS-level AR (Apple/Google standard).
 
 This is the exact method used by luxury brands like Shopify, Porsche, and others for their web-based AR.

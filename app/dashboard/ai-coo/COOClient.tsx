@@ -201,7 +201,7 @@ export function COOClient({
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `velorum-report-${new Date().toISOString().split("T")[0]}.md`;
+        a.download = `aethelon-report-${new Date().toISOString().split("T")[0]}.md`;
         a.click();
         URL.revokeObjectURL(url);
     };
@@ -214,7 +214,7 @@ export function COOClient({
             {/* Mobile Header */}
             <div className="md:hidden h-16 border-b border-white/10 flex items-center px-4 bg-black/40 backdrop-blur-xl flex-none z-50">
                 <MobileSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-                <span className="ml-4 text-sm font-bold uppercase tracking-widest text-white">Velorum COO</span>
+                <span className="ml-4 text-sm font-bold uppercase tracking-widest text-white">Aethelon COO</span>
             </div>
 
             {/* Main Content Area */}
@@ -228,7 +228,7 @@ export function COOClient({
                                 <Brain className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-lg font-bold uppercase tracking-tight text-white leading-none">Velorum AI</h1>
+                                <h1 className="text-lg font-bold uppercase tracking-tight text-white leading-none">Aethelon AI</h1>
                                 <p className="text-white/40 text-[10px] tracking-wide uppercase">Operational Intelligence</p>
                             </div>
                         </div>

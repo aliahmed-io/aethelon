@@ -38,7 +38,7 @@ function SidebarContent({ activeTab, onTabChange }: SidebarProps) {
                     <div className="w-4 h-4 bg-black rounded-full" />
                 </div>
                 <div>
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-white">Velorum</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-white">Aethelon</h2>
                     <p className="text-[10px] text-white/40 uppercase tracking-widest">AI Operations</p>
                 </div>
             </div>

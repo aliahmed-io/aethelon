@@ -17,20 +17,20 @@ async function main() {
     console.log("Updating product images...");
 
     const u1 = await prisma.product.updateMany({
-        where: { name: "Velorum Regatta Master" },
-        data: { images: ["/products/velorum-regatta.png"] }
+        where: { name: "Aethelon Regatta Master" },
+        data: { images: ["/products/regatta.png"] }
     });
     console.log(`Updated Regatta: ${u1.count}`);
 
     const u2 = await prisma.product.updateMany({
-        where: { name: "Velorum Stealth Ops" },
-        data: { images: ["/products/velorum-stealth.png"] }
+        where: { name: "Aethelon Stealth Ops" },
+        data: { images: ["/products/stealth.png"] }
     });
     console.log(`Updated Stealth: ${u2.count}`);
 
     const u3 = await prisma.product.updateMany({
-        where: { name: "Velorum Chronograph Steel" },
-        data: { images: ["/products/velorum-chronograph-steel.png"] }
+        where: { name: "Aethelon Chronograph Steel" },
+        data: { images: ["/products/chronograph-steel.png"] }
     });
     console.log(`Updated Chronograph Steel: ${u3.count}`);
 }

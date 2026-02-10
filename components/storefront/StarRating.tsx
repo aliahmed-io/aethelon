@@ -1,15 +1,28 @@
 import { Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function StarRating({ rating }: { rating: number }) {
+interface StarRatingProps {
+    rating: number;
+    maxRating?: number;
+    size?: number;
+    className?: string;
+}
+
+export function StarRating({ rating, maxRating = 5, size = 4, className }: StarRatingProps) {
     return (
-        <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
+        <div className={cn("flex items-center gap-0.5", className)}>
+            {[...Array(maxRating)].map((_, i) => (
                 <Star
                     key={i}
-                    className={`w-4 h-4 ${i < Math.round(rating)
-                            ? "text-yellow-500 fill-yellow-500"
-                            : "text-gray-300"
-                        }`}
+                    className={cn(
+                        "fill-current transition-colors duration-300",
+                        i < Math.round(rating)
+                            ? "text-yellow-400"
+                            : "text-white/10",
+                        `w-${size} h-${size}`
+                    )}
+                    strokeWidth={1.5}
+                    style={{ width: `${size * 4}px`, height: `${size * 4}px` }}
                 />
             ))}
         </div>

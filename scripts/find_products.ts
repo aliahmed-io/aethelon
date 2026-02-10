@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 async function main() {
     const products = await prisma.product.findMany({
         where: {
-            name: { in: ['Velorum Perpetual', 'Velorum Chronograph G'] }
+            name: { in: ['Aethelon Perpetual', 'Aethelon Chronograph G'] }
         },
         select: { id: true, name: true, images: true }
     });

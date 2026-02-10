@@ -7,7 +7,7 @@ export const options = {
 };
 
 export default function warmup() {
-    const BASE_URL = 'https://novexa-ten.vercel.app';
+    const BASE_URL = 'https://aethelona-ten.vercel.app';
 
     // Hit the main pages to prime the ISR cache
     check(http.get(`${BASE_URL}/`), { 'warmed home': (r) => r.status === 200 });

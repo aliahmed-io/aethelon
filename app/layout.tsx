@@ -1,21 +1,29 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // Using generic google font for now as per plan
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "./components/SmoothScroll";
-import AudioController from "./components/AudioController";
-import { CookieConsentBanner } from "./components/CookieConsentBanner";
-import { SearchProvider } from "./components/search/SearchContext";
-import { ClientProviders } from "./components/ClientProviders";
+import SmoothScroll from "@/components/features/SmoothScroll";
+import AudioController from "@/components/features/AudioController";
+import { CookieConsentBanner } from "@/components/ui/CookieConsentBanner";
+import { SearchProvider } from "@/components/search/SearchContext";
+import { ClientProviders } from "@/components/providers/ClientProviders";
+import CustomCursor from "@/components/ui/CustomCursor";
+import Chatbot from "@/components/ui/Chatbot";
 
 const inter = Inter({
     subsets: ["latin"],
     variable: "--font-inter",
-    display: "swap", // Optimization: Ensure text remains visible during font load
+    display: "swap",
+});
+
+const playfair = Playfair_Display({
+    subsets: ["latin"],
+    variable: "--font-playfair",
+    display: "swap",
 });
 
 export const metadata: Metadata = {
-    title: "Velorum Pilot's Watch Chronograph 41",
-    description: "Swiss engineering. Scrollytelling experience.",
+    title: "Aethelon - Furniture for the Soul",
+    description: "Award-winning premium furniture experience.",
 };
 
 export default function RootLayout({
@@ -24,10 +32,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className={`${inter.variable} bg-[#050505] text-white antialiased`}>
+        <html lang="en" className="scroll-smooth">
+            <body className={`${inter.variable} ${playfair.variable} bg-background text-foreground antialiased`}>
                 <SearchProvider>
                     <SmoothScroll>
+                        <CustomCursor />
+                        <Chatbot />
                         <AudioController />
                         <ClientProviders>
                             {children}

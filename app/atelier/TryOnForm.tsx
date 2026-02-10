@@ -106,7 +106,7 @@ export function TryOnForm() {
                                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent flex items-center justify-between">
                                     <div>
                                         <p className="text-white font-medium text-lg">Fitting Complete</p>
-                                        <p className="text-white/60 text-xs uppercase tracking-wide">Velorum Chronograph 41</p>
+                                        <p className="text-white/60 text-xs uppercase tracking-wide">Aethelon Chronograph 41</p>
                                     </div>
                                     <div className="flex gap-3">
                                         <button onClick={reset} className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
