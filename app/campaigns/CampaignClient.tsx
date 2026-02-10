@@ -36,7 +36,7 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
     }, []);
 
     return (
-        <div className="bg-[#050505] text-white min-h-screen" ref={containerRef}>
+        <div className="bg-background text-foreground min-h-screen" ref={containerRef}>
             <Navbar />
 
             {/* HERO BANNER SECTION */}
@@ -50,8 +50,8 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                             className="object-cover scale-110"
                             priority
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/40 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-foreground/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-foreground/30 via-transparent to-transparent" />
 
                         <div className="absolute inset-0 flex items-end pb-24 px-8 md:px-16">
                             <motion.div
@@ -60,14 +60,14 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                                 transition={{ duration: 1, delay: 0.5 }}
                                 className="max-w-2xl"
                             >
-                                <span className="text-xs uppercase tracking-[0.3em] text-amber-400 mb-4 block">Current Campaign</span>
-                                <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">
+                                <span className="text-xs uppercase tracking-[0.3em] text-accent mb-4 block">Current Campaign</span>
+                                <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6 text-white drop-shadow-lg">
                                     {heroBanner.title}
                                 </h1>
                                 {heroBanner.link && (
                                     <Link
                                         href={heroBanner.link}
-                                        className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black text-sm font-bold uppercase tracking-widest hover:bg-amber-400 transition-colors"
+                                        className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-accent-foreground text-sm font-bold uppercase tracking-widest hover:bg-accent/90 transition-colors rounded-sm"
                                     >
                                         Explore Collection <ArrowRight className="w-4 h-4" />
                                     </Link>
@@ -87,8 +87,8 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                 ) : (
                     <div className="h-full flex items-center justify-center">
                         <div className="text-center">
-                            <h1 className="text-4xl font-black uppercase tracking-tighter mb-4 text-white/20">No Active Campaign</h1>
-                            <p className="text-white/40">Add a banner in the Admin Dashboard</p>
+                            <h1 className="text-4xl font-black uppercase tracking-tighter mb-4 text-muted-foreground/30">No Active Campaign</h1>
+                            <p className="text-muted-foreground">Add a banner in the Admin Dashboard</p>
                         </div>
                     </div>
                 )}
@@ -97,7 +97,7 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
             {/* FEATURED PRODUCTS - STACKING SCROLL */}
             {featuredProducts.length > 0 && (
                 <section className="relative">
-                    <div className="py-20 px-8 text-center border-b border-white/5">
+                    <div className="py-20 px-8 text-center border-b border-border">
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -106,7 +106,7 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                         >
                             Featured Timepieces
                         </motion.h2>
-                        <p className="text-white/40 mt-4 max-w-md mx-auto">Scroll to discover our curated selection</p>
+                        <p className="text-muted-foreground mt-4 max-w-md mx-auto">Scroll to discover our curated selection</p>
                     </div>
 
                     {/* Stacking Cards Container */}
@@ -125,10 +125,10 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
             )}
 
             {/* FOOTER */}
-            <footer className="min-h-[40vh] flex items-center justify-center border-t border-white/5">
+            <footer className="min-h-[40vh] flex items-center justify-center border-t border-border">
                 <div className="text-center">
-                    <p className="text-white/30 text-sm uppercase tracking-widest mb-4">Aethelon Geneve</p>
-                    <Link href="/shop" className="text-amber-400 hover:text-amber-300 text-sm uppercase tracking-widest flex items-center gap-2 justify-center">
+                    <p className="text-muted-foreground text-sm uppercase tracking-widest mb-4">Aethelon Geneve</p>
+                    <Link href="/shop" className="text-accent hover:text-accent/80 text-sm uppercase tracking-widest flex items-center gap-2 justify-center">
                         View All Timepieces <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
@@ -182,7 +182,7 @@ function StackingCard({
                 }}
             >
                 <Link href={`/product/${product.id}`}>
-                    <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-950 border border-white/10 rounded-sm overflow-hidden shadow-2xl shadow-black/50 h-[70vh] md:h-[75vh]">
+                    <div className="relative bg-gradient-to-br from-muted to-secondary border border-border rounded-sm overflow-hidden shadow-2xl shadow-foreground/5 h-[70vh] md:h-[75vh]">
                         <div className="grid grid-cols-1 md:grid-cols-2 h-full">
                             {/* Image Side */}
                             <div className="relative overflow-hidden">
@@ -198,37 +198,37 @@ function StackingCard({
                                             className="object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-amber-900/20 to-transparent flex items-center justify-center">
-                                            <span className="text-white/20 text-6xl font-black">0{index + 1}</span>
+                                        <div className="w-full h-full bg-gradient-to-br from-accent/10 to-transparent flex items-center justify-center">
+                                            <span className="text-muted-foreground/20 text-6xl font-black">0{index + 1}</span>
                                         </div>
                                     )}
                                 </motion.div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-zinc-900/80 md:block hidden" />
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-muted/80 md:block hidden" />
                             </div>
 
                             {/* Content Side */}
                             <div className="relative flex flex-col justify-center p-8 md:p-16">
-                                <span className="text-xs uppercase tracking-[0.3em] text-amber-400 mb-4">
+                                <span className="text-xs uppercase tracking-[0.3em] text-accent mb-4">
                                     Featured 0{index + 1}
                                 </span>
                                 <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">
                                     {product.name}
                                 </h3>
-                                <p className="text-white/50 mb-8 line-clamp-3 max-w-md">
+                                <p className="text-muted-foreground mb-8 line-clamp-3 max-w-md">
                                     {product.description || "Discover the essence of luxury timekeeping."}
                                 </p>
                                 <div className="flex items-end gap-8">
                                     <div>
-                                        <span className="text-xs text-white/40 uppercase tracking-widest block mb-1">Price</span>
+                                        <span className="text-xs text-muted-foreground uppercase tracking-widest block mb-1">Price</span>
                                         <span className="text-3xl font-light">${product.price.toLocaleString()}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-amber-400 text-xs uppercase tracking-widest group-hover:gap-4 transition-all">
+                                    <div className="flex items-center gap-2 text-accent text-xs uppercase tracking-widest group-hover:gap-4 transition-all">
                                         View Details <ArrowRight className="w-4 h-4" />
                                     </div>
                                 </div>
 
                                 {/* Decorative number */}
-                                <span className="absolute bottom-8 right-8 text-[12rem] font-black text-white/[0.03] leading-none select-none hidden md:block">
+                                <span className="absolute bottom-8 right-8 text-[12rem] font-black text-foreground/[0.03] leading-none select-none hidden md:block">
                                     0{index + 1}
                                 </span>
                             </div>

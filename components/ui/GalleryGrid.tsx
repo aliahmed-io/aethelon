@@ -23,13 +23,13 @@ const images = [
 
 export default function GalleryGrid() {
     return (
-        <section className="relative z-10 bg-[#050505] py-32 px-6 md:px-12 border-t border-white/5">
+        <section className="relative z-10 bg-background py-32 px-6 md:px-12 border-t border-border">
             <div className="max-w-7xl mx-auto">
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-white text-4xl md:text-5xl font-bold tracking-tighter mb-16 text-right"
+                    className="text-foreground text-4xl md:text-5xl font-bold tracking-tighter mb-16 text-right"
                 >
                     BUILT FOR THE EXTREME
                 </motion.h2>
@@ -50,7 +50,7 @@ export default function GalleryGrid() {
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
+                            <div className="absolute inset-0 bg-foreground/10 group-hover:bg-transparent transition-colors duration-500" />
                         </motion.div>
                     ))}
                 </div>

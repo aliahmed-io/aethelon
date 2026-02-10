@@ -13,11 +13,11 @@ export function MobileMenu({ user }: { user: { given_name?: string | null; famil
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden text-white/70 hover:text-white hover:bg-white/5">
+                <Button variant="ghost" size="icon" className="md:hidden text-muted-foreground hover:text-foreground hover:bg-muted">
                     <Menu className="h-5 w-5" />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] border-r border-white/10 bg-[#050505]/95 backdrop-blur-xl">
+            <SheetContent side="left" className="w-[300px] border-r border-border bg-background/95 backdrop-blur-xl">
                 <SheetHeader className="text-left mb-8">
                     <SheetTitle className="text-xl font-bold tracking-tighter uppercase">Aethelon</SheetTitle>
                 </SheetHeader>
@@ -25,21 +25,21 @@ export function MobileMenu({ user }: { user: { given_name?: string | null; famil
                 <nav className="flex flex-col gap-6">
                     <NavbarLinks className="flex-col items-start gap-6" />
 
-                    <div className="h-px w-full bg-white/10 my-2" />
+                    <div className="h-px w-full bg-border my-2" />
 
                     {!user ? (
                         <div className="flex flex-col gap-3">
-                            <Button variant="outline" asChild className="justify-start border-white/20 text-white hover:bg-white/10 hover:text-white w-full">
+                            <Button variant="outline" asChild className="justify-start border-border text-foreground hover:bg-muted w-full">
                                 <LoginLink postLoginRedirectURL={pathname}>Sign in</LoginLink>
                             </Button>
-                            <Button asChild className="justify-start bg-white text-black hover:bg-white/90 w-full">
+                            <Button asChild className="justify-start bg-accent text-accent-foreground hover:bg-accent/90 w-full">
                                 <RegisterLink postLoginRedirectURL={pathname}>
                                     Create Account
                                 </RegisterLink>
                             </Button>
                         </div>
                     ) : (
-                        <Button variant="ghost" asChild className="justify-start text-white/60 hover:text-white hover:bg-white/5 w-full">
+                        <Button variant="ghost" asChild className="justify-start text-muted-foreground hover:text-foreground hover:bg-muted w-full">
                             <Link href="/account">My Account</Link>
                         </Button>
                     )}

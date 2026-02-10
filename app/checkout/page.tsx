@@ -27,12 +27,12 @@ export default async function CheckoutPage() {
     });
 
     return (
-        <main className="min-h-screen bg-[#050505] text-white pt-24 pb-20 relative overflow-hidden">
-            {/* Ambient Background - Light Pulse */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] pointer-events-none" />
+        <main className="min-h-screen bg-background text-foreground pt-24 pb-20 relative overflow-hidden">
+            {/* Ambient Background - Warm Pulse */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(circle_at_center,rgba(201,145,43,0.04)_0%,transparent_70%)] pointer-events-none" />
 
-            <div className="absolute top-0 w-full h-20 border-b border-white/5 flex items-center justify-center bg-[#050505]/80 backdrop-blur-md z-50">
-                <div className="flex items-center gap-2 text-white/70 text-sm uppercase tracking-widest">
+            <div className="absolute top-0 w-full h-20 border-b border-border flex items-center justify-center bg-background/80 backdrop-blur-md z-50">
+                <div className="flex items-center gap-2 text-muted-foreground text-sm uppercase tracking-widest">
                     <Lock className="w-4 h-4" /> Secure Checkout
                 </div>
             </div>
@@ -50,11 +50,9 @@ export default async function CheckoutPage() {
 
                 {/* Right: Summary */}
                 <div className="lg:col-span-5 relative hidden lg:block">
-                    {/* Check ShoppingBag page for summary logic reuse, or create simple summary component */}
-                    <div className="sticky top-32 p-8 bg-white/5 border border-white/5 backdrop-blur-md">
-                        <h3 className="text-sm font-bold uppercase tracking-widest mb-6 text-white/70">Order Summary</h3>
-                        {/* ... Summary details implementation would go here ... */}
-                        <p className="text-xs text-white/30 text-center italic mt-12">
+                    <div className="sticky top-32 p-8 bg-muted/50 border border-border backdrop-blur-md rounded-sm">
+                        <h3 className="text-sm font-bold uppercase tracking-widest mb-6 text-muted-foreground">Order Summary</h3>
+                        <p className="text-xs text-muted-foreground text-center italic mt-12">
                             By placing your order, you agree to our Terms of Service.
                         </p>
                     </div>

@@ -61,7 +61,7 @@
   }
 
   .glass-dark {
-    @apply bg-black/70 backdrop-blur-md border border-white/10 shadow-sm text-white;
+    @apply bg-foreground/70 backdrop-blur-md border border-foreground/10 shadow-sm text-background;
   }
 }
 

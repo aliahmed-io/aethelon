@@ -37,17 +37,17 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     ];
 
     return (
-        <main className="min-h-screen bg-[#050505] text-white pt-32 pb-20">
+        <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
             <Navbar />
 
             <div className="container mx-auto px-6 lg:px-12">
                 {/* Header */}
-                <div className="mb-16 border-b border-white/10 pb-8 flex justify-between items-end">
+                <div className="mb-16 border-b border-border pb-8 flex justify-between items-end">
                     <div>
-                        <h1 className="text-4xl lg:text-5xl font-light tracking-tight text-white mb-2">
+                        <h1 className="text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-2">
                             COLLECTION
                         </h1>
-                        <p className="text-white/40 font-mono text-sm tracking-widest">
+                        <p className="text-muted-foreground font-mono text-sm tracking-widest">
                             {products.length} REFERENCES FOUND
                         </p>
                     </div>
@@ -60,12 +60,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                     {/* Grid */}
                     <div className="flex-1">
                         {products.length === 0 ? (
-                            <div className="h-64 flex flex-col items-center justify-center p-8 border border-white/5 bg-white/5 backdrop-blur-md rounded-sm text-center">
-                                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                            <div className="h-64 flex flex-col items-center justify-center p-8 border border-border bg-muted/50 backdrop-blur-md rounded-sm text-center">
+                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
                                     <span className="text-xl">⌚</span>
                                 </div>
                                 <h3 className="text-lg font-light tracking-wide uppercase mb-2">No Timepieces Found</h3>
-                                <p className="text-white/40 text-sm max-w-xs mx-auto">
+                                <p className="text-muted-foreground text-sm max-w-xs mx-auto">
                                     Our ateliers are currently devoid of instruments matching your criteria.
                                 </p>
                             </div>

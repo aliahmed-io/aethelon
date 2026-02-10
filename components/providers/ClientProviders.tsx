@@ -12,21 +12,13 @@ const SearchOverlay = dynamic(
     }
 );
 
-const AiConcierge = dynamic(
-    () => import("@/components/features/AiConcierge").then((mod) => mod.AiConcierge),
-    {
-        ssr: false,
-        loading: () => null,
-    }
-);
-
 export function ClientProviders({ children }: { children: React.ReactNode }) {
     return (
         <>
             {children}
             <SearchOverlay />
-            <AiConcierge />
             <MobileNav />
         </>
     );
 }
+

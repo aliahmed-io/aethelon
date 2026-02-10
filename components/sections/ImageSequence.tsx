@@ -75,7 +75,7 @@ export default function ImageSequence({ progress }: ImageSequenceProps) {
                     const cw = canvas.width;
                     const ch = canvas.height;
 
-                    ctx.fillStyle = "#050505";
+                    ctx.fillStyle = "#F5F0E8";
                     ctx.fillRect(0, 0, cw, ch);
 
                     const iw = img.naturalWidth;
@@ -114,7 +114,7 @@ export default function ImageSequence({ progress }: ImageSequenceProps) {
     }, []);
 
     return (
-        <div className="fixed inset-0 z-0 flex items-center justify-center bg-[#050505]">
+        <div className="fixed inset-0 z-0 flex items-center justify-center bg-background">
             {/* Static Image Placeholder / Preloader */}
             <div
                 className={`absolute inset-0 z-10 transition-opacity duration-1000 ${loadedCount === TOTAL_FRAMES ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
@@ -129,7 +129,7 @@ export default function ImageSequence({ progress }: ImageSequenceProps) {
                 />
 
                 {/* Loading Text */}
-                <div className="absolute bottom-10 right-10 text-white/50 text-xs font-mono tracking-widest">
+                <div className="absolute bottom-10 right-10 text-muted-foreground text-xs font-mono tracking-widest">
                     SYSTEM INITIALIZATION... {Math.round((loadedCount / TOTAL_FRAMES) * 100)}%
                 </div>
             </div>

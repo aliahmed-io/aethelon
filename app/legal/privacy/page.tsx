@@ -10,7 +10,7 @@ export default function PrivacyPage() {
             title="Privacy Policy"
             subtitle="How we protect and manage your personal data."
         >
-            <p className="text-sm uppercase tracking-widest text-white/40 mb-12">Last updated: January 2026</p>
+            <p className="text-sm uppercase tracking-widest text-muted-foreground mb-12">Last updated: January 2026</p>
 
             <h3>1. Data Collection</h3>
             <p>

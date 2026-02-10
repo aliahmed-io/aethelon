@@ -46,24 +46,24 @@ export default function HeritageSection() {
     ];
 
     return (
-        <section ref={targetRef} className="relative z-10 h-[400vh] bg-[#0A0A0C]">
+        <section ref={targetRef} className="relative z-10 h-[400vh] bg-secondary">
             <div className="sticky top-0 flex h-screen items-center overflow-hidden">
                 <motion.div style={{ x }} className="flex gap-12 px-12 md:px-24">
                     {/* Intro Title */}
                     <div className="flex-shrink-0 w-[80vw] md:w-[40vw] flex flex-col justify-center z-10">
-                        <h2 className="text-6xl md:text-9xl font-bold text-white/10 tracking-tighter leading-none mb-4">
+                        <h2 className="text-6xl md:text-9xl font-bold text-foreground/10 tracking-tighter leading-none mb-4">
                             HERITAGE
                         </h2>
-                        <p className="text-xl md:text-2xl text-white ml-2 font-light max-w-md">
-                            From the first Special Pilot’s Watch to the era of Ceratanium®.
+                        <p className="text-xl md:text-2xl text-foreground ml-2 font-light max-w-md">
+                            From the first Special Pilot&apos;s Watch to the era of Ceratanium®.
                         </p>
                     </div>
 
-                    {/* Story Cards */}
+                    {/* Story Cards — these have full-bleed images so darker overlays are kept for readability */}
                     {stories.map((story) => (
                         <div
                             key={story.year}
-                            className="flex-shrink-0 w-[85vw] md:w-[60vw] h-[70vh] md:h-[80vh] relative group overflow-hidden bg-[#050505] border border-white/5"
+                            className="flex-shrink-0 w-[85vw] md:w-[60vw] h-[70vh] md:h-[80vh] relative group overflow-hidden bg-muted border border-border"
                         >
                             {/* Background Image */}
                             {story.image ? (
@@ -74,13 +74,13 @@ export default function HeritageSection() {
                                     className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000 ease-out grayscale group-hover:grayscale-0"
                                 />
                             ) : (
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] to-black" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-muted to-secondary" />
                             )}
 
-                            {/* Gradient Overlay */}
+                            {/* Gradient Overlay — kept dark for text readability over images */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
-                            {/* Content */}
+                            {/* Content — white text is intentional for readability over dark gradient on images */}
                             <div className="absolute bottom-0 left-0 p-8 md:p-12 w-full z-20">
                                 <span className="block text-6xl md:text-8xl font-bold text-white/10 mb-2">{story.year}</span>
                                 <h3 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight">{story.title}</h3>

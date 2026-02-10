@@ -92,16 +92,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const estimatedDelivery = getEstimatedDelivery();
 
     return (
-        <main className="min-h-screen bg-[#050505] text-white pt-32 pb-20">
+        <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
             <Navbar />
             <ProductTracker product={product} />
 
             <div className="container mx-auto px-6 lg:px-12">
                 {/* Breadcrumb */}
-                <div className="flex items-center gap-2 text-xs font-mono text-white/40 mb-12 uppercase tracking-widest">
-                    <Link href="/shop" className="hover:text-white transition-colors">Collection</Link>
+                <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-12 uppercase tracking-widest">
+                    <Link href="/shop" className="hover:text-foreground transition-colors">Collection</Link>
                     <ChevronRight className="w-3 h-3" />
-                    <span className="text-white">{product.name}</span>
+                    <span className="text-foreground">{product.name}</span>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
@@ -131,14 +131,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     {/* Details Column */}
                     <div className="lg:pt-8">
                         <div>
-                            <h2 className="text-sm font-mono text-white/50 tracking-widest uppercase mb-2">
+                            <h2 className="text-sm font-mono text-muted-foreground tracking-widest uppercase mb-2">
                                 {product.mainCategory || "Timepiece"}
                             </h2>
-                            <h1 className="text-4xl lg:text-5xl font-bold tracking-tighter text-white mb-6">
+                            <h1 className="text-4xl lg:text-5xl font-bold tracking-tighter text-foreground mb-6">
                                 {product.name}
                             </h1>
                             <div className="flex items-center justify-between mb-4">
-                                <p className="text-2xl font-light tracking-wide text-white">
+                                <p className="text-2xl font-light tracking-wide text-foreground">
                                     {formatPrice(product.price)}
                                 </p>
                                 <SizeGuideButton productName={product.name} />
@@ -149,19 +149,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 {isInStock ? (
                                     <div className="flex items-center gap-2">
                                         <div className={`w-2 h-2 rounded-full ${isLowStock ? "bg-yellow-500" : "bg-emerald-500"}`} />
-                                        <span className={`text-xs uppercase tracking-widest ${isLowStock ? "text-yellow-500" : "text-white/50"}`}>
+                                        <span className={`text-xs uppercase tracking-widest ${isLowStock ? "text-yellow-600" : "text-muted-foreground"}`}>
                                             {isLowStock ? `Only ${stockLevel} left` : "In Stock"}
                                         </span>
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full bg-red-500" />
-                                        <span className="text-xs uppercase tracking-widest text-red-500">Out of Stock</span>
+                                        <span className="text-xs uppercase tracking-widest text-red-600">Out of Stock</span>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="space-y-6 text-white/70 leading-relaxed font-light mb-8 border-t border-white/5 pt-8">
+                            <div className="space-y-6 text-muted-foreground leading-relaxed font-light mb-8 border-t border-border pt-8">
                                 <p>{product.description}</p>
 
                                 {product.features && product.features.length > 0 && (
@@ -175,18 +175,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
                             {/* Delivery & Guarantee Info */}
                             <div className="grid grid-cols-2 gap-4 mb-8">
-                                <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10">
-                                    <Truck className="w-5 h-5 text-white/40" />
+                                <div className="flex items-center gap-3 p-4 bg-muted/50 border border-border rounded-sm">
+                                    <Truck className="w-5 h-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-xs uppercase tracking-widest text-white/40">Est. Delivery</p>
-                                        <p className="text-sm text-white font-medium">{estimatedDelivery}</p>
+                                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Est. Delivery</p>
+                                        <p className="text-sm text-foreground font-medium">{estimatedDelivery}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10">
-                                    <Shield className="w-5 h-5 text-white/40" />
+                                <div className="flex items-center gap-3 p-4 bg-muted/50 border border-border rounded-sm">
+                                    <Shield className="w-5 h-5 text-muted-foreground" />
                                     <div>
-                                        <p className="text-xs uppercase tracking-widest text-white/40">Warranty</p>
-                                        <p className="text-sm text-white font-medium">5 Years</p>
+                                        <p className="text-xs uppercase tracking-widest text-muted-foreground">Warranty</p>
+                                        <p className="text-sm text-foreground font-medium">5 Years</p>
                                     </div>
                                 </div>
                             </div>
@@ -195,18 +195,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             <RecentFeedbackSection productId={product.id} />
                         </div>
 
-                        <div className="pt-12 border-t border-white/5 space-y-4">
+                        <div className="pt-12 border-t border-border space-y-4">
                             <button
                                 disabled={!isInStock}
-                                className={`w-full h-14 font-bold uppercase tracking-[0.2em] transition-colors ${isInStock
-                                    ? "bg-white text-black hover:bg-[#E5E5E5]"
-                                    : "bg-white/10 text-white/30 cursor-not-allowed"
+                                className={`w-full h-14 font-bold uppercase tracking-[0.2em] transition-colors rounded-sm ${isInStock
+                                    ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                                    : "bg-muted text-muted-foreground cursor-not-allowed"
                                     }`}
                             >
                                 {isInStock ? "Add to Bag" : "Out of Stock"}
                             </button>
 
-                            <button className="w-full h-14 border border-white/20 bg-transparent text-white font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-2">
+                            <button className="w-full h-14 border border-border bg-transparent text-foreground font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-center gap-2 rounded-sm">
                                 Virtual Try-On
                             </button>
                         </div>
@@ -218,7 +218,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             productName={product.name}
                         />
 
-                        <p className="text-xs text-center text-white/30 font-mono pt-4">
+                        <p className="text-xs text-center text-muted-foreground font-mono pt-4">
                             SWISS MADE • FREE SHIPPING • SECURE CHECKOUT
                         </p>
                     </div>

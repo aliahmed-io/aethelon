@@ -10,7 +10,7 @@ export default function ShippingPage() {
             title="Shipping & Delivery"
             subtitle="Global logistics, handled with care."
         >
-            <p className="text-sm uppercase tracking-widest text-white/40 mb-12">Last updated: January 2026</p>
+            <p className="text-sm uppercase tracking-widest text-muted-foreground mb-12">Last updated: January 2026</p>
 
             <h3>1. Processing Times</h3>
             <p>

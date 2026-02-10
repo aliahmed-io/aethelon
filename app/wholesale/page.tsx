@@ -46,20 +46,20 @@ export default async function WholesalePage() {
     const products = await getWholesaleProducts();
 
     return (
-        <main className="min-h-screen bg-[#050505] text-white">
+        <main className="min-h-screen bg-background text-foreground">
             <Navbar />
 
             {/* Hero Section */}
-            <section className="pt-40 pb-20 px-6 lg:px-12 border-b border-white/10">
+            <section className="pt-40 pb-20 px-6 lg:px-12 border-b border-border">
                 <div className="container mx-auto max-w-6xl">
                     <div className="flex items-center gap-3 mb-6">
-                        <Building2 className="w-6 h-6 text-white/40" />
-                        <span className="text-xs uppercase tracking-widest text-white/40">Business Partners</span>
+                        <Building2 className="w-6 h-6 text-muted-foreground" />
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground">Business Partners</span>
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-bold tracking-tighter mb-6">
                         Wholesale
                     </h1>
-                    <p className="text-xl text-white/50 font-light max-w-2xl mb-12">
+                    <p className="text-xl text-muted-foreground font-light max-w-2xl mb-12">
                         Partner with Aethelon Geneve for exclusive wholesale pricing, priority inventory access,
                         and dedicated account management.
                     </p>
@@ -67,14 +67,14 @@ export default async function WholesalePage() {
                     <div className="flex flex-wrap gap-4">
                         <a
                             href="#contact"
-                            className="inline-flex items-center gap-2 bg-white text-black px-8 py-4 text-sm uppercase tracking-widest font-bold hover:bg-zinc-200 transition-colors"
+                            className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 text-sm uppercase tracking-widest font-bold hover:bg-accent/90 transition-colors rounded-sm"
                         >
                             Become a Partner
                             <ArrowRight className="w-4 h-4" />
                         </a>
                         <a
                             href="#catalog"
-                            className="inline-flex items-center gap-2 border border-white/20 px-8 py-4 text-sm uppercase tracking-widest hover:bg-white/5 transition-colors"
+                            className="inline-flex items-center gap-2 border border-border px-8 py-4 text-sm uppercase tracking-widest hover:bg-muted transition-colors rounded-sm"
                         >
                             View Catalog
                         </a>
@@ -83,36 +83,36 @@ export default async function WholesalePage() {
             </section>
 
             {/* Benefits */}
-            <section className="py-20 px-6 lg:px-12 border-b border-white/10">
+            <section className="py-20 px-6 lg:px-12 border-b border-border">
                 <div className="container mx-auto max-w-6xl">
-                    <h2 className="text-xs uppercase tracking-widest text-white/40 mb-12">Partner Benefits</h2>
+                    <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-12">Partner Benefits</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div className="p-8 border border-white/10 hover:border-white/20 transition-colors group">
-                            <Package className="w-8 h-8 text-white/20 mb-6 group-hover:text-white/40 transition-colors" />
+                        <div className="p-8 border border-border hover:border-accent/30 transition-colors group rounded-sm">
+                            <Package className="w-8 h-8 text-muted-foreground/40 mb-6 group-hover:text-accent transition-colors" />
                             <h3 className="text-lg font-medium mb-2">Bulk Pricing</h3>
-                            <p className="text-sm text-white/40 leading-relaxed">
+                            <p className="text-sm text-muted-foreground leading-relaxed">
                                 Tiered discounts up to 40% off retail for volume orders.
                             </p>
                         </div>
-                        <div className="p-8 border border-white/10 hover:border-white/20 transition-colors group">
-                            <Shield className="w-8 h-8 text-white/20 mb-6 group-hover:text-white/40 transition-colors" />
+                        <div className="p-8 border border-border hover:border-accent/30 transition-colors group rounded-sm">
+                            <Shield className="w-8 h-8 text-muted-foreground/40 mb-6 group-hover:text-accent transition-colors" />
                             <h3 className="text-lg font-medium mb-2">Priority Access</h3>
-                            <p className="text-sm text-white/40 leading-relaxed">
+                            <p className="text-sm text-muted-foreground leading-relaxed">
                                 First access to new collections and limited editions.
                             </p>
                         </div>
-                        <div className="p-8 border border-white/10 hover:border-white/20 transition-colors group">
-                            <FileText className="w-8 h-8 text-white/20 mb-6 group-hover:text-white/40 transition-colors" />
+                        <div className="p-8 border border-border hover:border-accent/30 transition-colors group rounded-sm">
+                            <FileText className="w-8 h-8 text-muted-foreground/40 mb-6 group-hover:text-accent transition-colors" />
                             <h3 className="text-lg font-medium mb-2">Net-30 Terms</h3>
-                            <p className="text-sm text-white/40 leading-relaxed">
+                            <p className="text-sm text-muted-foreground leading-relaxed">
                                 Invoice-based payments with flexible terms.
                             </p>
                         </div>
-                        <div className="p-8 border border-white/10 hover:border-white/20 transition-colors group">
-                            <Building2 className="w-8 h-8 text-white/20 mb-6 group-hover:text-white/40 transition-colors" />
+                        <div className="p-8 border border-border hover:border-accent/30 transition-colors group rounded-sm">
+                            <Building2 className="w-8 h-8 text-muted-foreground/40 mb-6 group-hover:text-accent transition-colors" />
                             <h3 className="text-lg font-medium mb-2">Dedicated Support</h3>
-                            <p className="text-sm text-white/40 leading-relaxed">
+                            <p className="text-sm text-muted-foreground leading-relaxed">
                                 Personal account manager for all your needs.
                             </p>
                         </div>
@@ -121,17 +121,17 @@ export default async function WholesalePage() {
             </section>
 
             {/* Catalog Preview */}
-            <section id="catalog" className="py-20 px-6 lg:px-12 border-b border-white/10">
+            <section id="catalog" className="py-20 px-6 lg:px-12 border-b border-border">
                 <div className="container mx-auto max-w-6xl">
                     <div className="flex items-center justify-between mb-12">
-                        <h2 className="text-xs uppercase tracking-widest text-white/40">Catalog Preview</h2>
-                        <span className="text-xs text-white/30">Wholesale pricing shown after approval</span>
+                        <h2 className="text-xs uppercase tracking-widest text-muted-foreground">Catalog Preview</h2>
+                        <span className="text-xs text-muted-foreground/60">Wholesale pricing shown after approval</span>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {products.map((product) => (
                             <div key={product.id} className="group">
-                                <div className="aspect-square bg-white/5 mb-4 relative overflow-hidden">
+                                <div className="aspect-square bg-muted mb-4 relative overflow-hidden rounded-sm">
                                     {product.images[0] && (
                                         <Image
                                             src={product.images[0]}
@@ -140,12 +140,12 @@ export default async function WholesalePage() {
                                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                     )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
                                 <h3 className="text-sm font-medium mb-1 truncate">{product.name}</h3>
                                 <div className="flex items-center justify-between">
-                                    <p className="text-xs text-white/40">Retail: {formatPrice(product.price)}</p>
-                                    <span className="text-[10px] uppercase tracking-widest text-white/30">
+                                    <p className="text-xs text-muted-foreground">Retail: {formatPrice(product.price)}</p>
+                                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground/60">
                                         {product.stockQuantity} units
                                     </span>
                                 </div>
@@ -160,7 +160,7 @@ export default async function WholesalePage() {
                 <div className="container mx-auto max-w-2xl">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl font-bold tracking-tighter mb-4">Become a Partner</h2>
-                        <p className="text-white/50">
+                        <p className="text-muted-foreground">
                             Fill out the form below and our wholesale team will contact you within 48 hours.
                         </p>
                     </div>
@@ -168,22 +168,22 @@ export default async function WholesalePage() {
                     <form className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
                                     Business Name
                                 </label>
                                 <input
                                     type="text"
-                                    className="w-full bg-transparent border border-white/10 px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+                                    className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-accent transition-colors rounded-sm"
                                     placeholder="Your Company"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
                                     Contact Name
                                 </label>
                                 <input
                                     type="text"
-                                    className="w-full bg-transparent border border-white/10 px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+                                    className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-accent transition-colors rounded-sm"
                                     placeholder="John Smith"
                                 />
                             </div>
@@ -191,66 +191,66 @@ export default async function WholesalePage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
                                     Email
                                 </label>
                                 <input
                                     type="email"
-                                    className="w-full bg-transparent border border-white/10 px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+                                    className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-accent transition-colors rounded-sm"
                                     placeholder="email@company.com"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
                                     Phone
                                 </label>
                                 <input
                                     type="tel"
-                                    className="w-full bg-transparent border border-white/10 px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+                                    className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-accent transition-colors rounded-sm"
                                     placeholder="+1 (555) 000-0000"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                            <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
                                 Estimated Monthly Order Volume
                             </label>
-                            <select className="w-full bg-transparent border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors">
-                                <option value="" className="bg-black">Select volume</option>
-                                <option value="10-50" className="bg-black">10-50 units</option>
-                                <option value="50-100" className="bg-black">50-100 units</option>
-                                <option value="100-500" className="bg-black">100-500 units</option>
-                                <option value="500+" className="bg-black">500+ units</option>
+                            <select className="w-full bg-background border border-border px-4 py-3 text-foreground focus:outline-none focus:border-accent transition-colors rounded-sm">
+                                <option value="">Select volume</option>
+                                <option value="10-50">10-50 units</option>
+                                <option value="50-100">50-100 units</option>
+                                <option value="100-500">100-500 units</option>
+                                <option value="500+">500+ units</option>
                             </select>
                         </div>
 
                         <div>
-                            <label className="block text-xs uppercase tracking-widest text-white/40 mb-2">
+                            <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
                                 Message
                             </label>
                             <textarea
                                 rows={4}
-                                className="w-full bg-transparent border border-white/10 px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors resize-none"
+                                className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-accent transition-colors resize-none rounded-sm"
                                 placeholder="Tell us about your business..."
                             />
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full bg-white text-black py-4 text-sm uppercase tracking-widest font-bold hover:bg-zinc-200 transition-colors"
+                            className="w-full bg-accent text-accent-foreground py-4 text-sm uppercase tracking-widest font-bold hover:bg-accent/90 transition-colors rounded-sm"
                         >
                             Submit Application
                         </button>
                     </form>
 
                     {/* Direct Contact */}
-                    <div className="mt-12 pt-12 border-t border-white/10 flex flex-wrap justify-center gap-8 text-sm text-white/40">
-                        <a href="mailto:wholesale@aethelon.geneve.com" className="flex items-center gap-2 hover:text-white transition-colors">
+                    <div className="mt-12 pt-12 border-t border-border flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
+                        <a href="mailto:wholesale@aethelon.geneve.com" className="flex items-center gap-2 hover:text-foreground transition-colors">
                             <Mail className="w-4 h-4" />
                             wholesale@aethelon.geneve.com
                         </a>
-                        <a href="tel:+41227001234" className="flex items-center gap-2 hover:text-white transition-colors">
+                        <a href="tel:+41227001234" className="flex items-center gap-2 hover:text-foreground transition-colors">
                             <Phone className="w-4 h-4" />
                             +41 22 700 1234
                         </a>

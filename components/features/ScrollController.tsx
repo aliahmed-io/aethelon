@@ -35,7 +35,7 @@ export default function ScrollController() {
     // Total ~ 500vh to feel substantial.
 
     return (
-        <div className="relative bg-[#050505]">
+        <div className="relative bg-background">
             {/* Navbar (fixed) */}
             <Navbar progress={scrollProgress} />
 
