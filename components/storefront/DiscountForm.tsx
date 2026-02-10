@@ -1,0 +1,77 @@
+"use client";
+
+import { applyDiscount, removeDiscount } from "@/app/store/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2, X } from "lucide-react";
+import { useFormStatus } from "react-dom";
+import { toast } from "sonner";
+
+function SubmitButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button type="submit" disabled={pending} size="sm">
+            {pending ? (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Applying...
+                </>
+            ) : (
+                "Apply"
+            )}
+        </Button>
+    );
+}
+
+export function DiscountForm() {
+    const handleApplyDiscount = async (formData: FormData) => {
+        try {
+            const result = await applyDiscount(formData);
+            if (result?.error) {
+                toast.error(result.error);
+            } else {
+                toast.success("Discount code applied!");
+            }
+        } catch {
+            toast.error("Failed to apply discount code");
+        }
+    };
+
+    return (
+        <form action={handleApplyDiscount} className="flex flex-col gap-2">
+            <Label htmlFor="code">Discount Code</Label>
+            <div className="flex gap-2">
+                <Input
+                    id="code"
+                    name="code"
+                    placeholder="Enter discount code"
+                    className="max-w-xs"
+                    required
+                />
+                <SubmitButton />
+            </div>
+        </form>
+    );
+}
+
+export function RemoveDiscountButton() {
+    const handleRemoveDiscount = async () => {
+        try {
+            await removeDiscount();
+            toast.success("Discount removed");
+        } catch {
+            toast.error("Failed to remove discount");
+        }
+    };
+
+    return (
+        <form action={handleRemoveDiscount}>
+            <Button type="submit" variant="ghost" size="icon" className="h-6 w-6">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Remove discount</span>
+            </Button>
+        </form>
+    );
+}

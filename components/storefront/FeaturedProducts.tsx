@@ -1,0 +1,72 @@
+import prisma from "@/lib/db";
+import { Suspense } from "react";
+import { unstable_cache } from "next/cache";
+import { LoadingProductCard, ProductCard } from "./ProductCard";
+
+async function getData() {
+  try {
+    const data = await unstable_cache(
+      async () => {
+        return await prisma.product.findMany({
+          where: {
+            status: "published",
+            isFeatured: true,
+          },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            images: true,
+            price: true,
+            discountPercentage: true,
+            modelUrl: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 3,
+        });
+      },
+      ["featured-products"],
+      { revalidate: 3600 }
+    )();
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching featured products:", error);
+    return [];
+  }
+}
+
+export function FeaturedProducts() {
+  return (
+    <>
+      <h2 className="text-2xl font-extrabold tracking-tight">Featured Items</h2>
+      <Suspense fallback={<LoadingRows />}>
+        <LoadFeaturedproducts />
+      </Suspense>
+    </>
+  );
+}
+
+async function LoadFeaturedproducts() {
+  const data = await getData();
+
+  return (
+    <div className="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {data.map((item, index) => (
+        <ProductCard key={item.id} item={item} priority={index < 2} />
+      ))}
+    </div>
+  );
+}
+
+function LoadingRows() {
+  return (
+    <div className="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <LoadingProductCard />
+      <LoadingProductCard />
+      <LoadingProductCard />
+    </div>
+  );
+}

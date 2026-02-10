@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+Ali-provate-docs.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/lib/generated/prisma
+
+# Private Docs
+docs/ideas.md

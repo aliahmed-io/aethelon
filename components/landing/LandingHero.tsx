@@ -1,0 +1,56 @@
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const LandingHero3D = dynamic(() => import("./LandingHero3D"), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800/50 rounded-lg animate-pulse">
+            <p className="text-sm text-muted-foreground font-medium">Loading Interactive Model...</p>
+        </div>
+    )
+});
+
+export function LandingHero() {
+    return (
+        <section className="relative overflow-hidden pt-20 pb-4 lg:pt-24 lg:pb-8">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="flex flex-col items-center text-center space-y-8">
+                    <div className="space-y-4 max-w-3xl">
+                        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+                            Redefining Footwear
+                        </h1>
+                        <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+                            Experience the perfect blend of style, comfort, and innovation.
+                            Our premium collection is designed for those who demand the best.
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                        <Button asChild size="lg" className="rounded-full px-8">
+                            <Link href="/store/shop">
+                                Shop Collection
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="lg" className="rounded-full px-8">
+                            <Link href="#about">
+                                Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </div>
+
+                    {/* 3D Model Section */}
+                    <div className="w-full max-w-2xl mt-6 relative aspect-square md:aspect-[4/3] lg:aspect-[3/2] bg-transparent flex items-center justify-center overflow-visible z-10">
+                        <LandingHero3D />
+                    </div>
+                </div>
+            </div>
+
+            {/* Background Elements */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none" />
+        </section>
+    );
+}

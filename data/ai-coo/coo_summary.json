@@ -1,0 +1,16 @@
+{
+  "lastUpdated": "2026-01-26T02:06:35.669Z",
+  "keyFacts": [],
+  "preferences": {
+    "focusAreas": [
+      "inventory",
+      "revenue",
+      "customers"
+    ],
+    "alertThresholds": {
+      "lowStockThreshold": 5,
+      "inactiveCustomerDays": 30
+    }
+  },
+  "sessionCount": 19
+}
