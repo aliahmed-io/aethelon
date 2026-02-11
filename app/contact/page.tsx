@@ -41,7 +41,7 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-8">
                 <div>
                     <p className="text-muted-foreground mb-8">
-                        Whether you have questions about our timepieces, need assistance with an order, or simply wish to share your feedback, we are here to assist you.
+                        Whether you have questions about our collections, need assistance with an order, or simply wish to share your feedback, we are here to assist you.
                     </p>
 
                     <div className="space-y-6 text-sm">

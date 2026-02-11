@@ -53,6 +53,15 @@ interface LogWithUser {
     } | null;
 }
 
+interface AiLogItem {
+    id: string;
+    createdAt: Date;
+    success: boolean;
+    responseTimeMs: number;
+    ip: string | null;
+    route: string;
+}
+
 // Spam detection patterns
 const SPAM_PATTERNS = [
     /\b(buy now|click here|free money|viagra|casino)\b/i,
@@ -78,13 +87,14 @@ async function getSecurityData() {
     const recentAuditLogs = recentAuditLogsRaw as unknown as LogWithUser[];
 
     // Fetch AI interaction logs (API usage monitoring)
-    const aiLogs = await prisma.aiInteractionLog.findMany({
+    const aiLogsRaw = await prisma.aiInteractionLog.findMany({
         where: {
             createdAt: { gte: last24h }
         },
         orderBy: { createdAt: "desc" },
         take: 30
     });
+    const aiLogs = aiLogsRaw as unknown as AiLogItem[];
 
     // Calculate stats
     const totalLogins = recentAuditLogs.filter(log => log.action === "LOGIN").length;
@@ -311,40 +321,40 @@ function ThreatStatusBanner({ level }: { level: "secure" | "moderate" | "elevate
             icon: ShieldCheck,
             title: "System Secure",
             description: "All security protocols operational. No active threats detected.",
-            bgClass: "bg-white/5",
-            borderClass: "border-white/10",
-            iconClass: "text-white"
+            bgClass: "bg-emerald-50",
+            borderClass: "border-emerald-200",
+            iconClass: "text-emerald-600"
         },
         moderate: {
             icon: ShieldAlert,
             title: "Elevated Activity",
             description: "Unusual login activity detected. Review recent access logs.",
-            bgClass: "bg-yellow-500/5",
-            borderClass: "border-yellow-500/20",
-            iconClass: "text-yellow-500"
+            bgClass: "bg-amber-50",
+            borderClass: "border-amber-200",
+            iconClass: "text-amber-600"
         },
         elevated: {
             icon: AlertTriangle,
             title: "Security Alert",
             description: "Multiple failed login attempts detected. Immediate review recommended.",
-            bgClass: "bg-red-500/5",
-            borderClass: "border-red-500/20",
-            iconClass: "text-red-500"
+            bgClass: "bg-red-50",
+            borderClass: "border-red-200",
+            iconClass: "text-red-600"
         }
     };
 
     const { icon: Icon, title, description, bgClass, borderClass, iconClass } = config[level];
 
     return (
-        <div className={`${bgClass} ${borderClass} border p-8 rounded-sm flex items-center gap-8 relative overflow-hidden`}>
-            <div className={`p-6 ${bgClass} rounded-full border ${borderClass}`}>
+        <div className={`${bgClass} ${borderClass} border p-8 rounded-sm flex items-center gap-8 relative overflow-hidden shadow-sm`}>
+            <div className={`p-6 bg-white rounded-full border ${borderClass} shadow-sm`}>
                 <Icon className={`w-12 h-12 ${iconClass}`} />
             </div>
             <div>
-                <h2 className="text-xl font-bold tracking-tight text-white mb-2">{title}</h2>
-                <p className="text-white/60 font-light max-w-md">{description}</p>
+                <h2 className="text-xl font-bold tracking-tight text-foreground mb-2">{title}</h2>
+                <p className="text-muted-foreground font-light max-w-md">{description}</p>
             </div>
-            <div className="absolute top-4 right-6 text-[10px] font-mono uppercase tracking-widest text-white/30">
+            <div className="absolute top-4 right-6 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
                 Last Scan: {new Date().toLocaleTimeString()}
             </div>
         </div>
@@ -352,22 +362,22 @@ function ThreatStatusBanner({ level }: { level: "secure" | "moderate" | "elevate
 }
 
 function StatCard({ icon: Icon, label, value, subValue }: {
-    icon: any;
+    icon: React.ElementType;
     label: string;
     value: string | number;
     subValue?: string;
 }) {
     return (
-        <div className="bg-zinc-900/50 border border-white/10 p-6 rounded-sm hover:border-white/20 transition-all group">
+        <div className="bg-card border border-border p-6 rounded-sm hover:shadow-md transition-all group">
             <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] uppercase tracking-widest text-white/40 group-hover:text-white/60 transition-colors">
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
                     {label}
                 </span>
-                <Icon className="w-4 h-4 text-white/20" />
+                <Icon className="w-4 h-4 text-muted-foreground/50" />
             </div>
-            <p className="text-3xl font-light text-white tracking-tight">{value}</p>
+            <p className="text-3xl font-light text-foreground tracking-tight">{value}</p>
             {subValue && (
-                <p className="text-xs text-white/30 mt-1 font-mono">{subValue}</p>
+                <p className="text-xs text-muted-foreground mt-1 font-mono">{subValue}</p>
             )}
         </div>
     );
@@ -376,6 +386,8 @@ function StatCard({ icon: Icon, label, value, subValue }: {
 // ============================================================
 // PAGE
 // ============================================================
+
+export const dynamic = "force-dynamic";
 
 export default async function SecurityPage() {
     const [securityData, contentData, dbHealth] = await Promise.all([
@@ -387,14 +399,14 @@ export default async function SecurityPage() {
     return (
         <div className="space-y-8 max-w-[1600px] mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-6">
+            <div className="flex items-center justify-between border-b border-border pb-6">
                 <div>
-                    <h1 className="text-2xl font-bold uppercase tracking-tighter text-white">Security Center</h1>
-                    <p className="text-white/40 text-xs tracking-wide mt-1">Threat detection, content moderation, and data integrity</p>
+                    <h1 className="text-2xl font-bold uppercase tracking-tighter text-foreground">Security Center</h1>
+                    <p className="text-muted-foreground text-xs tracking-wide mt-1">Threat detection, content moderation, and data integrity</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] uppercase tracking-widest text-white/40">Live Monitoring</span>
+                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Live Monitoring</span>
                 </div>
             </div>
 
@@ -439,43 +451,43 @@ export default async function SecurityPage() {
             {/* Content Moderation & Database Health */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* AI Content Moderation */}
-                <div className="bg-zinc-900/30 border border-white/10 rounded-sm overflow-hidden">
-                    <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+                <div className="bg-card border border-border rounded-sm overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Brain className="w-4 h-4 text-white/50" />
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white">AI Content Moderation</h3>
+                            <Brain className="w-4 h-4 text-muted-foreground" />
+                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-foreground">AI Content Moderation</h3>
                         </div>
                         <div className="flex items-center gap-4">
-                            <span className="text-[10px] text-white/30 font-mono">{contentData.totalReviews} SCANNED</span>
+                            <span className="text-[10px] text-muted-foreground font-mono">{contentData.totalReviews} SCANNED</span>
                             {contentData.flaggedCount > 0 && (
-                                <span className="text-[10px] px-2 py-1 bg-red-500/20 text-red-400 rounded-sm uppercase tracking-widest">
+                                <span className="text-[10px] px-2 py-1 bg-red-100 text-red-600 rounded-sm uppercase tracking-widest font-bold">
                                     {contentData.flaggedCount} Flagged
                                 </span>
                             )}
                         </div>
                     </div>
 
-                    <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto">
+                    <div className="divide-y divide-border max-h-[400px] overflow-y-auto bg-card">
                         {contentData.flaggedReviews.length === 0 ? (
                             <div className="p-12 flex flex-col items-center justify-center text-center">
-                                <CheckCircle2 className="w-10 h-10 text-white/10 mb-4" />
-                                <p className="text-sm text-white/30">No suspicious content detected</p>
-                                <p className="text-[10px] text-white/20 mt-1">All reviews passed moderation</p>
+                                <CheckCircle2 className="w-10 h-10 text-emerald-500/20 mb-4" />
+                                <p className="text-sm text-muted-foreground">No suspicious content detected</p>
+                                <p className="text-[10px] text-muted-foreground/60 mt-1">All reviews passed moderation</p>
                             </div>
                         ) : (
                             contentData.flaggedReviews.map((review) => (
-                                <div key={review.id} className="px-6 py-4 hover:bg-white/[0.02] transition-colors">
+                                <div key={review.id} className="px-6 py-4 hover:bg-muted/30 transition-colors">
                                     <div className="flex items-start justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <Flag className="w-3 h-3 text-red-400" />
-                                            <span className="text-xs text-red-400 uppercase tracking-widest">{review.flagReason}</span>
+                                            <Flag className="w-3 h-3 text-red-500" />
+                                            <span className="text-xs text-red-600 font-medium uppercase tracking-widest">{review.flagReason}</span>
                                         </div>
-                                        <span className="text-[10px] text-white/30 font-mono">
+                                        <span className="text-[10px] text-muted-foreground font-mono">
                                             {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-white/70 line-clamp-2 mb-2">&quot;{review.content}&quot;</p>
-                                    <div className="flex items-center justify-between text-[10px] text-white/30">
+                                    <p className="text-sm text-foreground line-clamp-2 mb-2">&quot;{review.content}&quot;</p>
+                                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                                         <span>{review.userEmail}</span>
                                         <span>{review.productName}</span>
                                     </div>
@@ -485,9 +497,9 @@ export default async function SecurityPage() {
                     </div>
 
                     {contentData.hiddenCount > 0 && (
-                        <div className="px-6 py-3 border-t border-white/5 bg-white/[0.01] flex items-center justify-between">
-                            <span className="text-[10px] text-white/30">{contentData.hiddenCount} reviews currently hidden</span>
-                            <button className="text-[10px] text-white/50 hover:text-white transition-colors flex items-center gap-1">
+                        <div className="px-6 py-3 border-t border-border bg-muted/20 flex items-center justify-between">
+                            <span className="text-[10px] text-muted-foreground">{contentData.hiddenCount} reviews currently hidden</span>
+                            <button className="text-[10px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
                                 View All <ChevronRight className="w-3 h-3" />
                             </button>
                         </div>
@@ -495,62 +507,62 @@ export default async function SecurityPage() {
                 </div>
 
                 {/* Database Health */}
-                <div className="bg-zinc-900/30 border border-white/10 rounded-sm overflow-hidden">
-                    <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+                <div className="bg-card border border-border rounded-sm overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Database className="w-4 h-4 text-white/50" />
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Database Health</h3>
+                            <Database className="w-4 h-4 text-muted-foreground" />
+                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-foreground">Database Health</h3>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className={`text-xl font-light ${dbHealth.healthScore >= 80 ? "text-white" : dbHealth.healthScore >= 50 ? "text-yellow-500" : "text-red-500"}`}>
+                            <span className={`text-xl font-light ${dbHealth.healthScore >= 80 ? "text-emerald-600" : dbHealth.healthScore >= 50 ? "text-amber-500" : "text-red-500"}`}>
                                 {dbHealth.healthScore}%
                             </span>
                         </div>
                     </div>
 
                     {/* Quick Stats */}
-                    <div className="grid grid-cols-4 divide-x divide-white/5 border-b border-white/5">
+                    <div className="grid grid-cols-4 divide-x divide-border border-b border-border bg-card">
                         <div className="p-4 text-center">
-                            <p className="text-lg font-light text-white">{dbHealth.stats.totalProducts}</p>
-                            <p className="text-[10px] text-white/30 uppercase tracking-widest">Products</p>
+                            <p className="text-lg font-light text-foreground">{dbHealth.stats.totalProducts}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Products</p>
                         </div>
                         <div className="p-4 text-center">
-                            <p className="text-lg font-light text-white">{dbHealth.stats.totalOrders}</p>
-                            <p className="text-[10px] text-white/30 uppercase tracking-widest">Orders</p>
+                            <p className="text-lg font-light text-foreground">{dbHealth.stats.totalOrders}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Orders</p>
                         </div>
                         <div className="p-4 text-center">
-                            <p className="text-lg font-light text-white">{dbHealth.stats.totalUsers}</p>
-                            <p className="text-[10px] text-white/30 uppercase tracking-widest">Users</p>
+                            <p className="text-lg font-light text-foreground">{dbHealth.stats.totalUsers}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Users</p>
                         </div>
                         <div className="p-4 text-center">
-                            <p className="text-lg font-light text-white">{dbHealth.stats.totalReviews}</p>
-                            <p className="text-[10px] text-white/30 uppercase tracking-widest">Reviews</p>
+                            <p className="text-lg font-light text-foreground">{dbHealth.stats.totalReviews}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Reviews</p>
                         </div>
                     </div>
 
-                    <div className="divide-y divide-white/5 max-h-[280px] overflow-y-auto">
+                    <div className="divide-y divide-border max-h-[280px] overflow-y-auto bg-card">
                         {dbHealth.issues.length === 0 ? (
                             <div className="p-12 flex flex-col items-center justify-center text-center">
-                                <CheckCircle2 className="w-10 h-10 text-white/10 mb-4" />
-                                <p className="text-sm text-white/30">Database is healthy</p>
-                                <p className="text-[10px] text-white/20 mt-1">No integrity issues detected</p>
+                                <CheckCircle2 className="w-10 h-10 text-emerald-500/20 mb-4" />
+                                <p className="text-sm text-muted-foreground">Database is healthy</p>
+                                <p className="text-[10px] text-muted-foreground/60 mt-1">No integrity issues detected</p>
                             </div>
                         ) : (
                             dbHealth.issues.map((issue, i) => (
-                                <div key={i} className="px-6 py-4 hover:bg-white/[0.02] transition-colors flex items-center justify-between">
+                                <div key={i} className="px-6 py-4 hover:bg-muted/30 transition-colors flex items-center justify-between">
                                     <div className="flex items-center gap-4">
-                                        <AlertCircle className={`w-4 h-4 ${issue.severity === "error" ? "text-red-400" : issue.severity === "warning" ? "text-yellow-500" : "text-white/30"}`} />
+                                        <AlertCircle className={`w-4 h-4 ${issue.severity === "error" ? "text-red-500" : issue.severity === "warning" ? "text-amber-500" : "text-muted-foreground"}`} />
                                         <div>
-                                            <p className="text-sm text-white font-medium">{issue.type}</p>
-                                            <p className="text-xs text-white/40">{issue.message}</p>
+                                            <p className="text-sm text-foreground font-medium">{issue.type}</p>
+                                            <p className="text-xs text-muted-foreground">{issue.message}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <span className={`text-xl font-light ${issue.severity === "error" ? "text-red-400" : issue.severity === "warning" ? "text-yellow-500" : "text-white/50"}`}>
+                                        <span className={`text-xl font-light ${issue.severity === "error" ? "text-red-600" : issue.severity === "warning" ? "text-amber-600" : "text-muted-foreground"}`}>
                                             {issue.count}
                                         </span>
-                                        <button className="p-2 hover:bg-white/10 rounded-sm transition-colors">
-                                            <ChevronRight className="w-4 h-4 text-white/30" />
+                                        <button className="p-2 hover:bg-muted rounded-sm transition-colors">
+                                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
                                         </button>
                                     </div>
                                 </div>
@@ -563,43 +575,43 @@ export default async function SecurityPage() {
             {/* Main Content Grid - Audit & AI Logs */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Audit Log */}
-                <div className="lg:col-span-7 bg-zinc-900/30 border border-white/10 rounded-sm overflow-hidden">
-                    <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+                <div className="lg:col-span-7 bg-card border border-border rounded-sm overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-white/50" />
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Audit Log</h3>
+                            <FileText className="w-4 h-4 text-muted-foreground" />
+                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-foreground">Audit Log</h3>
                         </div>
-                        <span className="text-[10px] text-white/30 font-mono">LAST 24 HOURS</span>
+                        <span className="text-[10px] text-muted-foreground font-mono">LAST 24 HOURS</span>
                     </div>
 
-                    <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto">
+                    <div className="divide-y divide-border max-h-[400px] overflow-y-auto bg-card">
                         {securityData.recentAuditLogs.length === 0 ? (
                             <div className="p-12 flex flex-col items-center justify-center text-center">
-                                <Lock className="w-10 h-10 text-white/10 mb-4" />
-                                <p className="text-sm text-white/30">No activity recorded</p>
+                                <Lock className="w-10 h-10 text-muted-foreground/20 mb-4" />
+                                <p className="text-sm text-muted-foreground">No activity recorded</p>
                             </div>
                         ) : (
                             securityData.recentAuditLogs.map((log) => (
-                                <div key={log.id} className="px-6 py-4 hover:bg-white/[0.02] transition-colors group">
+                                <div key={log.id} className="px-6 py-4 hover:bg-muted/30 transition-colors group">
                                     <div className="flex items-start justify-between">
                                         <div className="flex items-start gap-4">
                                             <div className={`mt-1 w-2 h-2 rounded-full ${log.action.includes("DELETE") ? "bg-red-500" :
                                                 log.action.includes("CREATE") ? "bg-emerald-500" :
                                                     log.action.includes("UPDATE") ? "bg-blue-500" :
-                                                        "bg-white/30"
+                                                        "bg-muted-foreground"
                                                 }`} />
                                             <div>
-                                                <p className="text-sm text-white font-medium group-hover:text-white transition-colors">
+                                                <p className="text-sm text-foreground font-medium group-hover:text-primary transition-colors">
                                                     {log.action.replace(/_/g, " ")}
                                                 </p>
-                                                <p className="text-xs text-white/40 mt-1">
+                                                <p className="text-xs text-muted-foreground mt-1">
                                                     {log.targetType} {log.targetId ? `• ${log.targetId.slice(0, 8)}...` : ""}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-xs text-white/50">{log.user?.email || "System"}</p>
-                                            <p className="text-[10px] text-white/30 font-mono mt-1">
+                                            <p className="text-xs text-muted-foreground">{log.user?.email || "System"}</p>
+                                            <p className="text-[10px] text-muted-foreground/60 font-mono mt-1">
                                                 {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}
                                             </p>
                                         </div>
@@ -611,24 +623,24 @@ export default async function SecurityPage() {
                 </div>
 
                 {/* AI Activity Monitor */}
-                <div className="lg:col-span-5 bg-zinc-900/30 border border-white/10 rounded-sm overflow-hidden">
-                    <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+                <div className="lg:col-span-5 bg-card border border-border rounded-sm overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Activity className="w-4 h-4 text-white/50" />
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white">AI Activity</h3>
+                            <Activity className="w-4 h-4 text-muted-foreground" />
+                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-foreground">AI Activity</h3>
                         </div>
-                        <span className="text-[10px] text-white/30 font-mono">API MONITOR</span>
+                        <span className="text-[10px] text-muted-foreground font-mono">API MONITOR</span>
                     </div>
 
-                    <div className="divide-y divide-white/5 max-h-[400px] overflow-y-auto">
+                    <div className="divide-y divide-border max-h-[400px] overflow-y-auto bg-card">
                         {securityData.aiLogs.length === 0 ? (
                             <div className="p-12 flex flex-col items-center justify-center text-center">
-                                <Server className="w-10 h-10 text-white/10 mb-4" />
-                                <p className="text-sm text-white/30">No AI requests logged</p>
+                                <Server className="w-10 h-10 text-muted-foreground/20 mb-4" />
+                                <p className="text-sm text-muted-foreground">No AI requests logged</p>
                             </div>
                         ) : (
                             securityData.aiLogs.map((log) => (
-                                <div key={log.id} className="px-6 py-4 hover:bg-white/[0.02] transition-colors">
+                                <div key={log.id} className="px-6 py-4 hover:bg-muted/30 transition-colors">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-3">
                                             {log.success ? (
@@ -636,11 +648,11 @@ export default async function SecurityPage() {
                                             ) : (
                                                 <XCircle className="w-4 h-4 text-red-500" />
                                             )}
-                                            <span className="text-sm text-white font-mono">{log.route}</span>
+                                            <span className="text-sm text-foreground font-mono">{log.route}</span>
                                         </div>
-                                        <span className="text-xs text-white/40">{log.responseTimeMs}ms</span>
+                                        <span className="text-xs text-muted-foreground">{log.responseTimeMs}ms</span>
                                     </div>
-                                    <div className="flex items-center justify-between text-[10px] text-white/30">
+                                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                                         <span className="font-mono">{log.ip || "Internal"}</span>
                                         <span>{formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}</span>
                                     </div>
@@ -652,13 +664,13 @@ export default async function SecurityPage() {
             </div>
 
             {/* Security Configuration */}
-            <div className="bg-zinc-900/30 border border-white/10 rounded-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center gap-2">
-                    <Key className="w-4 h-4 text-white/50" />
-                    <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white">Security Configuration</h3>
+            <div className="bg-card border border-border rounded-sm overflow-hidden shadow-sm">
+                <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center gap-2">
+                    <Key className="w-4 h-4 text-muted-foreground" />
+                    <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-foreground">Security Configuration</h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border bg-card">
                     <SecurityConfigItem
                         title="Two-Factor Auth"
                         status="Recommended"
@@ -696,18 +708,18 @@ function SecurityConfigItem({ title, status, description, statusType }: {
     statusType: "active" | "warning" | "inactive";
 }) {
     return (
-        <div className="p-6 hover:bg-white/[0.02] transition-colors group cursor-pointer">
+        <div className="p-6 hover:bg-muted/30 transition-colors group cursor-pointer">
             <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-white">{title}</h4>
-                <span className={`text-[10px] px-2 py-1 rounded-sm uppercase tracking-widest ${statusType === "active" ? "bg-white/10 text-white" :
-                    statusType === "warning" ? "bg-yellow-500/10 text-yellow-500" :
-                        "bg-red-500/10 text-red-500"
+                <h4 className="text-sm font-medium text-foreground">{title}</h4>
+                <span className={`text-[10px] px-2 py-1 rounded-sm uppercase tracking-widest font-bold ${statusType === "active" ? "bg-emerald-100 text-emerald-700" :
+                    statusType === "warning" ? "bg-amber-100 text-amber-700" :
+                        "bg-red-100 text-red-700"
                     }`}>
                     {status}
                 </span>
             </div>
-            <p className="text-xs text-white/40">{description}</p>
-            <div className="mt-4 flex items-center gap-1 text-[10px] text-white/30 group-hover:text-white/50 transition-colors">
+            <p className="text-xs text-muted-foreground">{description}</p>
+            <div className="mt-4 flex items-center gap-1 text-[10px] text-muted-foreground group-hover:text-primary transition-colors">
                 Configure <ChevronRight className="w-3 h-3" />
             </div>
         </div>

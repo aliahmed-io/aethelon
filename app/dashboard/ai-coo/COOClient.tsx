@@ -207,64 +207,64 @@ export function COOClient({
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex flex-col md:flex-row bg-black text-white font-light overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex flex-col md:flex-row bg-background text-foreground font-light overflow-hidden">
             {/* Desktop Sidebar */}
             <Sidebar activeTab={activeTab} onTabChange={setActiveTab} className="hidden md:flex" />
 
             {/* Mobile Header */}
-            <div className="md:hidden h-16 border-b border-white/10 flex items-center px-4 bg-black/40 backdrop-blur-xl flex-none z-50">
+            <div className="md:hidden h-16 border-b border-border flex items-center px-4 bg-background/95 backdrop-blur-xl flex-none z-50">
                 <MobileSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-                <span className="ml-4 text-sm font-bold uppercase tracking-widest text-white">Aethelon COO</span>
+                <span className="ml-4 text-sm font-bold uppercase tracking-widest text-foreground">Aethelon COO</span>
             </div>
 
             {/* Main Content Area */}
-            <main className="flex-1 p-4 md:p-8 h-full overflow-y-auto flex flex-col bg-black/50 backdrop-blur-sm">
+            <main className="flex-1 p-4 md:p-8 h-full overflow-y-auto flex flex-col bg-muted/20 backdrop-blur-sm">
 
                 {/* Global KPI Header */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                     <div className="md:col-span-1 flex flex-col justify-center">
                         <div className="flex items-center gap-3 mb-1">
-                            <div className="p-2 bg-white/10 rounded-full">
-                                <Brain className="w-5 h-5 text-white" />
+                            <div className="p-2 bg-accent/10 rounded-full">
+                                <Brain className="w-5 h-5 text-accent" />
                             </div>
                             <div>
-                                <h1 className="text-lg font-bold uppercase tracking-tight text-white leading-none">Aethelon AI</h1>
-                                <p className="text-white/40 text-[10px] tracking-wide uppercase">Operational Intelligence</p>
+                                <h1 className="text-lg font-bold uppercase tracking-tight text-foreground leading-none">Aethelon AI</h1>
+                                <p className="text-muted-foreground text-[10px] tracking-wide uppercase">Operational Intelligence</p>
                             </div>
                         </div>
                     </div>
 
-                    <Card className="bg-zinc-900/40 border border-white/10 rounded-sm hover:border-white/20 transition-all group backdrop-blur-sm">
+                    <Card className="bg-card border border-border rounded-sm hover:shadow-sm transition-all group shadow-sm">
                         <CardContent className="p-5 flex flex-col justify-between h-full">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] uppercase tracking-widest text-white/40 group-hover:text-white/60 transition-colors">Revenue (24h)</span>
-                                <TrendingUp className="w-3 h-3 text-white/20" />
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">Revenue (24h)</span>
+                                <TrendingUp className="w-3 h-3 text-muted-foreground/50" />
                             </div>
-                            <p className="text-2xl font-light text-white tracking-tight">
+                            <p className="text-2xl font-light text-foreground tracking-tight">
                                 ${businessContext.snapshot.revenue.today.toLocaleString()}
                             </p>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-900/40 border border-white/10 rounded-sm hover:border-white/20 transition-all group backdrop-blur-sm">
+                    <Card className="bg-card border border-border rounded-sm hover:shadow-sm transition-all group shadow-sm">
                         <CardContent className="p-5 flex flex-col justify-between h-full">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] uppercase tracking-widest text-white/40 group-hover:text-white/60 transition-colors">Orders (Week)</span>
-                                <Package className="w-3 h-3 text-white/20" />
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">Orders (Week)</span>
+                                <Package className="w-3 h-3 text-muted-foreground/50" />
                             </div>
-                            <p className="text-2xl font-light text-white tracking-tight">
+                            <p className="text-2xl font-light text-foreground tracking-tight">
                                 {businessContext.snapshot.orders.thisWeek}
                             </p>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-zinc-900/40 border border-white/10 rounded-sm hover:border-white/20 transition-all group backdrop-blur-sm">
+                    <Card className="bg-card border border-border rounded-sm hover:shadow-sm transition-all group shadow-sm">
                         <CardContent className="p-5 flex flex-col justify-between h-full">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-[10px] uppercase tracking-widest text-white/40 group-hover:text-white/60 transition-colors">Sentiment</span>
-                                <Star className="w-3 h-3 text-white/20" />
+                                <span className="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">Sentiment</span>
+                                <Star className="w-3 h-3 text-muted-foreground/50" />
                             </div>
-                            <p className="text-2xl font-light text-white tracking-tight">
+                            <p className="text-2xl font-light text-foreground tracking-tight">
                                 {businessContext.sentiment.averageRating}/5
                             </p>
                         </CardContent>

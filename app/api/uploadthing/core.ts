@@ -21,6 +21,17 @@ export const ourFileRouter = {
         .onUploadComplete(async ({ metadata }) => {
             return { uploadedBy: metadata.userId };
         }),
+    modelUploader: f({ blob: { maxFileSize: "32MB", maxFileCount: 1 } })
+        .middleware(async () => {
+            const { getUser } = getKindeServerSession();
+            const user = await getUser();
+
+            if (!user) throw new UploadThingError("Unauthorized");
+            return { userId: user.id };
+        })
+        .onUploadComplete(async ({ metadata }) => {
+            return { uploadedBy: metadata.userId };
+        }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

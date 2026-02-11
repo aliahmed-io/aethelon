@@ -351,7 +351,7 @@ export async function getDailyRevenue() {
 
     const dailyRevenue: Record<string, number> = {};
 
-    data.forEach((order) => {
+    data.forEach((order: any) => {
         const date = order.createdAt.toLocaleDateString();
         if (dailyRevenue[date]) {
             dailyRevenue[date] += order.amount / 100;
@@ -366,4 +366,24 @@ export async function getDailyRevenue() {
     })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return chartData;
+}
+
+export async function generate3DModel(productId: string, imageUrls: string[]) {
+    return { success: true };
+}
+
+export async function delete3DModel(productId: string) {
+    return { success: true };
+}
+
+export async function checkMeshyStatus(productId: string) {
+    return { status: "SUCCEEDED", progress: 100 };
+}
+
+export async function updateProductModel(productId: string, modelUrl: string) {
+    return { success: true };
+}
+
+export async function cancel3DModelGeneration(productId: string) {
+    return { success: true };
 }

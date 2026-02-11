@@ -2,6 +2,8 @@ import { checkIntegrations } from "@/lib/health";
 import { Database, Server, Zap } from "lucide-react";
 import clsx from "clsx";
 
+export const dynamic = "force-dynamic";
+
 export default async function SystemHealthPage() {
     const health = await checkIntegrations();
 
@@ -17,12 +19,12 @@ export default async function SystemHealthPage() {
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-light uppercase tracking-widest text-white">System Health</h1>
-                    <p className="text-white/40 text-xs font-mono mt-1">INFRASTRUCTURE STATUS</p>
+                    <h1 className="text-2xl font-light uppercase tracking-widest text-foreground">System Health</h1>
+                    <p className="text-muted-foreground text-xs font-mono mt-1">INFRASTRUCTURE STATUS</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs text-emerald-500 font-bold uppercase tracking-widest">Operational</span>
+                    <span className="text-xs text-emerald-600 font-bold uppercase tracking-widest">Operational</span>
                 </div>
             </div>
 
@@ -30,45 +32,45 @@ export default async function SystemHealthPage() {
                 {health.map((item, idx) => (
                     <div
                         key={idx}
-                        className="bg-[#0A0A0C] border border-white/10 p-6 rounded-sm hover:border-white/20 transition-all group"
+                        className="bg-card border border-border p-6 rounded-sm hover:shadow-md transition-all group"
                     >
                         <div className="flex justify-between items-start mb-6">
-                            <div className="p-3 bg-white/5 rounded-sm text-white/70 group-hover:text-white transition-colors">
+                            <div className="p-3 bg-muted rounded-sm text-muted-foreground group-hover:text-foreground transition-colors">
                                 {getIcon(item.service)}
                             </div>
                             <div className={clsx(
                                 "px-2 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest border",
-                                item.status === 'healthy' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
-                                    item.status === 'misconfigured' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
-                                        "bg-red-500/10 text-red-500 border-red-500/20"
+                                item.status === 'healthy' ? "bg-emerald-100 text-emerald-700 border-emerald-200" :
+                                    item.status === 'misconfigured' ? "bg-amber-100 text-amber-700 border-amber-200" :
+                                        "bg-red-100 text-red-700 border-red-200"
                             )}>
                                 {item.status}
                             </div>
                         </div>
 
-                        <h3 className="text-lg font-medium text-white mb-1">{item.service}</h3>
-                        <p className="text-sm text-white/40 font-light">
+                        <h3 className="text-lg font-medium text-foreground mb-1">{item.service}</h3>
+                        <p className="text-sm text-muted-foreground font-light">
                             {item.message || "Service operating normally."}
                         </p>
                     </div>
                 ))}
 
                 {/* Environment Info Card */}
-                <div className="bg-[#0A0A0C] border border-white/10 p-6 rounded-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-white/50 mb-4">Environment</h3>
-                    <div className="space-y-2 font-mono text-xs text-white/70">
-                        <div className="flex justify-between">
+                <div className="bg-card border border-border p-6 rounded-sm relative overflow-hidden shadow-sm">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4">Environment</h3>
+                    <div className="space-y-2 font-mono text-xs text-muted-foreground">
+                        <div className="flex justify-between border-b border-border pb-1">
                             <span>NODE_ENV</span>
-                            <span className="text-white">{process.env.NODE_ENV}</span>
+                            <span className="text-foreground">{process.env.NODE_ENV}</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between border-b border-border pb-1">
                             <span>REGION</span>
-                            <span className="text-white">US-EAST-1</span>
+                            <span className="text-foreground">US-EAST-1</span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between pt-1">
                             <span>VERCEL_ENV</span>
-                            <span className="text-white">{process.env.VERCEL_ENV || "development"}</span>
+                            <span className="text-foreground">{process.env.VERCEL_ENV || "development"}</span>
                         </div>
                     </div>
                 </div>

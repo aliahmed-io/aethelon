@@ -7,7 +7,7 @@ import { ArrowRight, ShieldCheck, Lock } from "lucide-react";
 
 export const metadata = {
     title: "My Collection | Aethelon",
-    description: "Your digital portfolio of acquired timepieces.",
+    description: "Your digital portfolio of acquired pieces.",
 };
 
 export default async function VaultPage() {
@@ -102,7 +102,7 @@ export default async function VaultPage() {
 
                                     <div className="bg-background/90 backdrop-blur-xl border-t border-border -mx-6 -mb-6 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                                         <h3 className="text-lg font-medium text-foreground mb-1">{watch.name}</h3>
-                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{watch.mainCategory || "Timepiece"}</p>
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{watch.mainCategory || "Furniture"}</p>
                                         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent border-b border-accent hover:border-transparent w-fit transition-colors pb-0.5">
                                             View Provenance <ArrowRight className="w-3 h-3" />
                                         </div>
@@ -138,7 +138,7 @@ export default async function VaultPage() {
                         <h2 className="text-2xl font-light tracking-wide mb-3 uppercase">Portfolio Empty</h2>
                         <p className="text-muted-foreground max-w-md text-center mb-10 font-light leading-relaxed">
                             Your secure digital vault is initialized and ready for deposits.
-                            <br />Acquired timepieces will be automatically authenticated and stored here.
+                            Acquired pieces will be automatically authenticated and stored here.
                         </p>
 
                         <Link href="/shop" className="group relative px-8 py-4 bg-accent text-accent-foreground overflow-hidden rounded-sm hover:scale-105 transition-transform duration-300">

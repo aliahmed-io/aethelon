@@ -70,8 +70,9 @@ export function Navbar({ progress }: NavbarProps) {
                                 isAdmin={isAdmin}
                             />
                         ) : (
-                            <LoginLink className="text-muted-foreground hover:text-foreground transition-colors">
-                                <User className="w-5 h-5" />
+                            <LoginLink className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-xs font-bold uppercase tracking-widest">
+                                <User className="w-4 h-4" />
+                                <span>Sign In</span>
                             </LoginLink>
                         )}
                     </div>
@@ -127,12 +128,18 @@ export function Navbar({ progress }: NavbarProps) {
                         ))}
                     </div>
 
-                    <div className="mt-12 pt-12 border-t border-border grid grid-cols-2 gap-4 text-xs uppercase tracking-widest text-muted-foreground">
-                        <Link href="/legal/contact" className="hover:text-foreground">Contact Concierge</Link>
-                        <Link href="/legal/shipping" className="hover:text-foreground">Shipping & Returns</Link>
+                    <div className="mt-12 pt-12 border-t border-border space-y-4">
                         {!isAuthenticated && (
-                            <LoginLink className="hover:text-foreground flex items-center gap-2">Sign In <ArrowRight className="w-3 h-3" /></LoginLink>
+                            <LoginLink
+                                className="flex items-center justify-center gap-2 w-full py-3 bg-accent text-accent-foreground text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-accent/90 transition-colors"
+                            >
+                                Sign In <ArrowRight className="w-4 h-4" />
+                            </LoginLink>
                         )}
+                        <div className="grid grid-cols-2 gap-4 text-xs uppercase tracking-widest text-muted-foreground">
+                            <Link href="/legal/contact" className="hover:text-foreground">Contact Concierge</Link>
+                            <Link href="/legal/shipping" className="hover:text-foreground">Shipping & Returns</Link>
+                        </div>
                     </div>
                 </div>
             </div>

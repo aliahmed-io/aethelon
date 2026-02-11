@@ -2,29 +2,30 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Prisma from "@/lib/db";
-import { Product } from "@prisma/client";
+import { Product } from "@/lib/assistantTypes";
 
 const SYSTEM_INSTRUCTION = `
-You are the Aethelon Concierge, an elite horologist and digital artisan with decades of experience in high-end watchmaking and luxury retail.
-Your role is to assist discerning clients with their inquiries about Aethelon's exclusive timepieces.
+You are the Aethelon Concierge, an expert in premium furniture, interior design, and luxury home décor.
+Your role is to assist discerning clients with inquiries about Aethelon's exclusive furniture collection.
 
 TONE & PERSONA:
 - Sophisticated, professional, and knowledgeable.
-- Use precise horological terminology (tourbillon, caliber, escapement, power reserve) where appropriate but explain clearly.
-- Polite and refined, akin to a concierge at a 5-star hotel or a high-end boutique in Geneva.
+- Use precise design terminology (upholstery, joinery, patina, grain, tufting, silhouette) where appropriate but explain clearly.
+- Polite and refined, akin to a concierge at a 5-star hotel or a luxury showroom.
 - Never break character. You exist to serve the client's needs with elegance.
-- If asked about competitors, acknowledge them respectfully but subtly highlight Aethelon's unique value (generative craftsmanship, exclusivity).
+- If asked about competitors, acknowledge them respectfully but subtly highlight Aethelon's unique value (craftsmanship, exclusivity, generative design).
 
 CAPABILITIES:
-- Advise on watch maintenance and care.
-- Explain technical specifications of mechanical movements.
-- Guide users on styling (e.g., dress watches vs. sport watches).
+- Advise on furniture care and maintenance.
+- Explain material specifications (leathers, woods, metals, fabrics).
+- Guide users on styling (e.g., modern vs. classic, living room vs. dining).
 - Assist with the "Virtual Atelier" (AI Try-On) and "Campaigns" context if asked.
+- When a user sends an image, analyze it and provide styling advice, product recommendations, or answer questions about the space/furniture shown.
 
-Current Context: The user is browsing the Aethelon website (2026 Edition), features a Silver/Monochrome aesthetic.
+Current Context: The user is browsing the Aethelon website (2026 Edition), features a light cream luxury aesthetic.
 
 IMPORTANT: You now have the ability to recommend products.
-If the user asks for specific types of watches (e.g. "show me pilot watches", "do you have anything in ceramic", "chronographs under 10k"), you must output a JSON block at the END of your response in the following format:
+If the user asks for specific types of furniture (e.g. "show me leather sofas", "do you have anything in walnut", "dining tables under 5000"), you must output a JSON block at the END of your response in the following format:
 \`\`\`json
 {
   "recommendation_criteria": {
@@ -43,16 +44,24 @@ type ConciergeResponse = {
     products?: Product[];
 };
 
-export async function chatWithConcierge(history: { role: string; parts: { text: string }[] }[], userMessage: string): Promise<ConciergeResponse> {
+export async function chatWithConcierge(
+    history: { role: string; parts: { text: string }[] }[],
+    userMessage: string,
+    imageData?: { base64: string; mimeType: string } | null
+): Promise<ConciergeResponse> {
     try {
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) {
-            throw new Error("Missing GEMINI_API_KEY");
+            // Return safe fallback if no key, instead of throwing which crashes client
+            return {
+                success: false,
+                message: "Aethelon Concierge is currently offline (Configuration Error). Please contact support."
+            };
         }
 
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
-            model: "gemini-3.0-flash",
+            model: "gemini-2.0-flash",
             systemInstruction: SYSTEM_INSTRUCTION
         });
 
@@ -65,7 +74,21 @@ export async function chatWithConcierge(history: { role: string; parts: { text: 
             history: formattedHistory,
         });
 
-        const result = await chat.sendMessage(userMessage);
+        // Build message parts — text + optional image
+        const messageParts: Array<string | { text: string } | { inlineData: { data: string; mimeType: string } }> = [];
+
+        if (imageData) {
+            messageParts.push({
+                inlineData: {
+                    data: imageData.base64,
+                    mimeType: imageData.mimeType,
+                }
+            });
+        }
+
+        messageParts.push({ text: userMessage || "What do you see in this image?" });
+
+        const result = await chat.sendMessage(messageParts as any); // Type assertion for compatibility
         const text = result.response.text();
 
         // Parse for JSON recommendation trigger
@@ -82,19 +105,21 @@ export async function chatWithConcierge(history: { role: string; parts: { text: 
                 finalMessage = text.replace(/```json[\s\S]*?```/, "").trim();
 
                 // Build Prisma Query
-                const where: any = {};
-
-                if (criteria.category) {
-                    // Simple fuzzy match or category match
-                    // For now, let's search name/description or mainCategory
-                }
+                const where: any = { status: 'published' }; // Ensure we check status if schema has it
 
                 // Flexible Search Logic
                 if (criteria.search_term) {
                     where.OR = [
                         { name: { contains: criteria.search_term, mode: 'insensitive' } },
                         { description: { contains: criteria.search_term, mode: 'insensitive' } },
-                        { category: { contains: criteria.search_term, mode: 'insensitive' } }
+                        { category: { name: { contains: criteria.search_term, mode: 'insensitive' } } } // Adjusted for relation
+                    ];
+                }
+
+                if (criteria.category && !criteria.search_term) {
+                    where.OR = [
+                        { category: { name: { contains: criteria.category, mode: 'insensitive' } } },
+                        { mainCategory: { equals: criteria.category, mode: 'insensitive' } }, // Check enum/string
                     ];
                 }
 
@@ -102,15 +127,17 @@ export async function chatWithConcierge(history: { role: string; parts: { text: 
                     where.price = { lte: criteria.max_price };
                 }
 
-                // Execute Query
-                recommendedProducts = await Prisma.product.findMany({
+                // Execute Query using the imported Prisma client (renamed to prisma for consistency)
+                // Use 'any' cast if using the mock DB to avoid strict type errors during build
+                recommendedProducts = await (Prisma as any).product.findMany({
                     where,
-                    take: 5,
-                    orderBy: { price: 'desc' } // Premium first
+                    take: 6,
+                    orderBy: { price: 'desc' },
+                    include: { category: true } // Include category relation content
                 });
 
             } catch (e) {
-                console.error("Failed to parse recommendation JSON", e);
+                console.error("Failed to parse recommendation JSON or Query DB", e);
             }
         }
 
@@ -121,6 +148,6 @@ export async function chatWithConcierge(history: { role: string; parts: { text: 
         };
     } catch (error) {
         console.error("Concierge Error:", error);
-        return { success: false, message: "I apologize, but I am momentarily unable to access the archives. Please try again shortly." };
+        return { success: false, message: "I apologize, but I am momentarily unavailable. Please try again shortly." };
     }
 }

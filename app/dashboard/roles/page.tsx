@@ -18,8 +18,8 @@ export default async function RolesPage() {
         <div className="p-8 space-y-8 max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-light tracking-tight uppercase text-white">User Roles</h2>
-                    <p className="text-white/40 text-sm mt-1">Manage global access permissions and staff roles</p>
+                    <h2 className="text-3xl font-light tracking-tight uppercase text-foreground">User Roles</h2>
+                    <p className="text-muted-foreground text-sm mt-1">Manage global access permissions and staff roles</p>
                 </div>
             </div>
 

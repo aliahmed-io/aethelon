@@ -17,12 +17,12 @@ export default function Footer() {
 
                     {/* Collections */}
                     <div>
-                        <h3 className="font-bold mb-6 text-sm tracking-wider uppercase text-accent">Collections</h3>
+                        <h3 className="font-bold mb-6 text-sm tracking-wider uppercase text-accent">Explore</h3>
                         <ul className="space-y-4 text-sm text-primary-foreground/70">
-                            <li><Link href="/shop/living" className="hover:text-accent transition-colors">Living Room</Link></li>
-                            <li><Link href="/shop/dining" className="hover:text-accent transition-colors">Dining</Link></li>
-                            <li><Link href="/shop/bedroom" className="hover:text-accent transition-colors">Bedroom</Link></li>
-                            <li><Link href="/shop/workspace" className="hover:text-accent transition-colors">Workspace</Link></li>
+                            <li><Link href="/shop" className="hover:text-accent transition-colors">Collection</Link></li>
+                            <li><Link href="/about" className="hover:text-accent transition-colors">Our Story</Link></li>
+                            <li><Link href="/ai-search" className="hover:text-accent transition-colors">AI Search</Link></li>
+                            <li><Link href="/ai-vision" className="hover:text-accent transition-colors">Room Visualizer</Link></li>
                         </ul>
                     </div>
 
@@ -31,9 +31,9 @@ export default function Footer() {
                         <h3 className="font-bold mb-6 text-sm tracking-wider uppercase text-accent">Support</h3>
                         <ul className="space-y-4 text-sm text-primary-foreground/70">
                             <li><Link href="/contact" className="hover:text-accent transition-colors">Contact Us</Link></li>
-                            <li><Link href="/shipping" className="hover:text-accent transition-colors">Shipping & Returns</Link></li>
-                            <li><Link href="/care" className="hover:text-accent transition-colors">Product Care</Link></li>
-                            <li><Link href="/faq" className="hover:text-accent transition-colors">FAQ</Link></li>
+                            <li><Link href="/legal/shipping" className="hover:text-accent transition-colors">Shipping & Returns</Link></li>
+                            <li><Link href="/wholesale" className="hover:text-accent transition-colors">Wholesale</Link></li>
+                            <li><Link href="/legal/returns" className="hover:text-accent transition-colors">Returns Policy</Link></li>
                         </ul>
                     </div>
 
@@ -57,10 +57,10 @@ export default function Footer() {
                 </div>
 
                 <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-primary-foreground/40">
-                    <p>© 2024 Aethelon Design. All rights reserved.</p>
+                    <p>© 2026 Aethelon Design. All rights reserved.</p>
                     <div className="flex gap-6">
-                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-                        <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                        <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                        <Link href="/legal/terms" className="hover:text-white transition-colors">Terms of Service</Link>
                     </div>
                 </div>
             </div>

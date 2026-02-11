@@ -38,13 +38,13 @@ const aggregateData = (data: { date: string; revenue: number }[]) => {
 export function DashboardChart({ data }: ChartProps) {
     const processedData = aggregateData(data);
 
-    // Need custom tooltip for glass effect
+    // Custom tooltip for light theme
     const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[#0A0A0C]/90 border border-white/10 p-3 rounded-sm backdrop-blur-md shadow-xl text-xs">
-                    <p className="text-white/60 mb-1">{label}</p>
-                    <p className="text-white font-mono font-bold">
+                <div className="bg-background/95 border border-border p-3 rounded-sm backdrop-blur-md shadow-lg text-xs">
+                    <p className="text-muted-foreground mb-1">{label}</p>
+                    <p className="text-foreground font-mono font-bold">
                         ${new Intl.NumberFormat("en-US").format(payload[0].value)}
                     </p>
                 </div>
@@ -59,32 +59,32 @@ export function DashboardChart({ data }: ChartProps) {
                 <AreaChart data={processedData}>
                     <defs>
                         <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#fff" stopOpacity={0.2} />
-                            <stop offset="95%" stopColor="#fff" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#C9912B" stopOpacity={0.2} />
+                            <stop offset="95%" stopColor="#C9912B" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false} />
                     <XAxis
                         dataKey="date"
-                        stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
+                        stroke="rgba(0,0,0,0.1)"
+                        tick={{ fill: 'rgba(0,0,0,0.4)', fontSize: 10 }}
                         tickLine={false}
                         axisLine={false}
                         dy={10}
                     />
                     <YAxis
-                        stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
+                        stroke="rgba(0,0,0,0.1)"
+                        tick={{ fill: 'rgba(0,0,0,0.4)', fontSize: 10 }}
                         tickFormatter={(val) => `$${val}`}
                         tickLine={false}
                         axisLine={false}
                         dx={-10}
                     />
-                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(0,0,0,0.1)', strokeWidth: 1 }} />
                     <Area
                         type="monotone"
                         dataKey="revenue"
-                        stroke="#fff"
+                        stroke="#C9912B" // Aethelon Gold
                         strokeWidth={1.5}
                         fillOpacity={1}
                         fill="url(#colorRevenue)"

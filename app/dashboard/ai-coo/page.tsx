@@ -26,8 +26,8 @@ function LoadingState() {
     return (
         <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-white" />
-                <p className="text-white/50 text-sm uppercase tracking-widest">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto text-accent" />
+                <p className="text-muted-foreground text-sm uppercase tracking-widest">
                     Initializing AI COO...
                 </p>
             </div>

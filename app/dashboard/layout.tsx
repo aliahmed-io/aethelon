@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
@@ -14,14 +15,6 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     const user = await getUser();
 
     // Verify Admin
-    // For now we check email, but Kinde has Roles which is better long term.
-    /*
-    if (!user || user.email !== "your-admin-email@example.com") {
-        return redirect("/");
-    }
-    */
-
-    // Simpler check for now to allow you to view it
     if (!user) {
         return redirect("/api/auth/login");
     }
@@ -31,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] text-white">
+        <div className="min-h-screen bg-background text-foreground">
             <AdminSidebar />
             <main className="ml-64 p-8 pt-24 min-h-screen">
                 <div className="max-w-7xl mx-auto">

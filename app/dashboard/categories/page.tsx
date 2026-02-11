@@ -24,33 +24,33 @@ export default async function CategoriesPage() {
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-light tracking-tight uppercase">Categories</h2>
+                <h2 className="text-3xl font-light tracking-tight uppercase text-foreground">Categories</h2>
                 <Link href="/dashboard/categories/new">
-                    <Button className="bg-white text-black hover:bg-gray-200 font-bold uppercase tracking-widest gap-2">
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold uppercase tracking-widest gap-2">
                         <PlusCircle className="w-4 h-4" /> Add Category
                     </Button>
                 </Link>
             </div>
 
-            <Card className="bg-white/5 border border-white/10 overflow-hidden backdrop-blur-sm">
+            <Card className="bg-card border border-border overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow className="border-white/10 hover:bg-white/5">
-                            <TableHead className="text-white/50 uppercase tracking-widest text-xs">Name</TableHead>
-                            <TableHead className="text-white/50 uppercase tracking-widest text-xs">Description</TableHead>
-                            <TableHead className="text-white/50 uppercase tracking-widest text-xs text-right">Date</TableHead>
+                        <TableRow className="border-border hover:bg-muted/50 bg-muted/20">
+                            <TableHead className="text-muted-foreground uppercase tracking-widest text-xs font-medium">Name</TableHead>
+                            <TableHead className="text-muted-foreground uppercase tracking-widest text-xs font-medium">Description</TableHead>
+                            <TableHead className="text-muted-foreground uppercase tracking-widest text-xs font-medium text-right">Date</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {categories.map((cat) => (
-                            <TableRow key={cat.id} className="border-white/10 hover:bg-white/5 transition-colors">
-                                <TableCell className="font-medium text-white">
+                        {categories.map((cat: any) => (
+                            <TableRow key={cat.id} className="border-border hover:bg-muted/50 transition-colors">
+                                <TableCell className="font-medium text-foreground">
                                     {cat.name}
                                 </TableCell>
-                                <TableCell className="text-white/50 text-sm">
+                                <TableCell className="text-muted-foreground text-sm">
                                     {cat.description}
                                 </TableCell>
-                                <TableCell className="text-right text-white/50 text-sm">
+                                <TableCell className="text-right text-muted-foreground text-sm font-mono">
                                     {new Date(cat.createdAt).toLocaleDateString()}
                                 </TableCell>
                             </TableRow>

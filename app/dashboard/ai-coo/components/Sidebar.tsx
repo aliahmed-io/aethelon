@@ -8,7 +8,6 @@ import {
     TrendingUp,
     Activity,
     FileText,
-    Settings,
     LogOut
 } from "lucide-react";
 
@@ -34,12 +33,12 @@ function SidebarContent({ activeTab, onTabChange }: SidebarProps) {
         <div className="h-full flex flex-col">
             {/* Logo Area */}
             <div className="h-16 flex items-center px-4 mb-8">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-white to-white/50 flex items-center justify-center mr-3">
-                    <div className="w-4 h-4 bg-black rounded-full" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-foreground to-muted flex items-center justify-center mr-3">
+                    <div className="w-4 h-4 bg-background rounded-full" />
                 </div>
                 <div>
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-white">Aethelon</h2>
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest">AI Operations</p>
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-foreground">Aethelon</h2>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">AI Operations</p>
                 </div>
             </div>
 
@@ -53,32 +52,32 @@ function SidebarContent({ activeTab, onTabChange }: SidebarProps) {
                         className={cn(
                             "w-full justify-start h-12 text-xs uppercase tracking-widest font-medium transition-all px-4",
                             activeTab === item.id
-                                ? "bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-                                : "text-white/40 hover:text-white hover:bg-white/5"
+                                ? "bg-card text-foreground shadow-sm border border-border"
+                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
                         )}
                     >
-                        <item.icon className={cn("w-4 h-4 mr-3", activeTab === item.id ? "text-black" : "text-white/40")} />
+                        <item.icon className={cn("w-4 h-4 mr-3", activeTab === item.id ? "text-accent" : "text-muted-foreground")} />
                         {item.label}
                     </Button>
                 ))}
             </nav>
 
             {/* Footer */}
-            <div className="pt-8 border-t border-white/10 mt-auto space-y-4">
+            <div className="pt-8 border-t border-border mt-auto space-y-4">
                 <Button
                     variant="ghost"
-                    className="w-full justify-start text-xs uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 pl-4"
+                    className="w-full justify-start text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground hover:bg-muted pl-4"
                     onClick={() => window.location.href = "/dashboard"}
                 >
                     <LogOut className="w-4 h-4 mr-3" />
                     Exit Console
                 </Button>
 
-                <div className="px-4 py-4 bg-white/5 rounded-sm border border-white/5 mx-4">
-                    <p className="text-[10px] text-white/40 uppercase tracking-wider mb-1">System Status</p>
+                <div className="px-4 py-4 bg-card rounded-sm border border-border mx-4">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">System Status</p>
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                        <span className="text-xs text-white">Operational</span>
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                        <span className="text-xs text-foreground">Operational</span>
                     </div>
                 </div>
             </div>
@@ -88,7 +87,7 @@ function SidebarContent({ activeTab, onTabChange }: SidebarProps) {
 
 export function Sidebar({ activeTab, onTabChange, className }: SidebarProps) {
     return (
-        <div className={cn("w-64 border-r border-white/10 bg-black/40 backdrop-blur-xl h-full p-4 flex-none z-50", className)}>
+        <div className={cn("w-64 border-r border-border bg-background/95 backdrop-blur-xl h-full p-4 flex-none z-50", className)}>
             <SidebarContent activeTab={activeTab} onTabChange={onTabChange} />
         </div>
     );
@@ -98,11 +97,11 @@ export function MobileSidebar({ activeTab, onTabChange }: SidebarProps) {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden text-white/60 hover:text-white hover:bg-white/10">
+                <Button variant="ghost" size="icon" className="md:hidden text-muted-foreground hover:text-foreground hover:bg-muted">
                     <Menu className="w-6 h-6" />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 bg-black border-r border-white/10 p-4">
+            <SheetContent side="left" className="w-72 bg-background border-r border-border p-4">
                 <SidebarContent activeTab={activeTab} onTabChange={onTabChange} />
             </SheetContent>
         </Sheet>

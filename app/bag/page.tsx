@@ -52,7 +52,7 @@ export default async function BagPage() {
                             <ShoppingBag className="w-8 h-8 text-muted-foreground" />
                         </div>
                         <h2 className="text-xl font-light mb-4">Your bag is empty</h2>
-                        <p className="text-muted-foreground mb-8 max-w-sm">Discover our collection of fine timepieces and accessories.</p>
+                        <p className="text-muted-foreground mb-8 max-w-sm">Discover our collection of premium furniture and accessories.</p>
                         <Link href="/shop">
                             <Button className="h-12 px-8 bg-accent text-accent-foreground font-bold uppercase tracking-widest hover:bg-accent/90">
                                 Explore Collection

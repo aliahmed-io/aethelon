@@ -23,7 +23,7 @@ export default function AtelierPage() {
                                 VIRTUAL <br /> ATELIER
                             </h1>
                             <p className="text-muted-foreground max-w-lg text-lg font-light leading-relaxed">
-                                Experience our timepieces on your wrist using advanced generative AI.
+                                Experience our furniture in your space using advanced generative AI.
                                 Upload a photo and let our digital artisan render the perfect fit.
                             </p>
                         </div>

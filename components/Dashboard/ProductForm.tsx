@@ -43,7 +43,7 @@ function SubmitButton({ isEdit }: { isEdit: boolean }) {
         <Button
             type="submit"
             disabled={pending}
-            className="h-12 px-8 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200"
+            className="h-12 px-8 bg-foreground text-background font-bold uppercase tracking-widest hover:bg-foreground/90"
         >
             {pending ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : null}
             {isEdit ? "Update Product" : "Create Product"}
@@ -75,7 +75,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             return;
         }
         setIsGeneratingDesc(true);
-        const catName = categories.find(c => c.id === prodCategory)?.name || "Luxury Watch";
+        const catName = categories.find(c => c.id === prodCategory)?.name || "Luxury Furniture";
 
         try {
             const result = await generateProductDescription(prodName, catName);
@@ -121,10 +121,10 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             <input type="hidden" name="productId" value={initialData?.id} />
 
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/dashboard/products" className="p-2 border border-white/10 rounded-sm hover:bg-white/5 text-white/50 hover:text-white transition-colors">
+                <Link href="/dashboard/products" className="p-2 border border-border rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
                     <ChevronLeft className="w-5 h-5" />
                 </Link>
-                <h1 className="text-2xl font-light tracking-tight uppercase">
+                <h1 className="text-2xl font-light tracking-tight uppercase text-foreground">
                     {initialData ? "Edit Product" : "New Product"}
                 </h1>
                 <div className="ml-auto">
@@ -135,34 +135,34 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Main Details */}
                 <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-[#0A0A0C] border border-white/10 p-8 rounded-sm space-y-8 relative overflow-hidden">
+                    <div className="bg-card border border-border p-8 rounded-sm space-y-8 relative overflow-hidden shadow-sm">
                         {/* Gradient Glow */}
-                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-white/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-accent/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
                         <div className="relative z-10 space-y-6">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-white/70 mb-4 border-b border-white/10 pb-4">Product Info</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/70 mb-4 border-b border-border pb-4">Product Info</h3>
 
                             <div className="space-y-3">
-                                <Label className="uppercase text-xs tracking-widest text-white/50">Name</Label>
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Name</Label>
                                 <Input
                                     name="name"
                                     required
                                     defaultValue={initialData?.name}
                                     value={prodName}
                                     onChange={(e) => setProdName(e.target.value)}
-                                    className="bg-black/40 border-white/10 text-white focus:border-emerald-500/50 transition-colors h-12"
-                                    placeholder="e.g. Chrono Diver 300M"
+                                    className="h-12 border-border focus:border-accent/50 transition-colors"
+                                    placeholder="e.g. Lounge Chair"
                                 />
                             </div>
 
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center">
-                                    <Label className="uppercase text-xs tracking-widest text-white/50">Description</Label>
+                                    <Label className="uppercase text-xs tracking-widest text-muted-foreground">Description</Label>
                                     <button
                                         type="button"
                                         onClick={handleGenerateDesc}
                                         disabled={isGeneratingDesc}
-                                        className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                                        className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 hover:text-emerald-700 flex items-center gap-1.5 transition-colors disabled:opacity-50"
                                     >
                                         {isGeneratingDesc ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                                         Auto-Generate
@@ -174,14 +174,14 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                                         required
                                         value={generatedDescription}
                                         onChange={(e) => setGeneratedDescription(e.target.value)}
-                                        className="bg-black/40 border-white/10 text-white min-h-[180px] focus:border-emerald-500/50 transition-colors resize-none leading-relaxed p-4"
-                                        placeholder="Product description..."
+                                        className="min-h-[180px] border-border focus:border-accent/50 transition-colors resize-none leading-relaxed p-4"
+                                        placeholder="Product description... (Tip: Mention materials like Oak, Walnut, Leather)"
                                     />
                                     {isGeneratingDesc && (
-                                        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center border border-white/10 rounded-md">
+                                        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center border border-border rounded-md">
                                             <div className="flex flex-col items-center gap-2">
-                                                <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
-                                                <span className="text-xs uppercase tracking-widest text-white/70">Crafting Narrative...</span>
+                                                <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+                                                <span className="text-xs uppercase tracking-widest text-foreground/70">Crafting Narrative...</span>
                                             </div>
                                         </div>
                                     )}
@@ -190,14 +190,14 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                         </div>
                     </div>
 
-                    <div className="bg-[#0A0A0C] border border-white/10 p-8 rounded-sm space-y-8">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-white/70">Media Asset</h3>
+                    <div className="bg-card border border-border p-8 rounded-sm space-y-8 shadow-sm">
+                        <div className="flex items-center justify-between border-b border-border pb-4">
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/70">Media Asset</h3>
                             <button
                                 type="button"
                                 onClick={handleGenerate3D}
                                 disabled={isGenerating3D || images.length === 0}
-                                className="text-[10px] font-bold uppercase tracking-widest text-blue-400 hover:text-blue-300 flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                                className="text-[10px] font-bold uppercase tracking-widest text-blue-600 hover:text-blue-700 flex items-center gap-1.5 transition-colors disabled:opacity-50"
                             >
                                 {isGenerating3D ? <Loader2 className="w-3 h-3 animate-spin" /> : <Box className="w-3 h-3" />}
                                 Generate 3D Model
@@ -209,7 +209,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                         {images.length > 0 && (
                             <div className="grid grid-cols-4 gap-4">
                                 {images.map((img, i) => (
-                                    <div key={i} className="relative aspect-square bg-black/40 rounded-sm border border-white/10 overflow-hidden group">
+                                    <div key={i} className="relative aspect-square bg-muted rounded-sm border border-border overflow-hidden group">
                                         <Image src={img} alt="Product" fill className="object-cover" />
                                         <button
                                             type="button"
@@ -223,28 +223,20 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                             </div>
                         )}
 
-                        <div className="border border-dashed border-white/20 rounded-sm p-10 text-center hover:bg-white/5 transition-colors cursor-pointer group">
+                        <div className="border border-dashed border-border rounded-sm p-10 text-center hover:bg-muted/30 transition-colors cursor-pointer group">
                             {/* Temporary fallback input for images if UploadThing is not fully set up */}
                             <div className="flex flex-col items-center justify-center gap-3">
-                                <div className="p-4 bg-white/5 rounded-full group-hover:scale-110 transition-transform">
-                                    <Upload className="w-5 h-5 text-white/50" />
+                                <div className="p-4 bg-muted/50 rounded-full group-hover:scale-110 transition-transform">
+                                    <Upload className="w-5 h-5 text-muted-foreground" />
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-xs font-bold uppercase tracking-widest text-white/70">Upload Images</p>
-                                    <p className="text-[10px] text-white/30">Drag & drop or click to select</p>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-foreground/70">Upload Images</p>
+                                    <p className="text-[10px] text-muted-foreground">Drag & drop or click to select</p>
                                 </div>
-                                {/* 
-                                    Using a standard file input here is tricky with Server Actions + array of strings state.
-                                    Ideally we use UploadThing. If not available, we need a client-side upload handler.
-                                    For now, assuming users will fix the UploadThing integration or use the admin panel's existing upload capability if present.
-                                    Because I can't write a full S3 uploader in one step, I'll recommend the user ensures UploadThing is active.
-                                    Or, since 'UploadDropzone' was imported, I'll try to use it if I could trust it exists. 
-                                    I will render a simplified text input for URL as a fallback for testing.
-                                */}
-                                <div onClick={(e) => e.stopPropagation()} className="mt-4 flex gap-2">
+                                <div onClick={(e) => e.stopPropagation()} className="mt-4 flex gap-2 w-full max-w-xs mx-auto">
                                     <Input
                                         placeholder="Or paste image URL..."
-                                        className="h-8 text-xs bg-black/50 border-white/10"
+                                        className="h-8 text-xs border-border"
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
                                                 e.preventDefault();
@@ -264,16 +256,16 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
                 {/* Right Column: Organization */}
                 <div className="space-y-8">
-                    <div className="bg-[#0A0A0C] border border-white/10 p-6 rounded-sm space-y-6">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-white/50 mb-4 border-b border-white/10 pb-2">Status</h3>
+                    <div className="bg-card border border-border p-6 rounded-sm space-y-6 shadow-sm">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/50 mb-4 border-b border-border pb-2">Status</h3>
 
                         <div className="space-y-2">
-                            <Label className="uppercase text-xs tracking-widest text-white/50">Publication</Label>
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Publication</Label>
                             <Select name="status" defaultValue={initialData?.status || "draft"}>
-                                <SelectTrigger className="bg-black/40 border-white/10 text-white h-10">
+                                <SelectTrigger className="h-10 border-border">
                                     <SelectValue placeholder="Select status" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
+                                <SelectContent className="bg-popover text-popover-foreground border-border">
                                     <SelectItem value="draft">Draft</SelectItem>
                                     <SelectItem value="published">Published</SelectItem>
                                     <SelectItem value="archived">Archived</SelectItem>
@@ -281,10 +273,10 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                             </Select>
                         </div>
 
-                        <div className="flex items-center justify-between pt-4 bg-white/5 p-4 rounded-sm border border-white/5">
+                        <div className="flex items-center justify-between pt-4 bg-muted/30 p-4 rounded-sm border border-border">
                             <div className="space-y-0.5">
-                                <Label className="uppercase text-xs tracking-widest text-white/80">Featured</Label>
-                                <p className="text-[10px] text-white/40">Highlight in store</p>
+                                <Label className="uppercase text-xs tracking-widest text-foreground/80">Featured</Label>
+                                <p className="text-[10px] text-muted-foreground">Highlight in store</p>
                             </div>
                             <Switch
                                 name="isFeatured"
@@ -294,20 +286,20 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                         </div>
                     </div>
 
-                    <div className="bg-[#0A0A0C] border border-white/10 p-6 rounded-sm space-y-6">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-white/50 mb-4 border-b border-white/10 pb-2">Details</h3>
+                    <div className="bg-card border border-border p-6 rounded-sm space-y-6 shadow-sm">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/50 mb-4 border-b border-border pb-2">Details</h3>
 
                         <div className="space-y-2">
-                            <Label className="uppercase text-xs tracking-widest text-white/50">Category</Label>
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Category</Label>
                             <Select
                                 name="category"
                                 defaultValue={initialData?.categoryId}
                                 onValueChange={(val) => setProdCategory(val)}
                             >
-                                <SelectTrigger className="bg-black/40 border-white/10 text-white h-10">
+                                <SelectTrigger className="h-10 border-border">
                                     <SelectValue placeholder="Select Category" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
+                                <SelectContent className="bg-popover text-popover-foreground border-border">
                                     {categories.map((cat) => (
                                         <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                                     ))}
@@ -316,25 +308,25 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="uppercase text-xs tracking-widest text-white/50">Price ($)</Label>
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Price ($)</Label>
                             <Input
                                 name="price"
                                 type="number"
                                 required
                                 defaultValue={initialData?.price}
-                                className="bg-black/40 border-white/10 text-white font-mono h-10"
+                                className="font-mono h-10 border-border"
                                 placeholder="0.00"
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="uppercase text-xs tracking-widest text-white/50">Stock</Label>
-                                <Input name="stockQuantity" type="number" placeholder="0" defaultValue={initialData?.stockQuantity} className="bg-black/40 border-white/10 text-white h-10" />
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Stock</Label>
+                                <Input name="stockQuantity" type="number" placeholder="0" defaultValue={initialData?.stockQuantity} className="h-10 border-border" />
                             </div>
                             <div className="space-y-2">
-                                <Label className="uppercase text-xs tracking-widest text-white/50">Weight (g)</Label>
-                                <Input name="weight" type="number" placeholder="0" defaultValue={initialData?.weight} className="bg-black/40 border-white/10 text-white h-10" />
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Weight (g)</Label>
+                                <Input name="weight" type="number" placeholder="0" defaultValue={initialData?.weight} className="h-10 border-border" />
                             </div>
                         </div>
                     </div>

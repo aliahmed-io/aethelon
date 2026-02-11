@@ -85,10 +85,10 @@ export function ProductCard({ item, priority = false }: iAppProps) {
       <div className="w-full mt-auto pt-4">
         <div className="flex gap-2 w-full mt-auto pt-4">
           <Button asChild className="w-full flex-1">
-            <Link href={`/store/product/${item.id}`} prefetch={false}>Learn More!</Link>
+            <Link href={`/shop/${item.id}`} prefetch={false}>Learn More!</Link>
           </Button>
           <Button asChild variant="secondary" className="w-1/3">
-            <Link href={`/store/try-on?productId=${item.id}`} prefetch={false}>Try On</Link>
+            <Link href={`/atelier?productId=${item.id}`} prefetch={false}>Try On</Link>
           </Button>
         </div>
       </div>

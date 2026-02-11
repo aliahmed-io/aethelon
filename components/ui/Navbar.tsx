@@ -3,14 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, Search, Menu, X } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useSearch } from '@/components/search/SearchContext';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { LoginLink } from '@kinde-oss/kinde-auth-nextjs/components';
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const { openSearch } = useSearch();
+    const { isAuthenticated } = useKindeBrowserClient();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -26,7 +31,7 @@ export default function Navbar() {
         { href: '/shop', label: 'Shop' },
         { href: '/ai-search', label: 'AI Search' },
         { href: '/ai-vision', label: 'Room Visualizer' },
-        { href: '/story', label: 'Story' },
+        { href: '/about', label: 'Story' },
     ];
 
     return (
@@ -72,18 +77,29 @@ export default function Navbar() {
                 {/* Actions */}
                 <div className="flex items-center gap-4 z-50">
                     <button
+                        onClick={openSearch}
                         className="text-foreground hover:text-accent transition-colors p-2"
                         aria-label="Search"
                     >
                         <Search className="w-5 h-5" />
                     </button>
-                    <button
+                    <Link
+                        href="/bag"
                         className="text-foreground hover:text-accent transition-colors p-2 relative"
                         aria-label="Cart"
                     >
                         <ShoppingBag className="w-5 h-5" />
-                        <span className="absolute top-0 right-0 w-2 h-2 bg-accent rounded-full" />
-                    </button>
+                    </Link>
+                    {isAuthenticated ? (
+                        <Link href="/account" className="text-foreground hover:text-accent transition-colors p-2" aria-label="Account">
+                            <User className="w-5 h-5" />
+                        </Link>
+                    ) : (
+                        <LoginLink className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
+                            <User className="w-4 h-4" />
+                            <span>Sign In</span>
+                        </LoginLink>
+                    )}
                     <button
                         className="md:hidden text-foreground hover:text-accent transition-colors p-2"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -114,6 +130,11 @@ export default function Navbar() {
                                     {link.label}
                                 </Link>
                             ))}
+                            {!isAuthenticated && (
+                                <LoginLink className="mt-4 bg-accent text-accent-foreground px-8 py-3 rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-accent/90 transition-colors">
+                                    Sign In
+                                </LoginLink>
+                            )}
                         </nav>
                     </motion.div>
                 )}

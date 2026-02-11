@@ -18,8 +18,8 @@ export default function Footer() {
                         <span className="absolute -top-1 -right-3 w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
                     </h2>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                        Probus Scafusia. Engineered for the modern aviator.
-                        Merging Swiss heritage with quantum-era interfaces to create the ultimate pilot&apos;s chronograph.
+                        Crafting sanctuaries for the modern soul. Sustainable luxury furniture
+                        born from heritage craftsmanship and forward-thinking design.
                     </p>
                     <div className="flex gap-4">
                         {/* Social Icons */}
@@ -35,10 +35,10 @@ export default function Footer() {
                 {/* Newsletter */}
                 <div className="flex-1 w-full lg:w-auto max-w-md bg-muted/50 backdrop-blur-md border border-border p-8 rounded-sm">
                     <h3 className="text-sm font-bold uppercase tracking-widest mb-2">The Aethelon Chronicle</h3>
-                    <p className="text-xs text-muted-foreground mb-6">Join 12,000+ aviators receiving weekly flight logs and exclusive drops.</p>
+                    <p className="text-xs text-muted-foreground mb-6">Join 12,000+ design enthusiasts receiving weekly updates and exclusive drops.</p>
                     <div className="flex gap-2">
                         <Input
-                            placeholder="pilot@aethelon.ch"
+                            placeholder="your@email.com"
                             className="bg-background border-border text-foreground placeholder:text-muted-foreground/40 focus-visible:ring-1 focus-visible:ring-accent/30 h-10 text-xs"
                         />
                         <Button size="icon" className="h-10 w-10 bg-accent text-accent-foreground hover:bg-accent/90">
@@ -50,25 +50,27 @@ export default function Footer() {
                 {/* Links */}
                 <div className="flex gap-16 text-sm font-medium text-muted-foreground">
                     <div className="flex flex-col gap-4">
-                        <span className="text-foreground font-bold uppercase tracking-widest text-xs mb-2">Collection</span>
-                        <Link href="/shop?category=PILOT" className="hover:text-foreground transition-colors">Pilot&apos;s Watches</Link>
-                        <Link href="/shop?category=PORTUGIESER" className="hover:text-foreground transition-colors">Portugieser</Link>
-                        <Link href="/shop?category=PORTOFINO" className="hover:text-foreground transition-colors">Portofino</Link>
+                        <span className="text-foreground font-bold uppercase tracking-widest text-xs mb-2">Explore</span>
+                        <Link href="/shop" className="hover:text-foreground transition-colors">Collection</Link>
+                        <Link href="/about" className="hover:text-foreground transition-colors">Our Story</Link>
+                        <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+                        <Link href="/wholesale" className="hover:text-foreground transition-colors">Wholesale</Link>
                     </div>
 
                     <div className="flex flex-col gap-4">
                         <span className="text-foreground font-bold uppercase tracking-widest text-xs mb-2">Legal</span>
                         <Link href="/legal/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
                         <Link href="/legal/terms" className="hover:text-foreground transition-colors">Terms</Link>
-                        <Link href="/legal/contact" className="hover:text-foreground transition-colors">Contact</Link>
+                        <Link href="/legal/shipping" className="hover:text-foreground transition-colors">Shipping</Link>
+                        <Link href="/legal/returns" className="hover:text-foreground transition-colors">Returns</Link>
                     </div>
                 </div>
             </div>
 
             {/* Bottom Bar */}
             <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground/50 gap-4">
-                <span>© 2026 Aethelon SA. Schaffhausen, Switzerland.</span>
-                <span className="font-mono tracking-widest">EST. 1868 // REBORN 2026</span>
+                <span>© 2026 Aethelon SA. Geneva, Switzerland.</span>
+                <span className="font-mono tracking-widest">DESIGNED WITH PURPOSE // EST. 2026</span>
             </div>
         </footer>
     );

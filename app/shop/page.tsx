@@ -62,11 +62,11 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                         {products.length === 0 ? (
                             <div className="h-64 flex flex-col items-center justify-center p-8 border border-border bg-muted/50 backdrop-blur-md rounded-sm text-center">
                                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                                    <span className="text-xl">⌚</span>
+                                    <span className="text-xl">🪑</span>
                                 </div>
-                                <h3 className="text-lg font-light tracking-wide uppercase mb-2">No Timepieces Found</h3>
+                                <h3 className="text-lg font-light tracking-wide uppercase mb-2">No Products Found</h3>
                                 <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                                    Our ateliers are currently devoid of instruments matching your criteria.
+                                    Our collection is currently empty for the selected criteria.
                                 </p>
                             </div>
                         ) : (

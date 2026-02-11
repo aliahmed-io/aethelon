@@ -16,10 +16,10 @@ export default function AboutPage() {
                 {/* Hero */}
                 <div className="mb-24 text-center">
                     <h1 className="text-4xl lg:text-6xl font-light tracking-tighter uppercase mb-6">
-                        Probus Scafusia
+                        Crafted to Endure
                     </h1>
                     <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
-                        Solid. Precise. Engineered for men who fly.
+                        Designing furniture that transforms spaces into sanctuaries.
                     </p>
                 </div>
 
@@ -27,21 +27,23 @@ export default function AboutPage() {
                 <div className="grid lg:grid-cols-2 gap-16 mb-32 items-center">
                     <div className="relative aspect-square">
                         <div className="absolute inset-0 bg-muted rounded-sm overflow-hidden border border-border">
-                            {/* Placeholder for About Image */}
                             <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40 font-mono text-xs uppercase tracking-widest">
-                                [Engineering Image]
+                                [Workshop Image]
                             </div>
                         </div>
                     </div>
                     <div>
-                        <h2 className="text-2xl font-light uppercase tracking-tight mb-6">The Engineer&apos;s Spirit</h2>
+                        <h2 className="text-2xl font-light uppercase tracking-tight mb-6">The Maker&apos;s Spirit</h2>
                         <div className="w-12 h-1 bg-accent mb-8"></div>
                         <p className="text-muted-foreground leading-relaxed mb-6">
-                            Aethelon was founded on a simple premise: instruments for professionals. We don&apos;t just make watches; we create redundant systems for aerial navigation.
-                            Our timepieces are designed to withstand the G-forces of modern jet combat and the magnetic fields of electronic cockpits.
+                            Aethelon was founded on a simple premise: furniture should be an experience.
+                            We don&apos;t just build pieces; we design environments. Every joint, every curve,
+                            every grain pattern is intentional — selected to bring warmth, beauty, and permanence
+                            to the spaces you call home.
                         </p>
                         <p className="text-muted-foreground leading-relaxed">
-                            Every component is machined to micron-level tolerance in our Schaffhausen manufacture, ensuring that when you&apos;re at 30,000 feet, your time is absolute.
+                            Our artisans work with responsibly sourced hardwoods, premium leathers, and hand-finished
+                            metals, ensuring that every piece is built to last generations — not seasons.
                         </p>
                     </div>
                 </div>
@@ -49,18 +51,18 @@ export default function AboutPage() {
                 {/* Content Section 2 (Reversed) */}
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div className="order-2 lg:order-1">
-                        <h2 className="text-2xl font-light uppercase tracking-tight mb-6">Sustainable Aviation</h2>
+                        <h2 className="text-2xl font-light uppercase tracking-tight mb-6">Sustainable by Design</h2>
                         <div className="w-12 h-1 bg-accent mb-8"></div>
                         <p className="text-muted-foreground leading-relaxed mb-6">
-                            We believe the sky belongs to everyone. That&apos;s why Aethelon is pioneering the use of Ceratanium® and recycled aerospace-grade titanium.
-                            Our manufacturing facility operates on 100% renewable hydroelectric power from the Rhine Falls.
+                            We believe luxury and responsibility can coexist. That&apos;s why Aethelon pioneers
+                            the use of reclaimed timbers, water-based finishes, and carbon-neutral logistics.
+                            Our Geneva atelier operates on 100% renewable energy.
                         </p>
                     </div>
                     <div className="relative aspect-square order-1 lg:order-2">
                         <div className="absolute inset-0 bg-muted rounded-sm overflow-hidden border border-border">
-                            {/* Placeholder for Factory Image */}
                             <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40 font-mono text-xs uppercase tracking-widest">
-                                [Manufacture Image]
+                                [Atelier Image]
                             </div>
                         </div>
                     </div>
