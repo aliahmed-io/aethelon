@@ -3,6 +3,7 @@
 import { createCampaign } from "@/app/store/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { CampaignGenerator } from "@/components/dashboard/CampaignGenerator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +14,7 @@ import { UploadDropzone } from "@/lib/uploadthing";
 import { useActionState, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface Product {
     id: string;
@@ -44,6 +46,8 @@ export function CreateCampaignForm({ products }: { products: Product[] }) {
         }
     };
 
+
+
     return (
         <form action={action}>
             <div className="flex items-center gap-4">
@@ -57,10 +61,27 @@ export function CreateCampaignForm({ products }: { products: Product[] }) {
 
             <Card className="mt-5 bg-white/5 border-white/10 backdrop-blur-sm text-white">
                 <CardHeader>
-                    <CardTitle>Campaign Details</CardTitle>
+                    <CardTitle className="flex justify-between items-center">
+                        Campaign Details
+                        <div className="flex gap-2">
+                        </div>
+                    </CardTitle>
                     <CardDescription className="text-white/50">Create a new marketing campaign collection</CardDescription>
                 </CardHeader>
                 <CardContent>
+                    {/* AI Generator */}
+                    <CampaignGenerator
+                        selectedProductNames={products.filter(p => selectedProducts.includes(p.id)).map(p => p.name)}
+                        onGenerate={(data) => {
+                            // Populate form fields
+                            const titleInput = document.querySelector('input[name="title"]') as HTMLInputElement;
+                            const descInput = document.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
+
+                            if (titleInput) titleInput.value = data.subject; // Map subject to title/subject line
+                            if (descInput) descInput.value = data.body; // Map body to description (HTML)
+                        }}
+                    />
+
                     <div className="flex flex-col gap-6">
                         {/* Basic Info */}
                         <div className="grid gap-6 md:grid-cols-2">

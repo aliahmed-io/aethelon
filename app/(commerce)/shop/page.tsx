@@ -1,6 +1,8 @@
 import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import Prisma from "@/lib/db";
+import { getRecommendedProducts } from "@/app/actions/personalization";
+import { Suspense } from "react";
 
 // We need to handle searchParams in page
 interface ShopPageProps {
@@ -19,10 +21,13 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         where.mainCategory = (category as string).toUpperCase();
     }
 
-    const products = await Prisma.product.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-    });
+    const [products, recommendations] = await Promise.all([
+        Prisma.product.findMany({
+            where,
+            orderBy: { createdAt: "desc" },
+        }),
+        getRecommendedProducts()
+    ]);
 
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
@@ -39,6 +44,23 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                         </p>
                     </div>
                 </div>
+
+                {recommendations.length > 0 && !category && (
+                    <div className="mb-16">
+                        <h2 className="text-xl font-light tracking-tight text-foreground mb-6 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                            RECOMMENDED FOR YOU
+                        </h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {recommendations.map((product) => (
+                                <div key={product.id} className="h-[400px]">
+                                    <ProductCard item={product} />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="my-8 border-t border-border/50"></div>
+                    </div>
+                )}
 
                 <div className="flex gap-12">
                     {/* Sidebar */}

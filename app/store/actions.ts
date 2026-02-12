@@ -11,13 +11,23 @@ import Stripe from "stripe";
 import { parseWithZod } from "@conform-to/zod";
 import { reviewSchema } from "@/lib/zodSchemas";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { requireAdmin, requireUser } from "@/lib/auth";
+import { CircuitBreaker } from "@/lib/circuit-breaker";
+
+import { InventoryService } from "@/lib/inventory";
+import logger from "@/lib/logger";
+import { rateLimit } from "@/lib/rate-limit";
+
+const geminiBreaker = new CircuitBreaker("Gemini-AI", { failureThreshold: 3, recoveryTimeout: 30000 });
+const meshyBreaker = new CircuitBreaker("Meshy-3D", { failureThreshold: 3, recoveryTimeout: 60000 });
 
 export async function checkOut() {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
+    const user = await requireUser();
 
-    if (!user) {
-        return redirect("/api/auth/login");
+    // Rate Limit: 5 checkouts per minute per user (prevent inventory locking attacks)
+    const { success } = await rateLimit(`checkout-${user.id}`, 5, "60 s");
+    if (!success) {
+        return redirect("/bag?error=Too many requests. Please try again later.");
     }
 
     let cart: Cart | null = null;
@@ -29,7 +39,49 @@ export async function checkOut() {
         }
     }
 
-    if (cart && cart.items) {
+    if (cart && cart.items && cart.items.length > 0) {
+        // 1. Create Order (CREATED state)
+        // We create it first so we have an ID for reservation and Stripe metadata
+        const order = await prisma.order.create({
+            data: {
+                userId: user.id,
+                amount: cart.items.reduce((total, item) => total + item.price * item.quantity, 0) * 100, // Amount in cents
+                status: "CREATED",
+                paymentStatus: "PENDING",
+                orderItems: {
+                    create: cart.items.map((item) => ({
+                        productId: item.id,
+                        name: item.name,
+                        price: Math.round(item.price * 100), // Store in cents
+                        quantity: item.quantity,
+                        image: item.imageString,
+                    })),
+                },
+            },
+        });
+
+        // 2. Reserve Stock
+        try {
+            await InventoryService.reserveStock(
+                order.id,
+                cart.items.map((item) => ({
+                    productId: item.id,
+                    quantity: item.quantity,
+                }))
+            );
+        } catch (error: any) {
+            logger.error("Reservation Failed", error);
+            // Cancel order if reservation fails
+            await prisma.order.update({
+                where: { id: order.id },
+                data: { status: "CANCELLED" },
+            });
+            // return redirect(`/bag?error=${encodeURIComponent(error.message)}`);
+            // Server actions redirect limitation: needs to be caught in UI or just redirect
+            return redirect("/bag?error=Out of Stock");
+        }
+
+        // 3. Create Stripe Session
         const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = cart.items.map(
             (item) => ({
                 price_data: {
@@ -51,20 +103,18 @@ export async function checkOut() {
             cancel_url: process.env.NEXT_PUBLIC_URL + "/checkout/cancel",
             metadata: {
                 userId: user.id,
+                orderId: order.id, // Pass Order ID to Webhook
             },
         });
 
         return redirect(session.url as string);
     }
+
+    return redirect("/bag");
 }
 
 export async function delItem(formData: FormData) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user) {
-        return redirect("/api/auth/login");
-    }
+    const user = await requireUser();
 
     const productId = formData.get("productId");
 
@@ -95,12 +145,7 @@ export async function delItem(formData: FormData) {
 }
 
 export async function createProduct(_prevState: unknown, formData: FormData) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user) {
-        return redirect("/");
-    }
+    const user = await requireAdmin();
 
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
@@ -110,7 +155,15 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
 
     const categoryId = formData.get("category") as string;
     const status = formData.get("status") as "draft" | "published" | "archived";
+
+
     const isFeatured = formData.get("isFeatured") === "on";
+
+    // Rate Limit: 20 creations per min (Admin)
+    const { success } = await rateLimit(`create-product-${user.id}`, 20, "60 s");
+    if (!success) {
+        return redirect("/dashboard/products?error=Rate limit exceeded");
+    }
 
     await prisma.product.create({
         data: {
@@ -121,6 +174,7 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
             categoryId,
             status,
             isFeatured,
+            costPrice: Number(formData.get("costPrice") || 0),
         },
     });
 
@@ -129,12 +183,7 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
 }
 
 export async function editProduct(_prevState: unknown, formData: FormData) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user) {
-        return redirect("/");
-    }
+    const user = await requireAdmin();
 
     const productId = formData.get("productId") as string;
     const name = formData.get("name") as string;
@@ -144,7 +193,15 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
     const imageArray = images ? images.split(",") : [];
     const categoryId = formData.get("category") as string;
     const status = formData.get("status") as "draft" | "published" | "archived";
+
+
     const isFeatured = formData.get("isFeatured") === "on";
+
+    // Rate Limit: 20 edits per min (Admin)
+    const { success } = await rateLimit(`edit-product-${user.id}`, 20, "60 s");
+    if (!success) {
+        return redirect("/dashboard/products?error=Rate limit exceeded");
+    }
 
     await prisma.product.update({
         where: {
@@ -158,6 +215,7 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
             categoryId,
             status,
             isFeatured,
+            costPrice: Number(formData.get("costPrice") || 0),
         },
     });
 
@@ -165,12 +223,7 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
 }
 
 export async function createCategory(_prevState: unknown, formData: FormData) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user) {
-        return redirect("/");
-    }
+    const user = await requireAdmin();
 
     await prisma.category.create({
         data: {
@@ -184,12 +237,7 @@ export async function createCategory(_prevState: unknown, formData: FormData) {
 }
 
 export async function createCampaign(_prevState: unknown, formData: FormData) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user) {
-        return redirect("/");
-    }
+    const user = await requireAdmin();
 
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
@@ -217,12 +265,7 @@ export async function createCampaign(_prevState: unknown, formData: FormData) {
 }
 
 export async function createBanner(_prevState: unknown, formData: FormData) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user) {
-        return redirect("/");
-    }
+    const user = await requireAdmin();
 
     const campaignId = formData.get("campaignId") as string;
     let link = formData.get("link") as string;
@@ -247,12 +290,7 @@ export async function createBanner(_prevState: unknown, formData: FormData) {
 }
 
 export async function createReview(_prevState: unknown, formData: FormData) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    if (!user) {
-        return redirect("/api/auth/login");
-    }
+    const user = await requireUser();
 
     const parse = parseWithZod(formData, {
         schema: reviewSchema,
@@ -260,6 +298,14 @@ export async function createReview(_prevState: unknown, formData: FormData) {
 
     if (parse.status !== "success") {
         return parse.reply();
+    }
+
+
+
+    // Rate Limit: 3 reviews per minute
+    const { success } = await rateLimit(`review-${user.id}`, 3, "60 s");
+    if (!success) {
+        return { status: "error", message: "You are posting reviews too quickly." };
     }
 
     await prisma.review.create({
@@ -276,11 +322,16 @@ export async function createReview(_prevState: unknown, formData: FormData) {
 }
 
 export async function chatWithBusinessAdvisor(history: { role: string; message?: string; text?: string }[], userMessage: string) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
+    const user = await requireUser();
 
-    if (!user) {
-        return { success: false, message: "Unauthorized" };
+    // Authorization: Ideally only Admin or "Premium" users. 
+    // For now, allow authenticated users but rate limited.
+    // If strict admin only: await requireAdmin();
+
+    // Rate Limit: 10 messages per minute (Cost Control)
+    const { success: limitSuccess } = await rateLimit(`ai-advisor-${user.id}`, 10, "60 s");
+    if (!limitSuccess) {
+        return { success: false, message: "You have reached the message limit. Please wait a moment." };
     }
 
     try {
@@ -323,17 +374,20 @@ export async function chatWithBusinessAdvisor(history: { role: string; message?:
             ],
         });
 
-        const result = await chat.sendMessage(userMessage);
-        const response = result.response.text();
+        const response = await geminiBreaker.execute(async () => {
+            const result = await chat.sendMessage(userMessage);
+            return result.response.text();
+        });
 
         return { success: true, response };
-    } catch (error) {
-        console.error("AI Advisor Error:", error);
-        return { success: false, message: "Failed to consult advisor." };
+    } catch (error: any) {
+        logger.error("AI Advisor Error", error);
+        return { success: false, message: error.message || "Failed to consult advisor." };
     }
 }
 
 export async function getDailyRevenue() {
+    await requireAdmin();
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -369,10 +423,15 @@ export async function getDailyRevenue() {
 }
 
 export async function generate3DModel(productId: string, imageUrls: string[]) {
-    return { success: true };
+    await requireAdmin();
+    return meshyBreaker.execute(async () => {
+        // Real implementation would go here
+        return { success: true };
+    });
 }
 
 export async function delete3DModel(productId: string) {
+    await requireAdmin();
     return { success: true };
 }
 
@@ -381,9 +440,11 @@ export async function checkMeshyStatus(productId: string) {
 }
 
 export async function updateProductModel(productId: string, modelUrl: string) {
+    await requireAdmin();
     return { success: true };
 }
 
 export async function cancel3DModelGeneration(productId: string) {
+    await requireAdmin();
     return { success: true };
 }

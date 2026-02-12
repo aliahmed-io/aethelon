@@ -10,6 +10,8 @@ interface RetryOptions {
     retryOn?: (response: Response) => boolean;
 }
 
+import logger from "@/lib/logger";
+
 const defaultOptions: Required<RetryOptions> = {
     maxRetries: 3,
     baseDelayMs: 1000,
@@ -38,7 +40,7 @@ export async function fetchWithRetry(
                     config.baseDelayMs * Math.pow(2, attempt),
                     config.maxDelayMs
                 );
-                console.warn(`[Retry] Attempt ${attempt + 1}/${config.maxRetries} for ${url}. Waiting ${delay}ms...`);
+                logger.warn(`[Retry] Attempt ${attempt + 1}/${config.maxRetries} for ${url}. Waiting ${delay}ms...`);
                 await sleep(delay);
                 continue;
             }
@@ -52,7 +54,7 @@ export async function fetchWithRetry(
                     config.baseDelayMs * Math.pow(2, attempt),
                     config.maxDelayMs
                 );
-                console.warn(`[Retry] Network error on attempt ${attempt + 1}/${config.maxRetries}. Waiting ${delay}ms...`);
+                logger.warn(`[Retry] Network error on attempt ${attempt + 1}/${config.maxRetries}. Waiting ${delay}ms...`);
                 await sleep(delay);
             }
         }
@@ -107,7 +109,7 @@ export async function withRetry<T>(
                     config.baseDelayMs * Math.pow(2, attempt),
                     config.maxDelayMs
                 );
-                console.warn(`[Retry] Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`);
+                logger.warn(`[Retry] Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`);
                 await sleep(delay);
             }
         }

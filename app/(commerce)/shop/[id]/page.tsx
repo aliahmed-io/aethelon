@@ -122,7 +122,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
             {/* Tier 2: Analytics tracker — loaded after hydration, no SSR */}
-            <ProductTrackerLazy product={product} />
+            <ProductTrackerLazy product={{
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                images: product.images,
+                categoryId: product.categoryId
+            }} />
 
             <div className="container mx-auto px-6 lg:px-12">
                 {/* ── T1: Breadcrumb (server-rendered) ── */}
@@ -156,7 +162,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 className="w-full"
                             >
                                 <ThreeDViewerLazy
-                                    modelUrl={product.modelUrl}
+                                    modelUrl={product.modelUrl || ""}
                                     images={product.images}
                                     altTitle={product.name}
                                 />
@@ -278,7 +284,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
                         {/* T3: AR Button — lazy loaded, client only */}
                         <ARButtonLazy
-                            modelUrl={product.modelUrl}
+                            modelUrl={product.modelUrl || ""}
                             productId={product.id}
                             productName={product.name}
                         />

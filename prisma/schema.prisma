@@ -38,10 +38,12 @@ model Attribute {
 }
 
 model WishlistItem {
-  id        String   @id @default(uuid())
-  userId    String
-  productId String
-  createdAt DateTime @default(now())
+  id                String   @id @default(uuid())
+  userId            String
+  productId         String
+  addedPrice        Int      @default(0)
+  lastNotifiedPrice Int?
+  createdAt         DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -50,40 +52,46 @@ model WishlistItem {
 }
 
 model Product {
-  id                 String            @id @default(uuid())
+  id                 String        @id @default(uuid())
   name               String
   description        String
   status             ProductStatus
   price              Int
   images             String[]
   categoryId         String
-  isFeatured         Boolean           @default(false)
-  createdAt          DateTime          @default(now())
-  color              String?           @default("")
-  style              String?           @default("")
-  height             String?           @default("")
-  pattern            String?           @default("")
-  tags               String[]          @default([])
-  features           String[]          @default([])
-  sizes              String[]          @default([])
+  isFeatured         Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+  color              String?       @default("")
+  style              String?       @default("")
+  height             String?       @default("")
+  pattern            String?       @default("")
+  tags               String[]      @default([])
+  features           String[]      @default([])
+  sizes              String[]      @default([])
   modelUrl           String?
   imageDescription   String?
-  discountPercentage Int               @default(0)
-  averageRating      Float             @default(0)
-  reviewCount        Int               @default(0)
-  meshyProgress      Int?              @default(0)
-  meshyStatus        String?           @default("PENDING")
+  discountPercentage Int           @default(0)
+  averageRating      Float         @default(0)
+  reviewCount        Int           @default(0)
+  meshyProgress      Int?          @default(0)
+  meshyStatus        String?       @default("PENDING")
   meshyTaskId        String?
-  stockQuantity      Int               @default(0)
-  weight             Float             @default(1.0)
-  lowStockThreshold  Int               @default(5)
-  mainCategory       MainCategory      @default(MEN)
-  category           Category          @relation(fields: [categoryId], references: [id])
-  reviews            Review[]
-  tryOnSessions      TryOnSession[]
-  orderItems         OrderItem[]
-  wishlistItems      WishlistItem[]
-  campaignItems      CampaignProduct[]
+
+  // Inventory Fields
+  stockQuantity     Int   @default(0)
+  costPrice         Int   @default(0) // In cents
+  reservedStock     Int   @default(0)
+  weight            Float @default(1.0)
+  lowStockThreshold Int   @default(5)
+
+  mainCategory          MainCategory           @default(MEN)
+  category              Category               @relation(fields: [categoryId], references: [id])
+  reviews               Review[]
+  tryOnSessions         TryOnSession[]
+  orderItems            OrderItem[]
+  wishlistItems         WishlistItem[]
+  campaignItems         CampaignProduct[]
+  inventoryTransactions InventoryTransaction[]
 
   // Performance indexes for common queries
   @@index([status])
@@ -92,6 +100,32 @@ model Product {
   @@index([reviewCount])
   @@index([isFeatured])
   @@index([categoryId])
+}
+
+model InventoryTransaction {
+  id          String                   @id @default(uuid())
+  productId   String
+  type        InventoryTransactionType
+  quantity    Int
+  unitCost    Int                      @default(0) // Cost at time of transaction
+  unitPrice   Int                      @default(0) // Selling price at time of transaction (if applicable)
+  referenceId String? // Order ID, Return ID, etc.
+  reason      String?
+  createdAt   DateTime                 @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([createdAt])
+}
+
+enum InventoryTransactionType {
+  SALE
+  RESERVE
+  RELEASE
+  RESTOCK
+  RETURN
+  MANUAL_ADJUSTMENT
 }
 
 model Category {
@@ -112,6 +146,8 @@ model Banner {
   campaignId  String?
   campaign    Campaign? @relation(fields: [campaignId], references: [id])
   createdAt   DateTime  @default(now())
+
+  @@index([campaignId])
 }
 
 model Campaign {
@@ -158,17 +194,21 @@ enum CampaignStatus {
 }
 
 model Order {
-  id                   String          @id @default(uuid())
-  status               OrderStatus     @default(pending)
-  amount               Int
-  userId               String?
-  createdAt            DateTime        @default(now())
-  discountId           String?
-  discount             Discount?       @relation(fields: [discountId], references: [id])
-  User                 User?           @relation(fields: [userId], references: [id])
-  payment              Payment?
-  shipment             Shipment?
-  returnRequests       ReturnRequest[]
+  id                String            @id @default(uuid())
+  status            OrderStatus       @default(CREATED)
+  paymentStatus     PaymentStatus     @default(PENDING)
+  fulfillmentStatus FulfillmentStatus @default(UNFULFILLED)
+
+  amount         Int
+  userId         String?
+  createdAt      DateTime        @default(now())
+  discountId     String?
+  discount       Discount?       @relation(fields: [discountId], references: [id])
+  User           User?           @relation(fields: [userId], references: [id])
+  payment        Payment?
+  shipments      Shipment[]
+  returnRequests ReturnRequest[]
+
   // Shipping address snapshot
   shippingName         String?
   shippingPhone        String?
@@ -177,14 +217,25 @@ model Order {
   shippingCity         String?
   shippingState        String?
   shippingPostalCode   String?
-  shippingCountry      String?         @default("US")
+  shippingCountry      String? @default("US")
   shippingRateId       String?
-  shippingCost         Int             @default(0)
+  shippingCost         Int     @default(0)
   shippingServiceLevel String?
-  orderItems           OrderItem[]
+
+  orderItems OrderItem[]
 
   @@index([userId])
   @@index([createdAt])
+  @@index([status])
+  @@index([discountId])
+}
+
+enum FulfillmentStatus {
+  UNFULFILLED
+  PARTIALLY_FULFILLED
+  FULFILLED
+  RETURNED
+  PARTIALLY_RETURNED
 }
 
 model Payment {
@@ -201,15 +252,34 @@ model Payment {
 
 model Shipment {
   id             String         @id @default(uuid())
+  orderId        String
   trackingNumber String?
   carrier        String?
-  status         ShipmentStatus @default(PENDING)
+  trackingUrl    String?
   labelUrl       String?
+  status         ShipmentStatus @default(PENDING)
   eta            DateTime?
   shippoId       String?
-  orderId        String         @unique
   createdAt      DateTime       @default(now())
-  order          Order          @relation(fields: [orderId], references: [id])
+  updatedAt      DateTime       @updatedAt
+
+  order Order          @relation(fields: [orderId], references: [id])
+  items ShipmentItem[]
+
+  @@index([orderId])
+}
+
+model ShipmentItem {
+  id          String @id @default(uuid())
+  shipmentId  String
+  orderItemId String
+  quantity    Int
+
+  shipment  Shipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId])
+  @@index([orderItemId])
 }
 
 model Discount {
@@ -247,6 +317,9 @@ model TryOnSession {
   createdAt   DateTime @default(now())
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model ChatSession {
@@ -255,6 +328,8 @@ model ChatSession {
   messages  Json
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Contact {
@@ -291,10 +366,16 @@ model DailyStat {
 }
 
 enum OrderStatus {
-  pending
-  shipped
-  delivered
-  cancelled
+  CREATED
+  PAYMENT_PENDING
+  PAID
+  ALLOCATED
+  PARTIALLY_SHIPPED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+  FAILED
 }
 
 enum ProductStatus {
@@ -313,7 +394,10 @@ enum PaymentStatus {
 enum ShipmentStatus {
   PENDING
   SHIPPED
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
   DELIVERED
+  EXCEPTION
   RETURNED
 }
 
@@ -342,6 +426,10 @@ model AuditLog {
   metadata   Json?
   createdAt  DateTime @default(now())
   user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([targetType, targetId])
 }
 
 model AiInteractionLog {
@@ -357,30 +445,47 @@ model AiInteractionLog {
 }
 
 model ReturnRequest {
-  id           String   @id @default(uuid())
+  id           String       @id @default(uuid())
   orderId      String
   userId       String
   reason       String
-  status       String   @default("PENDING") // PENDING, APPROVED, REJECTED, REFUNDED
+  status       ReturnStatus @default(PENDING)
   refundAmount Int?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  order        Order    @relation(fields: [orderId], references: [id])
-  user         User     @relation(fields: [userId], references: [id])
+  adminNotes   String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@index([orderId])
+  @@index([userId])
+}
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REFUNDED
+  COMPLETED
 }
 
 model OrderItem {
-  id        String   @id @default(uuid())
-  orderId   String
-  productId String?
-  quantity  Int
-  price     Int
-  name      String
-  size      String?
-  image     String?
-  createdAt DateTime @default(now())
-  order     Order    @relation(fields: [orderId], references: [id])
-  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  id            String         @id @default(uuid())
+  orderId       String
+  productId     String?
+  quantity      Int
+  price         Int
+  name          String
+  size          String?
+  image         String?
+  createdAt     DateTime       @default(now())
+  order         Order          @relation(fields: [orderId], references: [id])
+  product       Product?       @relation(fields: [productId], references: [id], onDelete: SetNull)
+  shipmentItems ShipmentItem[]
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 model Address {
@@ -396,6 +501,8 @@ model Address {
   phone      String?
   isDefault  Boolean @default(false)
   user       User    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Alert {

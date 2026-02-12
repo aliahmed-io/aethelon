@@ -13,7 +13,7 @@ export default async function VaultPage() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    interface Watch {
+    interface FurnitureItem {
         id: string;
         orderId: string;
         name: string;
@@ -23,7 +23,7 @@ export default async function VaultPage() {
     }
 
     // Mock data for build
-    const allTimepieces: Watch[] = [];
+    const allItems: FurnitureItem[] = [];
     const totalAssetValue = 0;
     const totalAcquisitions = 0;
 
@@ -48,7 +48,7 @@ export default async function VaultPage() {
                             </p>
                         </div>
 
-                        {allTimepieces.length > 0 && (
+                        {allItems.length > 0 && (
                             <div className="flex gap-12 text-right opacity-0 animate-[fadeIn_1s_ease-out_0.4s_forwards]">
                                 <div>
                                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Acquisitions</p>
@@ -63,22 +63,22 @@ export default async function VaultPage() {
                     </div>
                 </div>
 
-                {/* 2. The Watch Box Grid */}
-                {allTimepieces.length > 0 ? (
+                {/* 2. The Collection Grid */}
+                {allItems.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {allTimepieces.map((watch: { id: string; orderId: string; name: string; images: string[]; mainCategory: string; acquiredDate: string | Date }, idx: number) => (
+                        {allItems.map((item: { id: string; orderId: string; name: string; images: string[]; mainCategory: string; acquiredDate: string | Date }, idx: number) => (
                             <Link
-                                href={`/account/orders/${watch.orderId}`}
-                                key={`${watch.id}-${idx}`}
+                                href={`/account/orders/${item.orderId}`}
+                                key={`${item.id}-${idx}`}
                                 className="group relative aspect-[4/5] bg-muted border border-border rounded-sm overflow-hidden hover:border-accent/30 transition-all duration-500"
                             >
-                                {/* Watch Image */}
+                                {/* Item Image */}
                                 <div className="absolute inset-0 p-8 flex items-center justify-center bg-gradient-to-b from-foreground/[0.02] to-transparent">
                                     <div className="relative w-full h-full transform group-hover:scale-105 transition-transform duration-700 ease-out">
-                                        {watch.images && watch.images[0] && (
+                                        {item.images && item.images[0] && (
                                             <Image
-                                                src={watch.images[0]}
-                                                alt={watch.name || "Watch"}
+                                                src={item.images[0]}
+                                                alt={item.name || "Furniture"}
                                                 fill
                                                 className="object-contain drop-shadow-2xl"
                                             />
@@ -94,13 +94,13 @@ export default async function VaultPage() {
                                             <span className="text-[9px] font-bold uppercase tracking-widest text-accent">Authenticated</span>
                                         </div>
                                         <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
-                                            {new Date(watch.acquiredDate).toLocaleDateString()}
+                                            {new Date(item.acquiredDate).toLocaleDateString()}
                                         </span>
                                     </div>
 
                                     <div className="bg-background/90 backdrop-blur-xl border-t border-border -mx-6 -mb-6 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                                        <h3 className="text-lg font-medium text-foreground mb-1">{watch.name}</h3>
-                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{watch.mainCategory || "Furniture"}</p>
+                                        <h3 className="text-lg font-medium text-foreground mb-1">{item.name}</h3>
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{item.mainCategory || "Furniture"}</p>
                                         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-accent border-b border-accent hover:border-transparent w-fit transition-colors pb-0.5">
                                             View Provenance <ArrowRight className="w-3 h-3" />
                                         </div>
@@ -110,8 +110,8 @@ export default async function VaultPage() {
                         ))}
 
                         {/* Empty "Allocation" Slots to fill grid */}
-                        {Array.from({ length: Math.max(0, 3 - (allTimepieces.length % 3)) }).map((_, i) => (
-                            (allTimepieces.length % 3 !== 0) && (
+                        {Array.from({ length: Math.max(0, 3 - (allItems.length % 3)) }).map((_, i) => (
+                            (allItems.length % 3 !== 0) && (
                                 <div key={`empty-${i}`} className="aspect-[4/5] border border-border bg-muted/30 rounded-sm flex flex-col items-center justify-center opacity-50">
                                     <div className="w-16 h-16 border border-border rounded-full flex items-center justify-center mb-4">
                                         <div className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
@@ -120,6 +120,7 @@ export default async function VaultPage() {
                                 </div>
                             )
                         ))}
+
 
                     </div>
                 ) : (

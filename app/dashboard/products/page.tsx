@@ -21,6 +21,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { RestockModal } from "./components/RestockModal";
 
 async function getProducts() {
     return await Prisma.product.findMany({
@@ -50,6 +52,7 @@ export default async function AdminProductsPage() {
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs">Name</TableHead>
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs">Status</TableHead>
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs text-right">Price</TableHead>
+                            <TableHead className="text-muted-foreground uppercase tracking-widest text-xs text-center">Stock</TableHead>
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs text-right">Date</TableHead>
                             <TableHead className="text-right text-muted-foreground uppercase tracking-widest text-xs">Actions</TableHead>
                         </TableRow>
@@ -80,6 +83,22 @@ export default async function AdminProductsPage() {
                                 </TableCell>
                                 <TableCell className="text-right font-mono text-foreground">
                                     {formatPrice(product.price)}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <div className="flex flex-col items-center gap-1">
+                                        <div className="font-mono text-sm">
+                                            {product.stockQuantity}
+                                            {product.stockQuantity <= product.lowStockThreshold && (
+                                                <Badge variant="destructive" className="ml-2 text-[10px] h-4 px-1">Low</Badge>
+                                            )}
+                                        </div>
+                                        {product.reservedStock > 0 && (
+                                            <span className="text-[10px] text-yellow-600 bg-yellow-100 px-1 rounded">
+                                                Rsrv: {product.reservedStock}
+                                            </span>
+                                        )}
+                                        <RestockModal productId={product.id} currentStock={product.stockQuantity} />
+                                    </div>
                                 </TableCell>
                                 <TableCell className="text-right text-muted-foreground text-sm">
                                     {new Date(product.createdAt).toLocaleDateString()}

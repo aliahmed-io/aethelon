@@ -1,11 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import logger from "@/lib/logger";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function checkModelQuality(thumbnailUrl: string) {
     try {
         if (!process.env.GEMINI_API_KEY) {
-            console.warn("GEMINI_API_KEY not found, skipping QA");
+            logger.warn("GEMINI_API_KEY not found, skipping QA");
             return null;
         }
 
@@ -35,7 +36,7 @@ export async function checkModelQuality(thumbnailUrl: string) {
 
         return JSON.parse(jsonStr);
     } catch (error) {
-        console.error("Gemini QA Error:", error);
+        logger.error("Gemini QA Error", error);
         return null;
     }
 }

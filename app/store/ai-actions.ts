@@ -3,6 +3,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createMeshyTask, getMeshyTask } from "@/lib/meshy";
 import prisma from "@/lib/db";
+import logger from "@/lib/logger";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -26,7 +27,7 @@ export async function generateProductDescription(name: string, category: string,
         const response = await result.response;
         return { success: true, text: response.text() };
     } catch (error) {
-        console.error("AI Generation Error:", error);
+        logger.error("AI Generation Error", error);
         return { success: false, error: "Failed to generate description." };
     }
 }
@@ -58,7 +59,7 @@ export async function generate3DModel(productId: string, imageUrls: string[]) {
             return { success: false, error: "Failed to start 3D generation." };
         }
     } catch (error) {
-        console.error("Meshy Error:", error);
+        logger.error("Meshy Error", error);
         return { success: false, error: "Failed to communicate with 3D engine." };
     }
 }
@@ -76,5 +77,45 @@ export async function check3DStatus(taskId: string) {
         };
     } catch (_error) {
         return { success: false, error: "Failed to check status." };
+    }
+}
+
+export async function generateCampaignContent(topic: string, products: string[]) {
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+        const productContext = products.length > 0
+            ? `Featured Products: ${products.join(", ")}`
+            : "General Brand Promotion";
+
+        const prompt = `
+        You are an expert email marketing copywriter for a luxury watch brand called Aethelon.
+        
+        Campaign Topic: ${topic}
+        ${productContext}
+        
+        Generate a high-converting HTML email campaign.
+        
+        Output valid JSON with the following fields:
+        {
+            "subject": "Catchy, premium subject line (max 50 chars)",
+            "preheader": "Engaging preview text",
+            "body": "HTML body content. Use inline CSS for styling. Keep it minimalist, dark mode friendly (dark background, white text). Include placeholders for product images if applicable."
+        }
+
+        Do not include markdown formatting like \`\`\`json. Just the raw JSON string.
+        `;
+
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+
+        // Clean up markdown if present
+        const jsonString = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+        const content = JSON.parse(jsonString);
+
+        return { success: true, data: content };
+    } catch (error) {
+        logger.error("Campaign Gen Error", error);
+        return { success: false, error: "Failed to generate campaign content." };
     }
 }

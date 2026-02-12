@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import logger from "@/lib/logger";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = 'force-dynamic';
 
 
 // GET handler for direct search queries
 export async function GET(request: NextRequest) {
+    // Rate Limit: 60 requests per minute by IP
+    const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
+    const { success } = await rateLimit(`search-${ip}`, 60, "60 s");
+
+    if (!success) {
+        return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("q");
     const category = searchParams.get("category");
@@ -23,7 +33,7 @@ export async function GET(request: NextRequest) {
         const { products, total } = await searchProducts({ query, category, minPrice, maxPrice, inStock, sortBy, limit });
         return NextResponse.json({ products, total, query, filters: { category, minPrice, maxPrice, inStock, sortBy } });
     } catch (error) {
-        console.error("[Search API Error]", error);
+        logger.error("[Search API Error]", error);
         return NextResponse.json({ error: "Failed to search products" }, { status: 500 });
     }
 }
@@ -44,7 +54,7 @@ export async function POST(request: NextRequest) {
         // For now, both types return the same results
         return NextResponse.json({ results: products, searchType });
     } catch (error) {
-        console.error("[Search API Error]", error);
+        logger.error("[Search API Error]", error);
         return NextResponse.json({ error: "Failed to search products", results: [] }, { status: 500 });
     }
 }

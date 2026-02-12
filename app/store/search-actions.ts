@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/db";
 import { Product } from "@/lib/assistantTypes";
+import logger from "@/lib/logger";
 
 export async function searchProductsAction(query: string): Promise<Product[]> {
     if (!query || !query.trim()) return [];
@@ -42,7 +43,7 @@ export async function searchProductsAction(query: string): Promise<Product[]> {
         }));
 
     } catch (error) {
-        console.error("Search Action Error:", error);
+        logger.error("Search Action Error", error);
         return [];
     }
 }

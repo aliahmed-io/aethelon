@@ -60,7 +60,7 @@ export function TryOnForm() {
                             </div>
                             <h3 className="text-lg font-light tracking-wide mb-2 text-foreground">Initialize Scanner</h3>
                             <p className="text-muted-foreground text-sm max-w-xs mx-auto mb-8 font-light">
-                                Upload a wrist reference for Imagen 3 calibration.
+                                Upload a room reference for Imagen 3 calibration.
                             </p>
 
                             <button className="px-8 py-3 bg-accent text-accent-foreground font-bold text-xs uppercase tracking-widest hover:bg-accent/90 transition-colors rounded-sm">
@@ -106,7 +106,7 @@ export function TryOnForm() {
                                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-foreground/70 to-transparent flex items-center justify-between">
                                     <div>
                                         <p className="text-white font-medium text-lg">Fitting Complete</p>
-                                        <p className="text-white/70 text-xs uppercase tracking-wide">Aethelon Chronograph 41</p>
+                                        <p className="text-white/70 text-xs uppercase tracking-wide">Aethelon Signature Lounge Chair</p>
                                     </div>
                                     <div className="flex gap-3">
                                         <button onClick={reset} className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">

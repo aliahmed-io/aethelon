@@ -2,8 +2,10 @@ import Stripe from "stripe";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 
+import logger from "@/lib/logger";
+
 if (!stripeKey) {
-    console.warn("⚠️ STRIPE_SECRET_KEY is missing in environment variables. Stripe calls will fail.");
+    logger.warn("⚠️ STRIPE_SECRET_KEY is missing in environment variables. Stripe calls will fail.");
 }
 
 export const stripe = new Stripe(stripeKey || "sk_missing", {

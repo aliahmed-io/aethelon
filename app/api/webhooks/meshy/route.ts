@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { checkModelQuality } from "@/lib/gemini";
+import logger from "@/lib/logger";
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
     try {
@@ -27,7 +30,7 @@ export async function POST(req: Request) {
         if (!product) {
             // It's possible we get a callback for a task that isn't linked to a product yet 
             // or was deleted. We log it but return 404.
-            console.warn(`Meshy webhook received for unknown task ID: ${id}`);
+            logger.warn(`Meshy webhook received for unknown task ID: ${id}`);
             return NextResponse.json({ error: "Product not found" }, { status: 404 });
         }
 
@@ -51,7 +54,7 @@ export async function POST(req: Request) {
                 const qaResult = await checkModelQuality(thumbnail_url);
 
                 if (qaResult) {
-                    console.log(`Gemini QA for Product ${product.id}:`, qaResult);
+                    logger.info(`Gemini QA for Product ${product.id}`, { qaResult });
                     // Optionally save this to a new field in the future
                 }
             }
@@ -76,7 +79,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("Meshy Webhook Error:", error);
+        logger.error("Meshy Webhook Error", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

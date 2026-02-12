@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import prisma from "@/lib/db";
 import { unstable_noStore as noStore } from "next/cache";
+import logger from "@/lib/logger";
 
 const GEN_AI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -250,7 +251,7 @@ export async function draftEmailCampaign(context: string, products: { name: stri
 
         return data;
     } catch (e) {
-        console.error("AI Email Draft Error:", e);
+        logger.error("AI Email Draft Error", e);
         return null;
     }
 }

@@ -2,8 +2,10 @@ import { Shippo } from "shippo";
 
 const apiKeyHeader = process.env.SHIPPO_API_KEY;
 
+import logger from "@/lib/logger";
+
 if (!apiKeyHeader) {
-    console.warn("⚠️ SHIPPO_API_KEY is missing in environment variables. Shipping rates/labels will fail.");
+    logger.warn("⚠️ SHIPPO_API_KEY is missing in environment variables. Shipping rates/labels will fail.");
 }
 
 const shippo = apiKeyHeader
@@ -63,7 +65,7 @@ export async function getShippingRates(
 
         return shipment.rates;
     } catch (error) {
-        console.error("Error fetching rates:", error);
+        logger.error("Error fetching rates", error);
         throw new Error("Failed to fetch shipping rates");
     }
 }
@@ -82,7 +84,7 @@ export async function purchaseLabel(rateId: string) {
 
         return transaction;
     } catch (error) {
-        console.error("Error purchasing label:", error);
+        logger.error("Error purchasing label", error);
         throw new Error("Failed to purchase shipping label");
     }
 }

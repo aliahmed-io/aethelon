@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import nextDynamic from "next/dynamic";
+import { ValuationMetrics } from "./components/ValuationMetrics";
 
 /**
  * ─── Progressive Loading ──────────────────────────────────────────────
@@ -45,7 +46,7 @@ async function getStats() {
     const [totalRevenue, totalOrders, paidOrders, products, reviews, recentOrders] = await Promise.all([
         Prisma.order.aggregate({ _sum: { amount: true } }),
         Prisma.order.count(),
-        Prisma.order.count({ where: { status: { in: ["delivered", "shipped", "pending"] } } }),
+        Prisma.order.count({ where: { status: { in: ["DELIVERED", "SHIPPED", "PENDING"] } } }),
         Prisma.product.findMany({ take: 5, orderBy: { price: 'desc' } }),
         Prisma.review.findMany({
             take: 4,
@@ -79,9 +80,11 @@ async function getStats() {
     };
 }
 
+import { getPredictiveAnalytics } from "@/lib/analytics";
+
 export default async function DashboardPage() {
     const stats = await getStats();
-    const chartData = await getDailyRevenue();
+    const { historical, forecast } = await getPredictiveAnalytics();
 
     return (
         <div className="space-y-8 p-4 md:p-8 max-w-7xl mx-auto min-h-screen">
@@ -93,6 +96,9 @@ export default async function DashboardPage() {
                 </div>
                 <SystemHealthWidget />
             </div>
+
+            {/* Inventory Valuation */}
+            <ValuationMetrics />
 
             {/* Stats Grid */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -169,9 +175,9 @@ export default async function DashboardPage() {
             <div className="grid gap-8 lg:grid-cols-3">
                 <Card className="lg:col-span-2 p-6 bg-card border-border text-foreground shadow-sm min-h-[400px]">
                     <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Revenue Trends</h3>
+                        <h3 className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Revenue Trends & Forecast</h3>
                     </div>
-                    <DashboardChart data={chartData} />
+                    <DashboardChart data={historical} forecast={forecast} />
                 </Card>
 
                 <Card className="p-6 bg-card border-border text-foreground shadow-sm">

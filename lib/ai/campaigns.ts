@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import prisma from "@/lib/db";
+import logger from "@/lib/logger";
 
 const GEN_AI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -45,7 +46,7 @@ export async function generateCampaignDraft(context: string): Promise<CampaignDr
         const text = result.response.text();
         return JSON.parse(text) as CampaignDraft;
     } catch (e) {
-        console.error("Campaign AI Error:", e);
+        logger.error("Campaign AI Error", e);
         return {
             subject: "Special Announcement from Aethelona",
             message: "We have some exciting updates for you. Check out our store for the latest collection!"

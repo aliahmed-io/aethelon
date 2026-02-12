@@ -1,12 +1,14 @@
 "use server";
 
-import Prisma from "@/lib/db";
+import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
 
 export async function toggleRoleAction(userId: string, currentRole: string) {
+    await requireAdmin();
     const newRole = currentRole === "ADMIN" ? "USER" : "ADMIN";
     try {
-        await Prisma.user.update({
+        await prisma.user.update({
             where: { id: userId },
             data: { role: newRole as "ADMIN" | "USER" }
         });

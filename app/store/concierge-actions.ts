@@ -3,6 +3,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Prisma from "@/lib/db";
 import { Product } from "@/lib/assistantTypes";
+import logger from "@/lib/logger";
 
 const SYSTEM_INSTRUCTION = `
 You are the Aethelon Concierge, an expert in premium furniture, interior design, and luxury home décor.
@@ -137,7 +138,7 @@ export async function chatWithConcierge(
                 });
 
             } catch (e) {
-                console.error("Failed to parse recommendation JSON or Query DB", e);
+                logger.error("Failed to parse recommendation JSON or Query DB", e);
             }
         }
 
@@ -147,7 +148,7 @@ export async function chatWithConcierge(
             products: recommendedProducts.length > 0 ? recommendedProducts : undefined
         };
     } catch (error) {
-        console.error("Concierge Error:", error);
+        logger.error("Concierge Error", error);
         return { success: false, message: "I apologize, but I am momentarily unavailable. Please try again shortly." };
     }
 }

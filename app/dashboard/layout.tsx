@@ -4,24 +4,11 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/components/dashboard/AdminSidebar";
 
-// Basic admin check - in production you should use RBAC
-function isAdminEmail(email?: string | null) {
-    if (!email) return false;
-    return email === "alihassan182006@gmail.com" || email.endsWith("@aethelon.geneve.com");
-}
+import { requireAdmin } from "@/lib/auth";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-
-    // Verify Admin
-    if (!user) {
-        return redirect("/api/auth/login");
-    }
-
-    if (!isAdminEmail(user.email)) {
-        return redirect("/account");
-    }
+    // Verify Admin (will redirect if not admin)
+    await requireAdmin();
 
     return (
         <div className="min-h-screen bg-background text-foreground">

@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getFullBusinessContext } from "./coo-data";
 import { getMemoryContext, addMessage, addKeyFact, startSession } from "./coo-memory";
 import prisma from "@/lib/db";
+import logger from "@/lib/logger";
 
 // ============================================================
 // AI COO SERVICE
@@ -104,11 +105,11 @@ async function getOrGenerate<T>(
         });
 
         if (cached && new Date() < cached.expiresAt) {
-            console.log(`[AI-CACHE] Hit: ${key}`);
+            logger.info(`[AI-CACHE] Hit: ${key}`);
             return cached.content as T;
         }
 
-        console.log(`[AI-CACHE] Miss: ${key}. Generating...`);
+        logger.info(`[AI-CACHE] Miss: ${key}. Generating...`);
         const result = await generator();
 
         // Calculate expiration
@@ -132,7 +133,7 @@ async function getOrGenerate<T>(
 
         return result;
     } catch (error) {
-        console.error(`[AI-CACHE] Error handling cache for ${key}:`, error);
+        logger.error(`[AI-CACHE] Error handling cache for ${key}`, error);
         // Fallback to generating without cache if DB fails
         return await generator();
     }

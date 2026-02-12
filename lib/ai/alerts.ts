@@ -1,10 +1,12 @@
 import prisma from "@/lib/db";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import logger from "@/lib/logger";
+import { OrderStatus } from "@prisma/client";
 
 const GEN_AI_API_KEY = process.env.GEMINI_API_KEY;
 
 export async function runFraudScan() {
-    console.log("Starting Fraud Scan...");
+    logger.info("Starting Fraud Scan...");
     let alertsGenerated = 0;
 
     // 1. High Value Orders Heuristic
@@ -16,7 +18,8 @@ export async function runFraudScan() {
             // Checking: BulkEditTable shows price. Usually price is stored as cents or dollars. 
             // Let's assume dollars for now based on "price: 150" seen in seeds often.
             // If it's dollars: > 500.
-            status: "pending"
+            // If it's dollars: > 500.
+            status: OrderStatus.PAYMENT_PENDING
         },
         include: { User: true } // to get user details
     });
@@ -36,7 +39,7 @@ export async function runFraudScan() {
             data: {
                 type: "FRAUD_HIGH_VALUE",
                 severity: order.amount > 1000 ? "HIGH" : "MEDIUM",
-                message: `High value order detected: $${order.amount} by ${order.User?.email || "Guest"}`,
+                message: `High value order detected: $${order.amount} by ${(order as any).User?.email || "Guest"}`,
                 metadata: { orderId: order.id, userId: order.userId },
             }
         });
@@ -93,7 +96,7 @@ export async function runFraudScan() {
                 }
             }
         } catch (e) {
-            console.error("AI Review Scan failed", e);
+            logger.error("AI Review Scan failed", e);
         }
     }
 

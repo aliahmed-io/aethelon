@@ -11,6 +11,7 @@ import { Product } from "@/lib/assistantTypes";
 import { formatPrice } from "@/lib/utils";
 import clsx from "clsx";
 import { searchProductsAction } from "@/app/store/search-actions";
+import { VoiceSearch } from "./VoiceSearch";
 
 
 
@@ -90,6 +91,7 @@ export function SearchOverlay() {
                                     placeholder="Search our collection..."
                                     className="flex-1 bg-transparent text-xl outline-none placeholder:text-muted-foreground/40 text-foreground font-light tracking-wide"
                                 />
+                                <VoiceSearch onResult={(text) => setQuery(text)} />
                                 <button type="button" onClick={closeSearch} className="hover:bg-muted p-2 rounded-full transition-colors">
                                     <X className="h-5 w-5 text-muted-foreground" />
                                 </button>

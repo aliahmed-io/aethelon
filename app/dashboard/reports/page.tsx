@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ExportButton } from "./ExportButton";
 
 // Mock data for sparklines (in a real app, this would come from the DB)
 const sparkData1 = [40, 55, 45, 60, 50, 65, 55, 70];
@@ -21,7 +22,7 @@ const sparkData3 = [30, 40, 35, 50, 45, 60, 55, 90];
 
 async function getReportData() {
     const [totalRevenue, totalOrders, totalUsers] = await Promise.all([
-        prisma.order.aggregate({ _sum: { total: true } }),
+        prisma.order.aggregate({ _sum: { amount: true } }),
         prisma.order.count(),
         prisma.user.count(),
     ]);
@@ -29,11 +30,11 @@ async function getReportData() {
     const recentOrders = await prisma.order.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
-        include: { user: true },
+        include: { User: true },
     });
 
     return {
-        revenue: totalRevenue._sum.total || 0,
+        revenue: totalRevenue._sum.amount || 0,
         orders: totalOrders,
         users: totalUsers,
         recentOrders,
@@ -92,12 +93,8 @@ export default async function ReportsPage() {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" className="h-9 w-9 p-0 border-border text-foreground hover:bg-muted">
-                        <Download className="w-4 h-4" />
-                    </Button>
-                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs px-4 h-9">
-                        Export CSV
-                    </Button>
+                    <ExportButton type="orders" label="" variant="outline" className="h-9 w-9 p-0 border-border text-foreground hover:bg-muted" />
+                    <ExportButton type="revenue" label="Export Revenue" className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs px-4 h-9" />
                 </div>
             </div>
 
@@ -188,9 +185,9 @@ export default async function ReportsPage() {
                             {data.recentOrders.map((order: any) => (
                                 <tr key={order.id} className="hover:bg-muted/30 transition-colors">
                                     <td className="px-6 py-4 font-mono text-muted-foreground text-xs">#{order.id.slice(-6)}</td>
-                                    <td className="px-6 py-4 font-medium text-foreground">{order.user?.email || "Guest"}</td>
+                                    <td className="px-6 py-4 font-medium text-foreground">{order.User?.email || "Guest"}</td>
                                     <td className="px-6 py-4 text-muted-foreground text-xs">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                    <td className="px-6 py-4 text-right font-medium text-foreground">{formatPrice(order.total)}</td>
+                                    <td className="px-6 py-4 text-right font-medium text-foreground">{formatPrice(order.amount)}</td>
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex items-center px-2 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest ${order.status === 'delivered' ? 'bg-emerald-100 text-emerald-700' :
                                             order.status === 'pending' ? 'bg-amber-100 text-amber-700' :

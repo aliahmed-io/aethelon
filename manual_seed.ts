@@ -2,19 +2,20 @@
 import { PrismaClient } from "@prisma/client";
 
 // Hardcoded for verification only - delete after use
-const DATABASE_URL = "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfaWQiOjEsInNlY3VyZV9rZXkiOiJza196UGJua3ZYMjN6c0ZXOGdJYk1iSHciLCJhcGlfa2V5IjoiMDFLRjYzVFRaQk1TNThWNFozVktZMVNXQzUiLCJ0ZW5hbnRfaWQiOiI5NThhZDU4NThmOWQ1MGIwOWQxYTM1Mjc1ZmU1NTdhYjg2NzEyOTUxNWFhNmRlZmY5NTJlMThmYjY3NDJkNzVhIiwiaW50ZXJuYWxfc2VjcmV0IjoiMTkzYmJkMzEtNGViMS00MWExLTgwZTUtYTBmMWEzOWExMGUxIn0.txXDqLIka8Q24nM5WrkO9PiRyX8TFjMB6HMgE34qEpw&connect_timeout=60";
+// Hardcoded for verification only - delete after use
+const DATABASE_URL = process.env.DATABASE_URL;
 
 const ASSETS = {
-    chronoFront: "/assets/products/chrono_front_black.png",
-    chronoAngle: "/assets/products/chrono_angle_black.png",
-    chronoGold: "/assets/products/chrono_gold_black.png",
-    aviator: "/assets/products/aviator_green.png",
-    horizon: "/assets/products/horizon_titanium.png",
-    perpetual: "/assets/products/perpetual_gold.png",
-    legacy: "/assets/products/legacy_classic.png",
-    concept: "/assets/products/concept_digital.png",
-    regatta: "/assets/products/regatta_yacht.png",
-    stealth: "/assets/products/stealth_black.png",
+    sofaVelvet: "/assets/products/sofa_velvet_blue.png",
+    armchairLeather: "/assets/products/armchair_leather_tan.png",
+    diningTable: "/assets/products/dining_table_oak.png",
+    coffeeTable: "/assets/products/coffee_table_marble.png",
+    bedFrame: "/assets/products/bed_frame_walnut.png",
+    bookshelf: "/assets/products/bookshelf_industrial.png",
+    lampFloor: "/assets/products/lamp_floor_brass.png",
+    rugPersian: "/assets/products/rug_persian_red.png",
+    deskOffice: "/assets/products/desk_office_modern.png",
+    chairDining: "/assets/products/chair_dining_scandi.png",
 };
 
 function slugify(value: string) {
@@ -26,7 +27,7 @@ function pickOne<T>(arr: T[]): T {
 }
 
 async function main() {
-    console.log("Starting Manual Seed...");
+    console.log("Starting Manual Seed (Furniture Edition)...");
 
     const prisma = new PrismaClient({
         datasources: {
@@ -39,12 +40,12 @@ async function main() {
     try {
         // 1. Upsert Categories
         const categoriesData = [
-            { name: "Chronographs", image: ASSETS.chronoFront },
-            { name: "Aviation", image: ASSETS.aviator },
-            { name: "Diving", image: ASSETS.regatta },
-            { name: "Dress", image: ASSETS.legacy },
-            { name: "Grand Complications", image: ASSETS.perpetual },
-            { name: "Concept", image: ASSETS.concept },
+            { name: "Living Room", image: ASSETS.sofaVelvet },
+            { name: "Dining Room", image: ASSETS.diningTable },
+            { name: "Bedroom", image: ASSETS.bedFrame },
+            { name: "Home Office", image: ASSETS.deskOffice },
+            { name: "Lighting", image: ASSETS.lampFloor },
+            { name: "Decor", image: ASSETS.rugPersian },
         ];
 
         const catMap: Record<string, string> = {};
@@ -59,16 +60,16 @@ async function main() {
 
         // 2. Upsert Products
         const productsData = [
-            { name: "Aethelon Chronograph Steel", price: 8900, cat: "Chronographs", img: [ASSETS.chronoFront, ASSETS.chronoAngle], desc: "The quintessential tool watch.", feat: true },
-            { name: "Aethelon Chronograph Gold", price: 18500, cat: "Chronographs", img: [ASSETS.chronoGold, ASSETS.chronoAngle], desc: "A statement of elegance.", feat: false },
-            { name: "Aethelon Regatta Master", price: 12400, cat: "Diving", img: [ASSETS.regatta], desc: "Precision yachting timer.", feat: true },
-            { name: "Aethelon Aviator Mk II", price: 6500, cat: "Aviation", img: [ASSETS.aviator], desc: "Vintage inspired pilot's watch.", feat: false },
-            { name: "Aethelon Horizon Titanium", price: 7200, cat: "Aviation", img: [ASSETS.horizon], desc: "Modern field watch.", feat: false },
-            { name: "Aethelon Leagcy Automatic", price: 5400, cat: "Dress", img: [ASSETS.legacy], desc: "Pure minimalism.", feat: false },
-            { name: "Aethelon Perpetual Calendar", price: 45000, cat: "Grand Complications", img: [ASSETS.perpetual], desc: "The pinnacle of horology.", feat: true },
-            { name: "Aethelon Concept One", price: 28000, cat: "Concept", img: [ASSETS.concept], desc: "Avant-garde.", feat: true },
-            { name: "Aethelon Stealth Ops", price: 9800, cat: "Concept", img: [ASSETS.stealth], desc: "Full DLC black coating.", feat: false },
-            { name: "Aethelon Deep Sea", price: 7200, cat: "Diving", img: [ASSETS.chronoAngle], desc: "Professional diver.", feat: false },
+            { name: "Aethelon Velvet Sofa", price: 2400, cat: "Living Room", img: [ASSETS.sofaVelvet], desc: "Luxurious deep blue velvet sofa with brass legs.", feat: true, color: "Blue", style: "Modern" },
+            { name: "Aethelon Leather Armchair", price: 1200, cat: "Living Room", img: [ASSETS.armchairLeather], desc: "Cognac leather armchair, mid-century design.", feat: false, color: "Tan", style: "Mid-Century" },
+            { name: "Aethelon Oak Dining Table", price: 3500, cat: "Dining Room", img: [ASSETS.diningTable], desc: "Solid oak table, seats 8.", feat: true, color: "Oak", style: "Scandinavian" },
+            { name: "Aethelon Marble Coffee Table", price: 850, cat: "Living Room", img: [ASSETS.coffeeTable], desc: "Carrara marble top with minimal steel base.", feat: false, color: "White", style: "Modern" },
+            { name: "Aethelon Walnut Bed Frame", price: 1800, cat: "Bedroom", img: [ASSETS.bedFrame], desc: "Platform bed with integrated headboard storage.", feat: true, color: "Walnut", style: "Contemporary" },
+            { name: "Aethelon Industrial Bookshelf", price: 950, cat: "Home Office", img: [ASSETS.bookshelf], desc: "Steel and reclaimed wood shelving unit.", feat: false, color: "Black/Wood", style: "Industrial" },
+            { name: "Aethelon Brass Floor Lamp", price: 450, cat: "Lighting", img: [ASSETS.lampFloor], desc: "Art deco inspired floor lamp.", feat: false, color: "Gold", style: "Art Deco" },
+            { name: "Aethelon Persian Rug", price: 1500, cat: "Decor", img: [ASSETS.rugPersian], desc: "Hand-knotted wool rug, vintage wash.", feat: true, color: "Red/Cream", style: "Traditional" },
+            { name: "Aethelon Executive Desk", price: 2100, cat: "Home Office", img: [ASSETS.deskOffice], desc: "Minimalist desk with cable management.", feat: true, color: "Black", style: "Modern" },
+            { name: "Aethelon Scandi Chair", price: 350, cat: "Dining Room", img: [ASSETS.chairDining], desc: "Curved wood dining chair.", feat: false, color: "Ash", style: "Scandinavian" },
         ];
 
         const productMap = [];
@@ -80,7 +81,9 @@ async function main() {
                     description: p.desc,
                     images: p.img,
                     isFeatured: p.feat,
-                    stockQuantity: 10
+                    stockQuantity: 10,
+                    color: p.color,
+                    style: p.style
                 },
                 create: {
                     name: p.name,
@@ -89,28 +92,30 @@ async function main() {
                     status: "published",
                     isFeatured: p.feat,
                     categoryId: catMap[p.cat],
-                    mainCategory: "MEN",
+                    mainCategory: "MEN", // Retain enum or update schema later if needed, assuming "MEN" is default for now but semantically wrong.
+                    // Ideally we fix MainCategory enum to be FURNITURE specific or generic.
+                    // For now, forcing a valid enum value to avoid breakage.
                     stockQuantity: 10,
                     images: p.img,
-                    color: "Silver",
-                    style: p.cat,
-                    tags: ["Luxury", p.cat],
+                    color: p.color,
+                    style: p.style,
+                    tags: ["Furniture", p.style, p.cat],
                 }
             });
             productMap.push(product);
         }
-        console.log(`Upserted ${productsData.length} products.`);
+        console.log(`Upserted ${productsData.length} furniture products.`);
 
         // 3. Upsert User
         const targetEmail = "alihassan182006@gmail.com";
         const user = await prisma.user.upsert({
             where: { email: targetEmail },
-            update: { isAdmin: true },
+            update: { role: "ADMIN" }, // Use role enum
             create: {
                 id: "user_ali_hassan_123",
                 email: targetEmail,
                 firstName: "Ali", lastName: "Hassan",
-                isAdmin: true,
+                role: "ADMIN",
                 profileImage: "https://placehold.co/200x200/png?text=AH"
             }
         });
@@ -126,12 +131,12 @@ async function main() {
                 orderDate.setDate(today.getDate() - daysAgo);
 
                 const p = pickOne(productMap);
-                const status = daysAgo > 5 ? "delivered" : pickOne(["processing", "shipped"]);
+                const status = daysAgo > 5 ? "DELIVERED" : pickOne(["CREATED", "SHIPPED"]); // Use correct OrderStatus enum
 
                 await prisma.order.create({
                     data: {
                         userId: user.id,
-                        status: status,
+                        status: status as any,
                         amount: p.price * 100,
                         createdAt: orderDate,
                         shippingName: "Ali Hassan",

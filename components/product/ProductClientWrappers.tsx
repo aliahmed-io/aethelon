@@ -40,7 +40,7 @@ export function ARButtonLazy(props: {
 }
 
 export function ProductTrackerLazy(props: {
-    product: { id: string; name: string; price: number; images: string[] };
+    product: { id: string; name: string; price: number; images: string[]; categoryId: string };
 }) {
     return <ProductTrackerInner {...props} />;
 }

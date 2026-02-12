@@ -20,11 +20,16 @@ async function getCollection(slug: string) {
 }
 
 export async function generateStaticParams() {
-    const campaigns = await prisma.campaign.findMany({
-        where: { status: "ACTIVE" },
-        select: { slug: true },
-    });
-    return campaigns.map((c) => ({ slug: c.slug }));
+    try {
+        const campaigns = await prisma.campaign.findMany({
+            where: { status: "ACTIVE" },
+            select: { slug: true },
+        });
+        return campaigns.map((c) => ({ slug: c.slug }));
+    } catch (error) {
+        console.error("Failed to generate static params for collections:", error);
+        return [];
+    }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

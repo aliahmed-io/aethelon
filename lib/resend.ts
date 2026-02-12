@@ -11,8 +11,10 @@ export function getResendFromEmail() {
     throw new Error("Missing RESEND_FROM in environment variables.");
 }
 
+import logger from "@/lib/logger";
+
 if (!apiKey) {
-    console.warn("⚠️ RESEND_API_KEY is missing in environment variables. Email sending will fail.");
+    logger.warn("⚠️ RESEND_API_KEY is missing in environment variables. Email sending will fail.");
 }
 
 export const resend = new Resend(apiKey || "re_missing_key");

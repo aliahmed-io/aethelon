@@ -3,9 +3,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const SYSTEM_INSTRUCTION = `
-You are an expert Virtual Try-On Assistant.
-Analyze the user's wrist image for lighting, skin tone, and perspective.
-Confirm if the image is suitable for a virtual watch fitting.
+You are an expert Interior Design Assistant.
+Analyze the user's room image for lighting, space, and style.
+Confirm if the image is suitable for virtual furniture placement.
 Return a professional assessment.
 `;
 
@@ -21,11 +21,11 @@ export async function generateTryOn(formData: FormData) {
 
         // In a real production environment with Imagen 3 access:
         // 1. Upload image to bucket (GCS).
-        // 2. Call Vertex AI Imagen 3 endpoint with prompt "Luxury watch on wrist".
+        // 2. Call Vertex AI Imagen 3 endpoint with prompt "Modern sofa in living room".
         // 3. Return the generated image URL.
 
         // For this demo, we verify the image with Gemini 3.0 Flash Logic
-        // to ensure it's a valid wrist shot, then return a "mock" success 
+        // to ensure it's a valid room shot, then return a "mock" success 
         // because we can't generate pixels without the specific paid API enabled.
 
         const apiKey = process.env.GEMINI_API_KEY;
@@ -47,7 +47,7 @@ export async function generateTryOn(formData: FormData) {
                         mimeType: imageFile.type
                     }
                 },
-                "Analyze this image. Is it a clear wrist shot suitable for virtual try-on? Answer briefly."
+                "Analyze this image. Is it a clear room shot suitable for furniture visualization? Answer briefly."
             ]);
 
             console.log("Gemini Analysis:", result.response.text());
@@ -57,7 +57,7 @@ export async function generateTryOn(formData: FormData) {
             success: true,
             // We return a specialized 'processed' image URL (using a placeholder for now that looks premium)
             // In a real app, this would be the output of Imagen 3.
-            imageUrl: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?q=80&w=1000&auto=format&fit=crop"
+            imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop"
         };
 
     } catch (error) {

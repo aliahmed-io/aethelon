@@ -34,6 +34,7 @@ interface ProductFormProps {
         isFeatured?: boolean;
         stockQuantity?: number;
         weight?: number;
+        costPrice?: number;
     } | null;
 }
 
@@ -317,6 +318,19 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                                 className="font-mono h-10 border-border"
                                 placeholder="0.00"
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Cost Price (Cents)</Label>
+                            <Input
+                                name="costPrice"
+                                type="number"
+                                required
+                                defaultValue={initialData?.costPrice || 0}
+                                className="font-mono h-10 border-border"
+                                placeholder="0"
+                            />
+                            <p className="text-[10px] text-muted-foreground">Internal cost in cents (e.g., 1500 = $15.00)</p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">

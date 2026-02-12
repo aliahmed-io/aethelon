@@ -1,11 +1,12 @@
 import axios from "axios";
+import logger from "@/lib/logger";
 
 const MESHY_API_KEY = process.env.MESHY_API_KEY;
 
 if (!MESHY_API_KEY) {
     // We'll log a warning but not throw immediately to allow build, 
     // as user promised to add key later.
-    console.warn("MESHY_API_KEY is missing from environment variables.");
+    logger.warn("MESHY_API_KEY is missing from environment variables.");
 }
 
 const client = axios.create({
@@ -64,7 +65,7 @@ export async function createMeshyTask(imageUrls: string[]) {
         const taskId = data?.taskId || data?.task_id || data?.id || data?.result;
         return { ...data, taskId };
     } catch (error) {
-        console.error("Error creating Meshy task:", error);
+        logger.error("Error creating Meshy task", error);
         throw error;
     }
 }
@@ -74,7 +75,7 @@ export async function getMeshyTask(taskId: string) {
         const response = await client.get(`/multi-image-to-3d/${taskId}`);
         return response.data;
     } catch (error) {
-        console.error("Error getting Meshy task:", error);
+        logger.error("Error getting Meshy task", error);
         throw error;
     }
 }

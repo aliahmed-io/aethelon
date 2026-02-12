@@ -18,6 +18,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "https://aethelon.vercel.app"),
     title: "Aethelon - Furniture for the Soul",
     description: "Award-winning premium furniture experience.",
 };
