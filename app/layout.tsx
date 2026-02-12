@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/features/SmoothScroll";
-import AudioController from "@/components/features/AudioController";
-import { CookieConsentBanner } from "@/components/ui/CookieConsentBanner";
 import { SearchProvider } from "@/components/search/SearchContext";
 import { ClientProviders } from "@/components/providers/ClientProviders";
-import CustomCursor from "@/components/ui/CustomCursor";
-import Chatbot from "@/components/ui/Chatbot";
+import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -26,6 +22,13 @@ export const metadata: Metadata = {
     description: "Award-winning premium furniture experience.",
 };
 
+/**
+ * Root Layout — Commerce Shell only.
+ *
+ * Global concerns: fonts, CSS, search context, cookie consent.
+ * Enhancement layer (cursor, scroll, audio, chatbot) is in route group layouts.
+ * This keeps shared JS lean for transactional and content routes.
+ */
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -35,15 +38,10 @@ export default function RootLayout({
         <html lang="en" className="scroll-smooth">
             <body className={`${inter.variable} ${playfair.variable} bg-background text-foreground antialiased`}>
                 <SearchProvider>
-                    <SmoothScroll>
-                        <CustomCursor />
-                        <Chatbot />
-                        <AudioController />
-                        <ClientProviders>
-                            {children}
-                        </ClientProviders>
-                        <CookieConsentBanner />
-                    </SmoothScroll>
+                    <ClientProviders>
+                        {children}
+                    </ClientProviders>
+                    <CookieConsentProvider />
                 </SearchProvider>
             </body>
         </html>

@@ -1,18 +1,45 @@
-
 import Prisma from "@/lib/db";
 export const dynamic = "force-dynamic";
 import { Card } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
 import { DollarSign, ShoppingBag, Users, Activity, TrendingUp, TrendingDown, ArrowUpRight, Star, MoreHorizontal } from "lucide-react";
-import { DashboardChart } from "@/components/dashboard/Charts";
 import { RecentSales } from "@/components/dashboard/RecentSales";
 import { getDailyRevenue } from "@/app/store/actions";
-import { SystemHealthWidget } from "@/components/dashboard/SystemHealthWidget";
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import nextDynamic from "next/dynamic";
+
+/**
+ * ─── Progressive Loading ──────────────────────────────────────────────
+ * DashboardChart (Recharts) and SystemHealthWidget are dynamically imported
+ * with skeleton fallbacks to reduce initial page JS and speed up TTFB.
+ * RecentSales is a server component — streamed via Suspense.
+ */
+const DashboardChart = nextDynamic(
+    () => import("@/components/dashboard/Charts").then((m) => m.DashboardChart),
+    {
+        loading: () => (
+            <div className="w-full h-[350px] bg-muted/30 animate-pulse rounded-sm flex items-center justify-center">
+                <span className="text-xs text-muted-foreground font-mono uppercase tracking-widest">Loading chart…</span>
+            </div>
+        ),
+    }
+);
+
+const SystemHealthWidget = nextDynamic(
+    () => import("@/components/dashboard/SystemHealthWidget").then((m) => m.SystemHealthWidget),
+    {
+        loading: () => (
+            <div className="flex items-center gap-3 px-4 py-2 bg-muted/50 rounded-sm animate-pulse">
+                <div className="w-2 h-2 rounded-full bg-muted" />
+                <span className="text-xs text-muted-foreground">System status…</span>
+            </div>
+        ),
+    }
+);
 
 async function getStats() {
     const [totalRevenue, totalOrders, paidOrders, products, reviews, recentOrders] = await Promise.all([
@@ -237,7 +264,20 @@ export default async function DashboardPage() {
                                 <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground hover:text-foreground">View all</Button>
                             </Link>
                         </div>
-                        <Suspense fallback={<div className="text-muted-foreground text-sm">Loading sales...</div>}>
+                        <Suspense fallback={
+                            <div className="space-y-4">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <div key={i} className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-muted animate-pulse" />
+                                        <div className="flex-1 space-y-2">
+                                            <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+                                            <div className="h-3 w-20 bg-muted animate-pulse rounded" />
+                                        </div>
+                                        <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                                    </div>
+                                ))}
+                            </div>
+                        }>
                             <RecentSales />
                         </Suspense>
                     </Card>
