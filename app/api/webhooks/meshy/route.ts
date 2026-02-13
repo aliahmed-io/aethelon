@@ -41,6 +41,7 @@ export async function POST(req: Request) {
                     meshyStatus: "SUCCEEDED",
                     meshyProgress: 100,
                     modelUrl: model_urls?.glb, // Save the GLB model URL
+                    usdzUrl: model_urls?.usdz, // Save the USDZ model URL for iOS AR
                 },
             });
 

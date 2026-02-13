@@ -15,8 +15,14 @@ async function getOrders() {
     const orders = await Prisma.order.findMany({
         orderBy: { createdAt: "desc" },
         include: {
-            User: true,
-        }
+            User: {
+                select: {
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                }
+            },
+        },
     });
     return orders;
 }

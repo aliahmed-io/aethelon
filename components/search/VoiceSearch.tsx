@@ -21,7 +21,7 @@ export function VoiceSearch({ onResult, className }: VoiceSearchProps) {
     const startListening = () => {
         if (!isSupported) return;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
 
@@ -33,14 +33,14 @@ export function VoiceSearch({ onResult, className }: VoiceSearchProps) {
             setIsListening(true);
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         recognition.onresult = (event: any) => {
             const transcript = event.results[0][0].transcript;
             onResult(transcript);
             setIsListening(false);
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         recognition.onerror = (event: any) => {
             console.error("Speech recognition error", event.error);
             setIsListening(false);

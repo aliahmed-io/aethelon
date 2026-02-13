@@ -2,9 +2,8 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, RotateCw, Sun, Moon, Sparkles, X, ArrowLeft, Loader2 } from 'lucide-react';
+import { Upload, RotateCw, Sun, Moon, Sparkles, ArrowLeft, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 function AIVisionContent() {

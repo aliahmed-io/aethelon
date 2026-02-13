@@ -9,7 +9,18 @@ Confirm if the image is suitable for virtual furniture placement.
 Return a professional assessment.
 `;
 
+import { requireUser } from "@/lib/auth";
+import { UsageService } from "@/modules/ai/usage.service";
+
 export async function generateTryOn(formData: FormData) {
+    const user = await requireUser();
+
+    // 1. Governance Check (3/day limit)
+    const { allowed, reason, remaining } = await UsageService.checkAndIncrement(user.id);
+    if (!allowed) {
+        return { success: false, message: reason || "Limit reached." };
+    }
+
     // Artificial delay to simulate heavy GPU processing (Imagen 3)
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
@@ -57,7 +68,8 @@ export async function generateTryOn(formData: FormData) {
             success: true,
             // We return a specialized 'processed' image URL (using a placeholder for now that looks premium)
             // In a real app, this would be the output of Imagen 3.
-            imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop"
+            imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop",
+            remainingGenerations: remaining
         };
 
     } catch (error) {

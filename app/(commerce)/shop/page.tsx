@@ -2,7 +2,7 @@ import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import Prisma from "@/lib/db";
 import { getRecommendedProducts } from "@/app/actions/personalization";
-import { Suspense } from "react";
+import { ProductStatus, MainCategory } from "@prisma/client";
 
 // We need to handle searchParams in page
 interface ShopPageProps {
@@ -13,12 +13,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     const { category } = await searchParams;
 
     // Fetch from Database
-    const where: any = {
+    const where: { status: ProductStatus; mainCategory?: MainCategory } = {
         status: 'published',
     };
 
     if (category) {
-        where.mainCategory = (category as string).toUpperCase();
+        where.mainCategory = (category as string).toUpperCase() as MainCategory;
     }
 
     const [products, recommendations] = await Promise.all([

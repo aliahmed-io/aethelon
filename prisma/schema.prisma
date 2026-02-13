@@ -23,6 +23,10 @@ model User {
   addresses              Address[]
   wishlist               WishlistItem[]
   role                   UserRole              @default(USER)
+
+  // AI Governance
+  aiGenerationsCount Int      @default(0)
+  lastGenerationDate DateTime @default(now())
 }
 
 enum UserRole {
@@ -49,6 +53,7 @@ model WishlistItem {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
+  @@index([productId])
 }
 
 model Product {
@@ -69,6 +74,7 @@ model Product {
   features           String[]      @default([])
   sizes              String[]      @default([])
   modelUrl           String?
+  usdzUrl            String? // For iOS AR Quick Look
   imageDescription   String?
   discountPercentage Int           @default(0)
   averageRating      Float         @default(0)

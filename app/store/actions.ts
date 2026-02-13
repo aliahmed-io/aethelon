@@ -14,7 +14,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { requireAdmin, requireUser } from "@/lib/auth";
 import { CircuitBreaker } from "@/lib/circuit-breaker";
 
-import { InventoryService } from "@/lib/inventory";
+import { InventoryService } from "@/modules/inventory/inventory.service";
+import { OrderService } from "@/modules/orders/orders.service";
+import { PaymentService } from "@/modules/payments/payments.service";
 import logger from "@/lib/logger";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -40,25 +42,8 @@ export async function checkOut() {
     }
 
     if (cart && cart.items && cart.items.length > 0) {
-        // 1. Create Order (CREATED state)
-        // We create it first so we have an ID for reservation and Stripe metadata
-        const order = await prisma.order.create({
-            data: {
-                userId: user.id,
-                amount: cart.items.reduce((total, item) => total + item.price * item.quantity, 0) * 100, // Amount in cents
-                status: "CREATED",
-                paymentStatus: "PENDING",
-                orderItems: {
-                    create: cart.items.map((item) => ({
-                        productId: item.id,
-                        name: item.name,
-                        price: Math.round(item.price * 100), // Store in cents
-                        quantity: item.quantity,
-                        image: item.imageString,
-                    })),
-                },
-            },
-        });
+        // 1. Create Order
+        const order = await OrderService.createFromCart(user.id, cart);
 
         // 2. Reserve Stock
         try {
@@ -72,40 +57,12 @@ export async function checkOut() {
         } catch (error: any) {
             logger.error("Reservation Failed", error);
             // Cancel order if reservation fails
-            await prisma.order.update({
-                where: { id: order.id },
-                data: { status: "CANCELLED" },
-            });
-            // return redirect(`/bag?error=${encodeURIComponent(error.message)}`);
-            // Server actions redirect limitation: needs to be caught in UI or just redirect
+            await OrderService.cancelOrder(order.id);
             return redirect("/bag?error=Out of Stock");
         }
 
         // 3. Create Stripe Session
-        const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = cart.items.map(
-            (item) => ({
-                price_data: {
-                    currency: "usd",
-                    unit_amount: Math.round(item.price * 100),
-                    product_data: {
-                        name: item.name,
-                        images: [item.imageString],
-                    },
-                },
-                quantity: item.quantity,
-            })
-        );
-
-        const session = await stripe.checkout.sessions.create({
-            mode: "payment",
-            line_items: lineItems,
-            success_url: process.env.NEXT_PUBLIC_URL + "/checkout/success",
-            cancel_url: process.env.NEXT_PUBLIC_URL + "/checkout/cancel",
-            metadata: {
-                userId: user.id,
-                orderId: order.id, // Pass Order ID to Webhook
-            },
-        });
+        const session = await PaymentService.createCheckoutSession(order, cart.items);
 
         return redirect(session.url as string);
     }
@@ -141,6 +98,7 @@ export async function delItem(formData: FormData) {
     }
 
     revalidatePath("/bag");
+    // @ts-ignore
     revalidateTag("products");
 }
 
@@ -178,6 +136,7 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
         },
     });
 
+    // @ts-ignore
     revalidateTag("products");
     return redirect("/dashboard/products");
 }
@@ -358,7 +317,7 @@ export async function chatWithBusinessAdvisor(history: { role: string; message?:
                 {
                     role: "user",
                     parts: [{
-                        text: `You are an AI Business Advisor for Aethelon, a luxury watch store. 
+                        text: `You are an AI Business Advisor for Aethelon, a luxury furniture brand. 
                     Be concise, professional, and strategic. 
                     Here is the live data: ${context}`
                     }],
@@ -447,4 +406,75 @@ export async function updateProductModel(productId: string, modelUrl: string) {
 export async function cancel3DModelGeneration(productId: string) {
     await requireAdmin();
     return { success: true };
+}
+
+export async function loadMoreProducts({
+    offset = 0,
+    limit = 10,
+    category,
+    sort,
+    price,
+    color,
+    size,
+}: {
+    offset?: number;
+    limit?: number;
+    category?: string;
+    sort?: string;
+    price?: string;
+    color?: string;
+    size?: string;
+}) {
+    const where: any = {
+        status: "published",
+    };
+
+    if (category && category !== "all") {
+        where.category = { slug: category };
+    }
+
+    if (color) {
+        where.color = color;
+    }
+
+    if (size) {
+        where.sizes = { has: size };
+    }
+
+    if (price) {
+        const [min, max] = price.split("-").map(Number);
+        if (max) {
+            where.price = { gte: min * 100, lte: max * 100 };
+        } else {
+            where.price = { gte: min * 100 };
+        }
+    }
+
+    let orderBy: any = { createdAt: "desc" };
+    if (sort === "price-asc") {
+        orderBy = { price: "asc" };
+    } else if (sort === "price-desc") {
+        orderBy = { price: "desc" };
+    }
+
+    const products = await prisma.product.findMany({
+        where,
+        take: limit,
+        skip: offset,
+        orderBy,
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            price: true,
+            images: true,
+            discountPercentage: true,
+            modelUrl: true,
+        },
+    });
+
+    return products.map((p) => ({
+        ...p,
+        price: p.price / 100,
+    }));
 }

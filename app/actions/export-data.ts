@@ -4,7 +4,7 @@ import prisma from "@/lib/db";
 import { format } from "date-fns";
 
 // Helper to escape CSV fields
-const escapeCsvField = (field: any) => {
+const escapeCsvField = (field: unknown) => {
     if (field === null || field === undefined) return "";
     const stringField = String(field);
     if (stringField.includes(",") || stringField.includes('"') || stringField.includes("\n")) {

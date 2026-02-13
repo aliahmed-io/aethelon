@@ -15,6 +15,12 @@ declare global {
                 loading?: 'auto' | 'lazy' | 'eager';
                 reveal?: 'auto' | 'interaction' | 'manual';
                 'shadow-intensity'?: string;
+                'ar-scale'?: string;
+                'ar-placement'?: string;
+                exposure?: string;
+                'shadow-softness'?: string;
+                'environment-image'?: string;
+                'skybox-image'?: string;
                 [key: string]: unknown;
             };
         }

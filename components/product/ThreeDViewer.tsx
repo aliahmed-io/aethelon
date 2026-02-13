@@ -10,18 +10,19 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
-const ThreeDModel = dynamic(() => import("./ThreeDModel"), {
+const ArModelViewer = dynamic(() => import("./ArModelViewer"), {
     ssr: false,
     loading: () => <div className="flex items-center justify-center h-full"><Loader2 className="w-8 h-8 text-white animate-spin" /></div>,
 });
 
 interface ThreeDViewerProps {
     modelUrl: string | null;
+    usdzUrl?: string | null; // Added for AR
     images: string[];
     altTitle?: string;
 }
 
-export function ThreeDViewer({ modelUrl, images, altTitle = "Product Image" }: ThreeDViewerProps) {
+export function ThreeDViewer({ modelUrl, usdzUrl, images, altTitle = "Product Image" }: ThreeDViewerProps) {
     const [isInteracting, setIsInteracting] = useState(false);
     const [hasError, setHasError] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -111,11 +112,10 @@ export function ThreeDViewer({ modelUrl, images, altTitle = "Product Image" }: T
                                     </div>
                                 }
                             >
-                                <ThreeDModel
-                                    modelUrl={modelUrl}
-                                    onBounds={handleModelBounds}
-                                    orbitTarget={orbitTarget}
-                                    orbitRadius={orbitRadius}
+                                <ArModelViewer
+                                    src={modelUrl || ""}
+                                    iosSrc={usdzUrl || undefined}
+                                    alt={altTitle}
                                 />
                             </ErrorBoundary>
 

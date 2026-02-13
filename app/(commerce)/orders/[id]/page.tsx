@@ -5,15 +5,15 @@ import Image from "next/image";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import prisma from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
-import { ArrowLeft, Package, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
+import { ArrowLeft, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 const TIMELINE_CONFIG: Record<string, { icon: React.ComponentType<{ className?: string }>; color: string; label: string }> = {
-    pending: { icon: Clock, color: "text-amber-600", label: "Order Placed" },
-    shipped: { icon: Truck, color: "text-blue-600", label: "Shipped" },
-    delivered: { icon: CheckCircle, color: "text-emerald-600", label: "Delivered" },
-    cancelled: { icon: XCircle, color: "text-red-600", label: "Cancelled" },
+    PENDING: { icon: Clock, color: "text-amber-600", label: "Order Placed" },
+    SHIPPED: { icon: Truck, color: "text-blue-600", label: "Shipped" },
+    DELIVERED: { icon: CheckCircle, color: "text-emerald-600", label: "Delivered" },
+    CANCELLED: { icon: XCircle, color: "text-red-600", label: "Cancelled" },
 };
 
 async function getOrder(orderId: string, userId: string) {
@@ -21,7 +21,7 @@ async function getOrder(orderId: string, userId: string) {
         where: { id: orderId, userId },
         include: {
             orderItems: { include: { product: true } },
-            shipment: true,
+            shipments: true,
             payment: true,
         },
     });
@@ -48,9 +48,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
     if (!order) return notFound();
 
-    const statusTimeline = ["pending", "shipped", "delivered"] as const;
-    const currentIdx = statusTimeline.indexOf(order.status as typeof statusTimeline[number]);
-    const isCancelled = order.status === "cancelled";
+    const statusTimeline = ["PENDING", "SHIPPED", "DELIVERED"] as const;
+    const currentIdx = (statusTimeline as readonly string[]).indexOf(order.status);
+    const isCancelled = order.status === "CANCELLED";
 
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
@@ -76,10 +76,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                             })}
                         </p>
                     </div>
-                    <div className={`px-4 py-2 text-xs uppercase tracking-widest font-bold border rounded-sm ${order.status === "delivered" ? "bg-emerald-100 text-emerald-800 border-emerald-200" :
-                            order.status === "shipped" ? "bg-blue-100 text-blue-800 border-blue-200" :
-                                order.status === "cancelled" ? "bg-red-100 text-red-800 border-red-200" :
-                                    "bg-amber-100 text-amber-800 border-amber-200"
+                    <div className={`px-4 py-2 text-xs uppercase tracking-widest font-bold border rounded-sm ${order.status === "DELIVERED" ? "bg-emerald-100 text-emerald-800 border-emerald-200" :
+                        order.status === "SHIPPED" ? "bg-blue-100 text-blue-800 border-blue-200" :
+                            order.status === "CANCELLED" ? "bg-red-100 text-red-800 border-red-200" :
+                                "bg-amber-100 text-amber-800 border-amber-200"
                         }`}>
                         {order.status}
                     </div>
@@ -116,7 +116,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                     <div className="lg:col-span-2">
                         <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-mono mb-6">Items</h2>
                         <div className="space-y-4">
-                            {order.orderItems.map((item) => (
+                            {order.orderItems.map((item: { id: string; name: string; price: number; quantity: number; image: string | null; size: string | null }) => (
                                 <div key={item.id} className="flex gap-4 p-4 border border-border rounded-sm">
                                     <div className="w-20 h-20 bg-muted rounded-sm overflow-hidden relative flex-shrink-0">
                                         {item.image && (
@@ -169,16 +169,16 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                         )}
 
                         {/* Tracking info */}
-                        {order.shipment?.trackingNumber && (
+                        {order.shipments && order.shipments[0]?.trackingNumber && (
                             <div className="p-6 border border-border rounded-sm">
                                 <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-mono mb-4">Tracking</h2>
-                                <p className="text-sm font-mono">{order.shipment.trackingNumber}</p>
-                                {order.shipment.carrier && (
-                                    <p className="text-xs text-muted-foreground mt-1">via {order.shipment.carrier}</p>
+                                <p className="text-sm font-mono">{order.shipments[0].trackingNumber}</p>
+                                {order.shipments[0].carrier && (
+                                    <p className="text-xs text-muted-foreground mt-1">via {order.shipments[0].carrier}</p>
                                 )}
-                                {order.shipment.eta && (
+                                {order.shipments[0].eta && (
                                     <p className="text-xs text-muted-foreground mt-1">
-                                        ETA: {new Date(order.shipment.eta).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                        ETA: {new Date(order.shipments[0].eta).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                                     </p>
                                 )}
                             </div>
@@ -190,8 +190,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                                 <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-mono mb-4">Payment</h2>
                                 <p className="text-sm">{order.payment.provider}</p>
                                 <p className={`text-xs uppercase tracking-widest mt-1 ${order.payment.status === "COMPLETED" ? "text-emerald-600" :
-                                        order.payment.status === "FAILED" ? "text-red-600" :
-                                            "text-muted-foreground"
+                                    order.payment.status === "FAILED" ? "text-red-600" :
+                                        "text-muted-foreground"
                                     }`}>
                                     {order.payment.status}
                                 </p>

@@ -4,15 +4,17 @@ import dynamic from "next/dynamic";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Truck, Shield } from "lucide-react";
+import { ChevronRight, Truck, Shield, Sparkles } from "lucide-react";
 import { WriteReviewSection } from "@/components/storefront/WriteReviewSection";
 import { RecentFeedbackSection } from "@/components/storefront/RecentFeedbackSection";
 import {
     ThreeDViewerLazy,
-    ARButtonLazy,
     ProductTrackerLazy,
 } from "@/components/product/ProductClientWrappers";
+import { ArWrapper } from "@/components/ar/ArWrapper";
 import Prisma from "@/lib/db";
+
+import { Metadata, ResolvingMetadata } from "next";
 
 /**
  * ─── Tier 2: Post-Hydration Components ───────────────────────────────
@@ -104,6 +106,50 @@ export async function generateStaticParams() {
     return products.map((p) => ({ id: p.id }));
 }
 
+// ─── Metadata Generation (SEO & Social) ──────────────────────────────
+export async function generateMetadata(
+    { params }: ProductPageProps,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const { id } = await params;
+
+    // Fetch product for metadata (Next.js automatically dedupes this request if used in page)
+    const product = await Prisma.product.findUnique({
+        where: { id },
+        select: {
+            name: true,
+            description: true,
+            images: true,
+            price: true,
+        }
+    });
+
+    if (!product) {
+        return {
+            title: "Product Not Found | Aethelon",
+        };
+    }
+
+    const previousImages = (await parent).openGraph?.images || [];
+
+    return {
+        title: product.name,
+        description: product.description?.substring(0, 160) || "Luxury furniture from Aethelon.",
+        openGraph: {
+            title: product.name,
+            description: product.description?.substring(0, 160),
+            images: [product.images[0] || "", ...previousImages],
+            type: "website",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: product.name,
+            description: product.description?.substring(0, 160),
+            images: [product.images[0] || ""],
+        },
+    };
+}
+
 // ─── Tier 1: Server-Rendered Core ────────────────────────────────────
 // Gallery image, title, price, stock, description, buy button — all SSR.
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -119,8 +165,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const isInStock = stockLevel > 0;
     const estimatedDelivery = getEstimatedDelivery();
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.name,
+        image: product.images,
+        description: product.description,
+        sku: product.id,
+        brand: {
+            "@type": "Brand",
+            name: "Aethelon",
+        },
+        offers: {
+            "@type": "Offer",
+            url: `${process.env.NEXT_PUBLIC_URL}/shop/${product.id}`,
+            priceCurrency: "USD",
+            price: (product.price / 100).toFixed(2),
+            availability: isInStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            itemCondition: "https://schema.org/NewCondition",
+        },
+    };
+
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             {/* Tier 2: Analytics tracker — loaded after hydration, no SSR */}
             <ProductTrackerLazy product={{
                 id: product.id,
@@ -163,6 +234,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             >
                                 <ThreeDViewerLazy
                                     modelUrl={product.modelUrl || ""}
+                                    usdzUrl={product.usdzUrl || undefined}
                                     images={product.images}
                                     altTitle={product.name}
                                 />
@@ -277,15 +349,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                 {isInStock ? "Add to Bag" : "Out of Stock"}
                             </button>
 
-                            <button className="w-full h-14 border border-border bg-transparent text-foreground font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-center gap-2 rounded-sm">
-                                Virtual Try-On
-                            </button>
+                            <Link href="/atelier" className="w-full h-14 border border-border bg-transparent text-foreground font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-center gap-2 rounded-sm">
+                                <Sparkles className="w-4 h-4" />
+                                AI Room Inspiration
+                            </Link>
                         </div>
 
-                        {/* T3: AR Button — lazy loaded, client only */}
-                        <ARButtonLazy
+                        {/* T3: AR Button — Mobile Only, Client Loaded */}
+                        <ArWrapper
                             modelUrl={product.modelUrl || ""}
-                            productId={product.id}
                             productName={product.name}
                         />
 

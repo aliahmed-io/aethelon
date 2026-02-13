@@ -24,8 +24,15 @@ export async function searchProductsAction(query: string): Promise<Product[]> {
                 // Prisma full text search is specific to DB, here we use simple contains
                 name: 'asc'
             },
-            include: {
-                category: true
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                price: true,
+                images: true,
+                category: { select: { name: true } },
+                mainCategory: true,
+                stockQuantity: true,
             }
         });
 
@@ -43,7 +50,7 @@ export async function searchProductsAction(query: string): Promise<Product[]> {
         }));
 
     } catch (error) {
-        logger.error("Search Action Error", error);
+        logger.error(error, "Search Action Error");
         return [];
     }
 }

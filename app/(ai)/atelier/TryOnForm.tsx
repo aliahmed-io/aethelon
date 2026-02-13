@@ -6,6 +6,7 @@ import Image from "next/image";
 import { generateTryOn } from "./actions";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 export function TryOnForm() {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -31,8 +32,17 @@ export function TryOnForm() {
 
         const result = await generateTryOn(formData);
 
-        if (result.success && result.imageUrl) {
+        if (!result.success) {
+            toast.error(result.message || "Fitting failed.");
+            setIsProcessing(false);
+            return;
+        }
+
+        if (result.imageUrl) {
             setResultUrl(result.imageUrl);
+            if (result.remainingGenerations !== undefined) {
+                toast.success(`Fitting Complete. ${result.remainingGenerations} tries remaining today.`);
+            }
         }
         setIsProcessing(false);
     };

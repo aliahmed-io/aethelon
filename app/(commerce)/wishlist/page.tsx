@@ -52,7 +52,7 @@ export default async function WishlistPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {wishlistItems.map((item) => (
                             <div key={item.id} className="group relative">
-                                <ProductCard item={{ ...item.product, discountPercentage: 0 } as any} />
+                                <ProductCard item={{ ...item.product, discountPercentage: 0 }} />
                             </div>
                         ))}
                     </div>

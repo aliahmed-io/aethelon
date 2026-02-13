@@ -95,7 +95,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
         const finalProducts = candidates.slice(0, 8); // Cap at 8 for LLM Context
 
         // 3. Generate Insight & Rerank/Explain
-        const productContext = finalProducts.map((p: any) => `- ${p.name}: ${p.description} (Price: $${p.price})`).join("\n");
+        const productContext = finalProducts.map((p) => `- ${p.name}: ${p.description} (Price: $${p.price})`).join("\n");
         const prompt = `
             You are an expert interior designer. 
             User Query: "${query}"
@@ -121,10 +121,10 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
 
         // Clean JSON formatting (remove markdown code blocks if present)
         const jsonText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-        let parsed;
+        let parsed: { insight: string; relatedPrompts: string[] };
         try {
             parsed = JSON.parse(jsonText);
-        } catch (e) {
+        } catch {
             parsed = {
                 insight: text,
                 relatedPrompts: ["Modern sofa", "Marble coffee table", "Floor lamp"]
@@ -132,7 +132,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
         }
 
         return {
-            products: finalProducts,
+            products: finalProducts as unknown as Product[],
             insight: parsed.insight,
             relatedPrompts: parsed.relatedPrompts || [],
             debug: imageAnalysis

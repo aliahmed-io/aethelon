@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 // Helper to get or set a semi-persistent user ID from cookies
 async function getUserId() {
     const cookieStore = await cookies();
-    let userId = cookieStore.get("temp_user_id")?.value;
+    const userId = cookieStore.get("temp_user_id")?.value;
 
     // In a real app with auth, we'd prefer the authenticated user ID
     // specific logic to check kine-auth session would go here

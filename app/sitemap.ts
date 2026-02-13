@@ -14,12 +14,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     });
 
+    const categories = await prisma.category.findMany({
+        select: {
+            slug: true,
+        },
+    });
+
     const productUrls = products.map((product) => {
         return {
             url: `${baseUrl}/shop/${product.id}`,
             lastModified: product.createdAt,
             changeFrequency: "weekly" as const,
             priority: 0.8,
+        };
+    });
+
+    const categoryUrls = categories.map((category) => {
+        return {
+            url: `${baseUrl}/shop?category=${category.slug}`,
+            lastModified: new Date(),
+            changeFrequency: "daily" as const,
+            priority: 0.9,
         };
     });
 
@@ -72,6 +87,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: "yearly",
             priority: 0.5,
         },
+        ...categoryUrls,
         ...productUrls,
     ];
 }

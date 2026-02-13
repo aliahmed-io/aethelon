@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { InventoryService } from "@/lib/inventory";
+import { InventoryService } from "@/modules/inventory/inventory.service";
 import logger from "@/lib/logger";
 
 export const dynamic = 'force-dynamic';

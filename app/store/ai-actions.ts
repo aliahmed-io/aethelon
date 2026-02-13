@@ -12,10 +12,10 @@ export async function generateProductDescription(name: string, category: string,
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
         const prompt = `
-        Write a premium, luxury product description for a high-end watch.
+        Write a premium, luxury product description for a high-end furniture item.
         Product Name: ${name}
         Category: ${category}
-        Key Features: ${features || "Swiss movement, Sapphire crystal, 316L Stainless steel"}
+        Key Features: ${features || "Solid oak, Italian leather, Ergonomic design"}
         
         Tone: Sophisticated, technical yet poetic, minimalist luxury.
         Length: 2-3 paragraphs.
@@ -27,7 +27,7 @@ export async function generateProductDescription(name: string, category: string,
         const response = await result.response;
         return { success: true, text: response.text() };
     } catch (error) {
-        logger.error("AI Generation Error", error);
+        logger.error(error, "AI Generation Error");
         return { success: false, error: "Failed to generate description." };
     }
 }
@@ -59,7 +59,7 @@ export async function generate3DModel(productId: string, imageUrls: string[]) {
             return { success: false, error: "Failed to start 3D generation." };
         }
     } catch (error) {
-        logger.error("Meshy Error", error);
+        logger.error(error, "Meshy Error");
         return { success: false, error: "Failed to communicate with 3D engine." };
     }
 }
@@ -89,7 +89,7 @@ export async function generateCampaignContent(topic: string, products: string[])
             : "General Brand Promotion";
 
         const prompt = `
-        You are an expert email marketing copywriter for a luxury watch brand called Aethelon.
+        You are an expert email marketing copywriter for a luxury furniture brand called Aethelon.
         
         Campaign Topic: ${topic}
         ${productContext}
@@ -115,7 +115,7 @@ export async function generateCampaignContent(topic: string, products: string[])
 
         return { success: true, data: content };
     } catch (error) {
-        logger.error("Campaign Gen Error", error);
+        logger.error(error, "Campaign Gen Error");
         return { success: false, error: "Failed to generate campaign content." };
     }
 }

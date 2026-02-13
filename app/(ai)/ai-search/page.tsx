@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense } from 'react';
-import { Search, Mic, Camera, ArrowRight, Sparkles, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { useState, useRef, useEffect, Suspense, useCallback } from 'react';
+import { Search, Camera, ArrowRight, Sparkles, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from '../../../components/layout/Navbar';
 import { performAiSearch } from './actions';
@@ -23,15 +23,6 @@ function AISearchContent() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [hasSearched, setHasSearched] = useState(false);
-
-    // Auto-search on mount if query exists
-    const mounted = useRef(false);
-    useEffect(() => {
-        if (!mounted.current && initialQuery) {
-            handleSearch(initialQuery);
-            mounted.current = true;
-        }
-    }, [initialQuery]);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,7 +46,7 @@ function AISearchContent() {
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    const handleSearch = async (overrideQuery?: string) => {
+    const handleSearch = useCallback(async (overrideQuery?: string) => {
         const searchQuery = overrideQuery || query;
         if (!searchQuery.trim() && !selectedImage) return;
 
@@ -81,7 +72,16 @@ function AISearchContent() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [query, selectedImage, searchParams, router]);
+
+    // Auto-search on mount if query exists
+    const mounted = useRef(false);
+    useEffect(() => {
+        if (!mounted.current && initialQuery) {
+            handleSearch(initialQuery);
+            mounted.current = true;
+        }
+    }, [initialQuery, handleSearch]);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {

@@ -27,6 +27,17 @@ import { RestockModal } from "./components/RestockModal";
 async function getProducts() {
     return await Prisma.product.findMany({
         orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            name: true,
+            images: true,
+            status: true,
+            price: true,
+            stockQuantity: true,
+            lowStockThreshold: true,
+            reservedStock: true,
+            createdAt: true,
+        }
     });
 }
 

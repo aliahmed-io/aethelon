@@ -44,7 +44,7 @@ export async function toggleWishlist(productId: string) {
             return { success: true, isWishlisted: true };
         }
     } catch (error) {
-        logger.error("Wishlist Error", error);
+        logger.error(error, "Wishlist Error");
         return { success: false, error: "Failed to update wishlist" };
     }
 }

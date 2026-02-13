@@ -25,6 +25,7 @@ const ProductTrackerInner = dynamic(
 
 export function ThreeDViewerLazy(props: {
     modelUrl: string;
+    usdzUrl?: string; // Added for AR
     images: string[];
     altTitle: string;
 }) {
@@ -33,6 +34,7 @@ export function ThreeDViewerLazy(props: {
 
 export function ARButtonLazy(props: {
     modelUrl: string;
+    usdzUrl?: string; // Added for AR
     productId: string;
     productName: string;
 }) {

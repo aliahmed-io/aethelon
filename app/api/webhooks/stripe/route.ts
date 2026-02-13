@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import prisma from "@/lib/db";
-import { InventoryService } from "@/lib/inventory";
+import { InventoryService } from "@/modules/inventory/inventory.service";
 import { Resend } from "resend";
 import logger from "@/lib/logger";
 import Stripe from "stripe";

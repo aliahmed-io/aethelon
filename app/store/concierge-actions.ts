@@ -138,7 +138,7 @@ export async function chatWithConcierge(
                 });
 
             } catch (e) {
-                logger.error("Failed to parse recommendation JSON or Query DB", e);
+                logger.error(e, "Failed to parse recommendation JSON or Query DB");
             }
         }
 
@@ -148,7 +148,7 @@ export async function chatWithConcierge(
             products: recommendedProducts.length > 0 ? recommendedProducts : undefined
         };
     } catch (error) {
-        logger.error("Concierge Error", error);
+        logger.error(error, "Concierge Error");
         return { success: false, message: "I apologize, but I am momentarily unavailable. Please try again shortly." };
     }
 }

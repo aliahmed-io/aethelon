@@ -14,14 +14,12 @@ const ModelViewerElement = () => {
 
 interface ARButtonProps {
     modelUrl: string | null;
+    usdzUrl?: string | null; // Added for iOS AR
     productId: string;
     productName: string;
 }
 
-
-
-
-export function ARButton({ modelUrl, productId }: ARButtonProps) {
+export function ARButton({ modelUrl, usdzUrl, productId, productName }: ARButtonProps) {
     const viewerRef = useRef<HTMLElement>(null);
 
     // Analytics Helper
@@ -69,9 +67,11 @@ export function ARButton({ modelUrl, productId }: ARButtonProps) {
             <model-viewer
                 ref={viewerRef}
                 src={modelUrl || undefined}
-                alt="Aethelon Timepiece"
+                ios-src={usdzUrl || undefined}
+                alt={productName || "Aethelon Furniture"}
                 ar
                 ar-modes="webxr scene-viewer quick-look"
+                ar-scale="auto"
                 camera-controls
                 shadow-intensity="1"
                 style={{ display: "none" }}
