@@ -4,6 +4,9 @@ import prisma from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { Resend } from "resend";
+import { PaymentService } from "@/modules/payments/payments.service";
+import { InventoryService } from "@/modules/inventory/inventory.service";
+import { sendEmailSafe } from "@/lib/resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -188,5 +191,69 @@ export async function processReturn(prevState: any, formData: FormData) {
     } catch (e) {
         console.error(e);
         return { message: "Failed to process return" };
+    }
+}
+
+export async function refundOrder(formData: FormData) {
+    const admin = await requireAdmin();
+    const orderId = formData.get("orderId") as string;
+
+    if (!orderId) return { message: "Order ID required" };
+
+    try {
+        const order = await prisma.order.findUnique({
+            where: { id: orderId },
+            include: { payment: true, orderItems: true, User: true }
+        });
+
+        if (!order) return { message: "Order not found" };
+        if (order.status === "REFUNDED" || order.status === "CANCELLED") return { message: "Order already cancelled/refunded" };
+
+        // 1. Process Stripe Refund
+        if (order.payment?.transactionId) {
+            await PaymentService.refund(order.payment.transactionId);
+        } else {
+            console.warn("No payment transaction ID found for refund, skipping Stripe");
+        }
+
+        await prisma.$transaction(async (tx) => {
+            // 2. Update Order Status
+            await tx.order.update({
+                where: { id: orderId },
+                data: {
+                    status: "REFUNDED",
+                    paymentStatus: "REFUNDED"
+                }
+            });
+        });
+
+        // 3. Restock Inventory
+        // We use InventoryService logic to restock and log to ledger
+        await InventoryService.processReturn(orderId, order.orderItems.map(i => ({
+            productId: i.productId!,
+            quantity: i.quantity
+        })));
+
+        // 4. Send Notification
+        if (order.User?.email) {
+            await sendEmailSafe({
+                from: "Aethelon <billing@aethelon.com>",
+                to: order.User.email,
+                subject: `Refund Processed for Order #${order.id.slice(0, 8)}`,
+                html: `
+                    <h1>Refund Notification</h1>
+                    <p>Referencing Order #${order.id}</p>
+                    <p>A refund has been issued to your original payment method.</p>
+                    <p>It may take 5-10 days to appear on your statement.</p>
+                `
+            });
+        }
+
+        revalidatePath(`/dashboard/orders/${orderId}`);
+        return { message: "Refund processed successfully" };
+
+    } catch (error) {
+        console.error("Refund Error:", error);
+        return { message: "Refund failed check logs" };
     }
 }

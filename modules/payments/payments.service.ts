@@ -45,4 +45,21 @@ export class PaymentService {
             throw new PaymentError(errorMessage);
         }
     }
+
+    /**
+     * Refunds a payment via Stripe.
+     */
+    static async refund(paymentIntentId: string): Promise<Stripe.Refund> {
+        try {
+            const refund = await stripe.refunds.create({
+                payment_intent: paymentIntentId,
+                reason: "requested_by_customer"
+            });
+            logger.info({ paymentIntentId, refundId: refund.id }, "Stripe Refund Created");
+            return refund;
+        } catch (error: unknown) {
+            logger.error({ err: error }, "Stripe Refund Failed");
+            throw new PaymentError("Failed to process refund with payment provider");
+        }
+    }
 }

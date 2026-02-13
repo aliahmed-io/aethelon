@@ -3,11 +3,9 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import prisma from "@/lib/db";
 import { InventoryService } from "@/modules/inventory/inventory.service";
-import { Resend } from "resend";
+import { sendEmailSafe } from "@/lib/resend";
 import logger from "@/lib/logger";
 import Stripe from "stripe";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
     const body = await req.text();
@@ -44,7 +42,7 @@ export async function POST(req: Request) {
             });
 
             if (!existingOrder) {
-                logger.error("Order not found", { orderId });
+                logger.error({ orderId }, "Order not found");
                 return new NextResponse("Order not found", { status: 404 });
             }
 
@@ -57,7 +55,7 @@ export async function POST(req: Request) {
             // Scenario: Order was CANCELLED by Cron Job because payment took too long, but now Payment arrived.
             // Scenario: Order was CANCELLED by Cron Job because payment took too long, but now Payment arrived.
             if (existingOrder.status === "CANCELLED") {
-                logger.warn("Zombie Order Detected: Payment received after cancellation", { orderId });
+                logger.warn({ orderId }, "Zombie Order Detected: Payment received after cancellation");
 
                 // Attempt to Recovery: Check if stock is available to "un-cancel"
                 const itemsToRecover = existingOrder.orderItems.map(item => ({
@@ -114,7 +112,7 @@ export async function POST(req: Request) {
                     // Recovery Successful - Send Email logic below will run naturally
 
                 } catch (recoveryError) {
-                    logger.error("Recovery Failed. Issuing Refund.", recoveryError, { orderId });
+                    logger.error({ err: recoveryError, orderId }, "Recovery Failed. Issuing Refund.");
                     // Stock gone. Must Refund.
                     await stripe.refunds.create({
                         payment_intent: session.payment_intent as string,
@@ -156,8 +154,9 @@ export async function POST(req: Request) {
             }
 
             // 4. Send Confirmation Email (Shared for Normal + Recovery)
-            if (process.env.RESEND_API_KEY && existingOrder.User?.email) {
-                await resend.emails.send({
+            // 4. Send Confirmation Email (Robust)
+            if (existingOrder.User?.email) {
+                await sendEmailSafe({
                     from: "Aethelon <orders@aethelon.com>",
                     to: existingOrder.User.email,
                     subject: `Order Confirmed #${existingOrder.id.slice(0, 8)}`,
@@ -173,7 +172,7 @@ export async function POST(req: Request) {
             }
 
         } catch (error) {
-            logger.error("Processing Error", error);
+            logger.error({ err: error }, "Processing Error");
             return new NextResponse("Internal Server Error", { status: 500 });
         }
     }
@@ -189,7 +188,7 @@ export async function POST(req: Request) {
 
             // Only release if still reserved (CREATED)
             if (existingOrder && existingOrder.status === "CREATED") {
-                logger.info("Payment Failed/Expired. Releasing Stock.", { orderId });
+                logger.info({ orderId }, "Payment Failed/Expired. Releasing Stock.");
 
                 await InventoryService.releaseReservation(orderId, existingOrder.orderItems.map(i => ({
                     productId: i.productId!,

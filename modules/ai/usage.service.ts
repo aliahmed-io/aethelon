@@ -37,10 +37,10 @@ export class UsageService {
         const isToday = now.toDateString() === lastDate.toDateString();
 
         // 2. Daily Reset Logic
-        let currentCount = isToday ? user.aiGenerationsCount : 0;
+        const currentCount = isToday ? user.aiGenerationsCount : 0;
 
         if (currentCount >= MAX_DAILY_GENERATIONS) {
-            logger.info("AI Generation limit reached", { userId, count: currentCount });
+            logger.info({ userId, count: currentCount }, "AI Generation limit reached");
             return { allowed: false, reason: "You have reached your daily limit of 3 visualizations." };
         }
 
@@ -55,7 +55,7 @@ export class UsageService {
             },
         });
 
-        logger.info("AI Generation approved", { userId, newCount });
+        logger.info({ userId, newCount }, "AI Generation approved");
         return { allowed: true, remaining: MAX_DAILY_GENERATIONS - newCount };
     }
 

@@ -12,7 +12,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { reviewSchema } from "@/lib/zodSchemas";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { requireAdmin, requireUser } from "@/lib/auth";
-import { CircuitBreaker } from "@/lib/circuit-breaker";
+import { CircuitBreaker } from "@/modules/observability/circuit-breaker";
 
 import { InventoryService } from "@/modules/inventory/inventory.service";
 import { OrderService } from "@/modules/orders/orders.service";
@@ -22,6 +22,66 @@ import { rateLimit } from "@/lib/rate-limit";
 
 const geminiBreaker = new CircuitBreaker("Gemini-AI", { failureThreshold: 3, recoveryTimeout: 30000 });
 const meshyBreaker = new CircuitBreaker("Meshy-3D", { failureThreshold: 3, recoveryTimeout: 60000 });
+
+// Re-implement addItem
+export async function addItem(productId: string, formData: FormData) {
+    const user = await requireUser();
+
+    // Parse quantity and color from formData
+    const quantity = Number(formData.get("quantity") || 1);
+    const color = formData.get("color") as string;
+    const size = formData.get("size") as string;
+
+    const product = await prisma.product.findUnique({
+        where: { id: productId },
+        select: { id: true, name: true, price: true, images: true, stockQuantity: true }
+    });
+
+    if (!product) throw new Error("Product not found");
+
+    if (product.stockQuantity < quantity) {
+        throw new Error("Insufficient stock");
+    }
+
+    let cart: Cart | null = null;
+    if (redis) {
+        const cartData = await redis.get(`cart-${user.id}`);
+        if (cartData) {
+            cart = JSON.parse(cartData) as Cart;
+        }
+    }
+
+    if (!cart) {
+        cart = {
+            userId: user.id,
+            items: [],
+        };
+    }
+
+    const existingItemIndex = cart.items.findIndex(
+        (item) => item.id === productId && item.color === color && item.size === size
+    );
+
+    if (existingItemIndex > -1) {
+        cart.items[existingItemIndex].quantity += quantity;
+    } else {
+        cart.items.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: quantity,
+            imageString: product.images[0],
+            color: color, // Optional, check CartItem interface
+            size: size // Optional
+        });
+    }
+
+    if (redis) {
+        await redis.set(`cart-${user.id}`, JSON.stringify(cart));
+    }
+
+    revalidatePath("/bag");
+}
 
 export async function checkOut() {
     const user = await requireUser();

@@ -5,6 +5,7 @@ export type CartItem = {
   quantity: number;
   imageString: string;
   size?: string;
+  color?: string;
 };
 
 export type Cart = {

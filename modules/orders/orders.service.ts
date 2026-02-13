@@ -34,10 +34,18 @@ export class OrderService {
         return order;
     }
 
+    /**
+     * Cancels an order.
+     * Transitions state to CANCELLED.
+     */
     static async cancelOrder(orderId: string): Promise<Order> {
         return this.transitionStatus(orderId, "CANCELLED");
     }
 
+    /**
+     * Updates payment status directly.
+     * Used by Webhooks (Stripe).
+     */
     static async updatePaymentStatus(orderId: string, status: PaymentStatus): Promise<Order> {
         return prisma.order.update({
             where: { id: orderId },

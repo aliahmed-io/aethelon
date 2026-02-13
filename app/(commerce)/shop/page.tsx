@@ -1,5 +1,6 @@
 import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { ProductCard } from "@/components/storefront/ProductCard";
+import { ProductGrid } from "@/components/storefront/ProductGrid";
 import Prisma from "@/lib/db";
 import { getRecommendedProducts } from "@/app/actions/personalization";
 import { ProductStatus, MainCategory } from "@prisma/client";
@@ -68,23 +69,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
                     {/* Grid */}
                     <div className="flex-1">
-                        {products.length === 0 ? (
-                            <div className="h-64 flex flex-col items-center justify-center p-8 border border-border bg-muted/50 backdrop-blur-md rounded-sm text-center">
-                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                                    <span className="text-xl">🪑</span>
-                                </div>
-                                <h3 className="text-lg font-light tracking-wide uppercase mb-2">No Products Found</h3>
-                                <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                                    Our collection is currently empty for the selected criteria.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12" data-testid="product-grid">
-                                {products.map((product) => (
-                                    <ProductCard key={product.id} item={product} />
-                                ))}
-                            </div>
-                        )}
+                        <ProductGrid products={products} />
                     </div>
                 </div>
             </div>

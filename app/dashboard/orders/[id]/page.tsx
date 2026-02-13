@@ -6,6 +6,7 @@ import { formatPrice } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { FulfillmentModal } from "../components/FulfillmentModal";
+import { RefundButton } from "../components/RefundButton";
 import {
     Table,
     TableBody,
@@ -99,6 +100,9 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                     </Button>
                     {!allFulfilled && order.status !== "CANCELLED" && (
                         <FulfillmentModal orderId={order.id} items={itemsWithShipping} />
+                    )}
+                    {order.status !== "REFUNDED" && order.status !== "CANCELLED" && (
+                        <RefundButton orderId={order.id} />
                     )}
                 </div>
             </div>

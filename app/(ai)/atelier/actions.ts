@@ -11,6 +11,12 @@ Return a professional assessment.
 
 import { requireUser } from "@/lib/auth";
 import { UsageService } from "@/modules/ai/usage.service";
+import { CircuitBreaker } from "@/modules/observability";
+
+const tryOnBreaker = new CircuitBreaker("ai-try-on", {
+    failureThreshold: 5,
+    recoveryTimeout: 60000 // 1 minute
+});
 
 export async function generateTryOn(formData: FormData) {
     const user = await requireUser();
@@ -51,17 +57,19 @@ export async function generateTryOn(formData: FormData) {
             const arrayBuffer = await imageFile.arrayBuffer();
             const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-            const result = await model.generateContent([
-                {
-                    inlineData: {
-                        data: base64,
-                        mimeType: imageFile.type
-                    }
-                },
-                "Analyze this image. Is it a clear room shot suitable for furniture visualization? Answer briefly."
-            ]);
-
-            console.log("Gemini Analysis:", result.response.text());
+            // Wrap External API Call
+            await tryOnBreaker.execute(async () => {
+                const result = await model.generateContent([
+                    {
+                        inlineData: {
+                            data: base64,
+                            mimeType: imageFile.type
+                        }
+                    },
+                    "Analyze this image. Is it a clear room shot suitable for furniture visualization? Answer briefly."
+                ]);
+                console.log("Gemini Analysis:", result.response.text());
+            });
         }
 
         return {

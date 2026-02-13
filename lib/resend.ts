@@ -18,3 +18,29 @@ if (!apiKey) {
 }
 
 export const resend = new Resend(apiKey || "re_missing_key");
+
+import { withRetry } from "@/lib/retry";
+import { CreateEmailOptions } from "resend";
+
+export async function sendEmailSafe(payload: CreateEmailOptions) {
+    if (!apiKey) {
+        logger.warn({ to: payload.to }, "Skipping email: Missing API Key");
+        return;
+    }
+
+    try {
+        await withRetry(async () => {
+            const { error, data } = await resend.emails.send(payload);
+            if (error) {
+                throw new Error(`Resend Error: ${error.message}`);
+            }
+            return data;
+        }, { maxRetries: 3, baseDelayMs: 1000 });
+
+        logger.info({ to: payload.to, subject: payload.subject }, "Email sent successfully");
+    } catch (error) {
+        logger.error({ err: error }, "Failed to send email after retries");
+        // We absorb the error to prevent crashing the caller (e.g., Webhook)
+        // The AlertService (if wired up to logger.error) would pick this up.
+    }
+}
