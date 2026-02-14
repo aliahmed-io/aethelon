@@ -46,7 +46,7 @@ async function getStats() {
     const [totalRevenue, totalOrders, paidOrders, products, reviews, recentOrders] = await Promise.all([
         Prisma.order.aggregate({ _sum: { amount: true } }),
         Prisma.order.count(),
-        Prisma.order.count({ where: { status: { in: ["DELIVERED", "SHIPPED", "PENDING"] } } }),
+        Prisma.order.count({ where: { status: { in: ["PAID", "ALLOCATED", "PARTIALLY_SHIPPED", "SHIPPED", "DELIVERED"] } } }),
         Prisma.product.findMany({ take: 5, orderBy: { price: 'desc' } }),
         Prisma.review.findMany({
             take: 4,
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
             <ValuationMetrics />
 
             {/* Stats Grid */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
                 <Card className="p-6 bg-card border-border text-foreground shadow-sm group hover:shadow-md transition-all">
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 mb-2">
@@ -165,6 +165,29 @@ export default async function DashboardPage() {
                             <span className="text-2xl font-bold font-mono text-foreground">{stats.visitors.toLocaleString()}</span>
                             <span className="text-xs text-emerald-600 font-medium mb-1 flex items-center gap-0.5">
                                 <TrendingUp className="w-3 h-3" /> +12.5%
+                            </span>
+                        </div>
+                    </div>
+                </Card>
+
+                {/* Lifetime Value / AOV Metric (Enterprise Extension) */}
+                <Card className="p-6 bg-card border-border text-foreground shadow-sm group hover:shadow-md transition-all relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-2 opacity-10">
+                        <DollarSign className="w-24 h-24 text-accent" />
+                    </div>
+                    <div className="flex flex-col gap-1 relative z-10">
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="p-2 bg-purple-100 rounded-full">
+                                <Activity className="w-4 h-4 text-purple-700" />
+                            </div>
+                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Avg. Order Value</span>
+                        </div>
+                        <div className="flex items-end gap-2">
+                            <span className="text-2xl font-bold font-mono text-foreground">
+                                {stats.orders > 0 ? formatPrice(stats.revenue / stats.orders) : formatPrice(0)}
+                            </span>
+                            <span className="text-xs text-emerald-600 font-medium mb-1 flex items-center gap-0.5">
+                                <TrendingUp className="w-3 h-3" /> LTV Proxy
                             </span>
                         </div>
                     </div>

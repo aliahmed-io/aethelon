@@ -3,8 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { CurrencySwitcher } from "@/components/store/CurrencySwitcher";
+import { CurrencyService } from "@/modules/currency/currency.service";
 
-export default function Footer() {
+export default async function Footer() {
+    const currentCurrency = await CurrencyService.getCurrency();
+
     return (
         <footer className="relative z-10 bg-secondary text-foreground py-24 px-6 md:px-12 border-t border-border overflow-hidden">
             {/* Ambient Background Glow */}
@@ -69,7 +73,10 @@ export default function Footer() {
 
             {/* Bottom Bar */}
             <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground/50 gap-4">
-                <span>© 2026 Aethelon SA. Geneva, Switzerland.</span>
+                <span className="flex items-center gap-4">
+                    © 2026 Aethelon SA. Geneva, Switzerland.
+                    <CurrencySwitcher currentCurrency={currentCurrency} />
+                </span>
                 <span className="font-mono tracking-widest">DESIGNED WITH PURPOSE // EST. 2026</span>
             </div>
         </footer>

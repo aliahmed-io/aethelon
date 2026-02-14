@@ -34,15 +34,6 @@ export async function requireAdmin() {
         redirect("/api/auth/login");
     }
 
-    // emergency fallback for hardcoded emails
-    const isAdminEmail =
-        kindeUser.email === "alihassan182006@gmail.com" ||
-        kindeUser.email?.endsWith("@aethelon.geneve.com");
-
-    if (isAdminEmail) {
-        return kindeUser;
-    }
-
     // Check database role
     const dbUser = await prisma.user.findUnique({
         where: { id: kindeUser.id },
@@ -55,4 +46,23 @@ export async function requireAdmin() {
 
     // Unauthorized
     redirect("/");
+}
+
+/**
+ * Returns true if the current user is an admin.
+ * Does NOT redirect. Secure for UI logic.
+ */
+export async function isAdminUser() {
+    const { getUser } = getKindeServerSession();
+    const kindeUser = await getUser();
+
+    if (!kindeUser) return false;
+
+    // Check database role
+    const dbUser = await prisma.user.findUnique({
+        where: { id: kindeUser.id },
+        select: { role: true }
+    });
+
+    return dbUser?.role === UserRole.ADMIN;
 }

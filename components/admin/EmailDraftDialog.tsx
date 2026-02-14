@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { generateEmailDraft } from "@/app/store/dashboard/ai-coo/actions";
+import { generateEmailDraft } from "@/app/dashboard/ai-coo/actions";
 import { Loader2, Copy, Check, Sparkles, Send } from "lucide-react";
 import { toast } from "sonner";
 

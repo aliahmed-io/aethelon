@@ -4,12 +4,20 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createMeshyTask, getMeshyTask } from "@/lib/meshy";
 import prisma from "@/lib/db";
 import logger from "@/lib/logger";
+import { requireAdmin } from "@/lib/auth";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+function getGenAI() {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new Error("GEMINI_API_KEY not configured");
+    }
+    return new GoogleGenerativeAI(apiKey);
+}
 
 export async function generateProductDescription(name: string, category: string, features?: string) {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        await requireAdmin();
+        const model = getGenAI().getGenerativeModel({ model: "gemini-pro" });
 
         const prompt = `
         Write a premium, luxury product description for a high-end furniture item.
@@ -34,6 +42,7 @@ export async function generateProductDescription(name: string, category: string,
 
 export async function generate3DModel(productId: string, imageUrls: string[]) {
     try {
+        await requireAdmin();
         if (!process.env.MESHY_API_KEY) {
             return { success: false, error: "Meshy API Key not configured." };
         }
@@ -66,6 +75,7 @@ export async function generate3DModel(productId: string, imageUrls: string[]) {
 
 export async function check3DStatus(taskId: string) {
     try {
+        await requireAdmin();
         const task = await getMeshyTask(taskId);
         // Map Meshy status to our UI status
         // Meshy statuses: PENDING, IN_PROGRESS, SUCCEEDED, FAILED, EXPIRED
@@ -82,7 +92,8 @@ export async function check3DStatus(taskId: string) {
 
 export async function generateCampaignContent(topic: string, products: string[]) {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        await requireAdmin();
+        const model = getGenAI().getGenerativeModel({ model: "gemini-pro" });
 
         const productContext = products.length > 0
             ? `Featured Products: ${products.join(", ")}`

@@ -58,8 +58,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground">
-                        <p>Height: 32" | Width: 84" | Depth: 38"</p>
-                        <p className="mt-2 text-xs">Seat Height: 18"</p>
+                        <p>Height: 32&quot; | Width: 84&quot; | Depth: 38&quot;</p>
+                        <p className="mt-2 text-xs">Seat Height: 18&quot;</p>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="shipping">
@@ -80,7 +80,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground">
-                        <p>Protected by Aethelon's 5-Year Craftsmanship Warranty.</p>
+                        <p>Protected by Aethelon&apos;s 5-Year Craftsmanship Warranty.</p>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

@@ -114,7 +114,7 @@ export default function FAQPage() {
                 <div className="mt-20 text-center border-t border-border pt-12">
                     <p className="text-sm text-muted-foreground mb-4">Still have questions?</p>
                     <a
-                        href="/legal/contact"
+                        href="/contact"
                         className="inline-block px-8 py-3 bg-accent text-accent-foreground font-bold uppercase tracking-[0.2em] text-xs rounded-sm hover:bg-accent/90 transition-colors"
                     >
                         Contact Concierge

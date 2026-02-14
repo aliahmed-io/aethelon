@@ -22,7 +22,15 @@ export default async function CampaignPage({ params }: { params: { slug: string 
         where: { slug: params.slug },
         include: {
             products: {
-                where: { status: "published" } // Only show published products
+                where: {
+                    product: { status: "published" }
+                },
+                include: {
+                    product: true
+                },
+                orderBy: {
+                    order: 'asc'
+                }
             }
         }
     });
@@ -40,5 +48,5 @@ export default async function CampaignPage({ params }: { params: { slug: string 
         link: null // No link needed, we are on the page
     } : null;
 
-    return <CampaignClient heroBanner={fakeBanner} featuredProducts={campaign.products} />;
+    return <CampaignClient heroBanner={fakeBanner} featuredProducts={campaign.products.map(cp => cp.product)} />;
 }

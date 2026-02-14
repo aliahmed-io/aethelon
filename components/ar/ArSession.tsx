@@ -3,17 +3,17 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { XR, createXRStore } from "@react-three/xr";
 import { useGLTF } from "@react-three/drei";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import * as THREE from "three";
 
 // Store configuration for WebXR session
-const store = createXRStore({
+export const arStore = createXRStore({
     depthSensing: true,
     hitTest: true,
 });
 
 // Preload the model to prevent jank on placement
-useGLTF.preload = (url: string) => useGLTF.preload(url);
+// (useGLTF.preload is already provided by drei)
 
 interface ArSessionProps {
     modelUrl: string;
@@ -75,7 +75,8 @@ function ArScene({ modelUrl }: { modelUrl: string }) {
     });
 
     // Handle Tap to Place (Logic adapted from repo: decompose -> recompose)
-    const handleSelect = () => {
+    // Wrapped in useCallback to stabilize dependency for useEffect
+    const handleSelect = useCallback(() => {
         if (reticleVisible && reticleRef.current) {
             // 1. Decompose Reticle Matrix (Position, Rotation, Scale)
             const position = new THREE.Vector3();
@@ -91,7 +92,7 @@ function ArScene({ modelUrl }: { modelUrl: string }) {
 
             setModels((prev) => [...prev, matrix]);
         }
-    };
+    }, [reticleVisible]);
 
     // Bind Select Event to Session
     useEffect(() => {
@@ -100,7 +101,7 @@ function ArScene({ modelUrl }: { modelUrl: string }) {
             session.addEventListener("select", handleSelect);
             return () => session.removeEventListener("select", handleSelect);
         }
-    }, [gl.xr, reticleVisible]);
+    }, [gl.xr, handleSelect]);
 
     return (
         <>
@@ -124,7 +125,7 @@ function ArScene({ modelUrl }: { modelUrl: string }) {
     );
 }
 
-export function ArSession({ modelUrl }: ArSessionProps) {
+export function ArSession({ modelUrl, onClose }: ArSessionProps) {
     return (
         <div className="fixed inset-0 z-50 bg-black">
             <div className="absolute top-6 left-1/2 -translate-x-1/2 text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium z-10 pointer-events-none">
@@ -133,7 +134,7 @@ export function ArSession({ modelUrl }: ArSessionProps) {
 
             <Canvas>
                 {/* @ts-ignore - XR store integration */}
-                <XR store={store}>
+                <XR store={arStore}>
                     <ArScene modelUrl={modelUrl} />
                 </XR>
             </Canvas>

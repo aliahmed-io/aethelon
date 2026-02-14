@@ -257,3 +257,126 @@ export async function refundOrder(formData: FormData) {
         return { message: "Refund failed check logs" };
     }
 }
+
+import { ShippingService } from "@/modules/shipping/shippo.service";
+import { WAREHOUSE_ADDRESS } from "@/lib/config/shipping";
+
+export async function generateLabel(formData: FormData) {
+    const user = await requireAdmin();
+    const orderId = formData.get("orderId") as string;
+
+    if (!orderId) return { message: "Order ID required" };
+
+    try {
+        const order = await prisma.order.findUnique({
+            where: { id: orderId },
+            include: { orderItems: true, User: true }
+        });
+
+        if (!order) return { message: "Order not found" };
+
+        // 1. Prepare Addresses
+        const addressTo = {
+            name: order.shippingName || "Valued Customer",
+            street1: order.shippingStreet1 || "",
+            street2: order.shippingStreet2 || undefined,
+            city: order.shippingCity || "",
+            state: order.shippingState || "",
+            zip: order.shippingPostalCode || "",
+            country: order.shippingCountry || "US",
+            email: order.User?.email || undefined // Need to fetch user if strictly required by Shippo
+        };
+
+        const addressFrom = WAREHOUSE_ADDRESS;
+
+        // 2. Prepare Parcels (MVP Heuristic: 1 Parcel for entire order if small, or per item?)
+        // For MVP: 1 Standard Box
+        const parcels = [{
+            length: 20, width: 20, height: 20, distance_unit: "in" as const,
+            weight: 5, mass_unit: "lb" as const
+        }];
+
+        // 3. Get Rates
+        const rates = await ShippingService.getRates(addressFrom, addressTo, parcels);
+        if (!rates || rates.length === 0) return { message: "No shipping rates found" };
+
+        // 4. Select Cheapest Rate (MVP)
+        // In real app: Let admin choose.
+        const bestRate = rates.sort((a, b) => Number(a.amount) - Number(b.amount))[0];
+
+        // 5. Buy Label
+        const label = await ShippingService.createLabel(bestRate.objectId);
+
+        // 6. Save Shipment
+        await prisma.shipment.create({
+            data: {
+                orderId: order.id,
+                trackingNumber: label.trackingNumber,
+                carrier: label.carrier,
+                labelUrl: label.labelUrl,
+                status: "PENDING", // Label created but not yet scanned
+                items: {
+                    create: order.orderItems.map(i => ({
+                        orderItemId: i.id,
+                        quantity: i.quantity
+                    }))
+                }
+            }
+        });
+
+        // 7. Update Order
+        await prisma.order.update({
+            where: { id: order.id },
+            data: {
+                status: "SHIPPED", // Or PARTIALLY_SHIPPED
+                fulfillmentStatus: "FULFILLED"
+            }
+        });
+
+        revalidatePath(`/dashboard/orders/${orderId}`);
+        return { message: "Label generated successfully", labelUrl: label.labelUrl };
+
+    } catch (error) {
+        console.error("Label Generation Error:", error);
+        return { message: "Failed to generate label" };
+    }
+}
+
+import { requireUser } from "@/lib/auth";
+
+export async function requestReturn(formData: FormData) {
+    const user = await requireUser();
+    const orderId = formData.get("orderId") as string;
+    const reason = formData.get("reason") as string;
+
+    // Items are passed as "item_PRODUCTID" = "quantity"
+    const itemsToReturn: { productId: string, quantity: number }[] = [];
+    for (const [key, value] of Array.from(formData.entries())) {
+        if (key.startsWith("item_")) {
+            const productId = key.replace("item_", "");
+            const quantity = Number(value);
+            if (quantity > 0) itemsToReturn.push({ productId, quantity });
+        }
+    }
+
+    if (itemsToReturn.length === 0) return { message: "No items selected for return" };
+    if (!reason) return { message: "Return reason is required" };
+
+    try {
+        await prisma.returnRequest.create({
+            data: {
+                orderId,
+                userId: user.id,
+                reason,
+                status: "PENDING",
+                adminNotes: `Requested by customer`
+            }
+        });
+
+        revalidatePath(`/orders/${orderId}`);
+        return { message: "Return request submitted successfully" };
+    } catch (error) {
+        console.error("Return Request Error:", error);
+        return { message: "Failed to submit return request" };
+    }
+}

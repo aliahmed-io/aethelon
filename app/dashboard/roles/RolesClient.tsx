@@ -23,7 +23,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toggleRoleAction } from "@/app/dashboard/roles/actions";
+import { updateRoleAction } from "@/app/dashboard/roles/actions";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -67,11 +67,11 @@ export function RolesClient({ initialUsers }: { initialUsers: User[] }) {
     const confirmRoleChange = async () => {
         if (!selectedUser) return;
         setIsLoading(true);
+        const newRole = selectedUser.role === 'ADMIN' ? 'USER' : 'ADMIN';
         try {
-            await toggleRoleAction(selectedUser.id, selectedUser.role);
+            await updateRoleAction(selectedUser.id, newRole);
 
             // Optimistic update
-            const newRole = selectedUser.role === 'ADMIN' ? 'USER' : 'ADMIN';
             setUsers(users.map(u => u.id === selectedUser.id ? { ...u, role: newRole } : u));
             toast.success(`User role updated to ${newRole}`);
         } catch (error) {

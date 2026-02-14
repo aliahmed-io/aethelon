@@ -451,15 +451,16 @@ model AiInteractionLog {
 }
 
 model ReturnRequest {
-  id           String       @id @default(uuid())
-  orderId      String
-  userId       String
-  reason       String
-  status       ReturnStatus @default(PENDING)
-  refundAmount Int?
-  adminNotes   String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id             String       @id @default(uuid())
+  orderId        String
+  userId         String
+  reason         String
+  status         ReturnStatus @default(PENDING)
+  refundAmount   Int?
+  adminNotes     String?
+  returnLabelUrl String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   order Order @relation(fields: [orderId], references: [id])
   user  User  @relation(fields: [userId], references: [id])

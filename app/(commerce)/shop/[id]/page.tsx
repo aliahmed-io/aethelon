@@ -8,6 +8,7 @@ import { ProductTrackerLazy } from "@/components/product/ProductClientWrappers";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Metadata, ResolvingMetadata } from "next";
+import { CurrencyService, SUPPORTED_CURRENCIES } from "@/modules/currency/currency.service";
 
 // Post-Hydration Components
 const RecentlyViewed = dynamic(
@@ -21,7 +22,7 @@ interface ProductPageProps {
 
 export async function generateMetadata(
     { params }: ProductPageProps,
-    parent: ResolvingMetadata
+    _parent: ResolvingMetadata
 ): Promise<Metadata> {
     const { id } = await params;
     const product = await Prisma.product.findUnique({
@@ -42,6 +43,7 @@ export async function generateMetadata(
 
 export default async function ProductPage({ params }: ProductPageProps) {
     const { id } = await params;
+    const currentCurrency = await CurrencyService.getCurrency();
     const product = await Prisma.product.findUnique({ where: { id } });
 
     if (!product) return notFound();
@@ -77,6 +79,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             productId={product.id}
                             price={product.price}
                             stock={product.stockQuantity}
+                            currencyCode={currentCurrency}
+                            exchangeRate={SUPPORTED_CURRENCIES[currentCurrency].rate}
                         />
                     </div>
 

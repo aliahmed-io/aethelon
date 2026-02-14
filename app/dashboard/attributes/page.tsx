@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { revalidatePath } from "next/cache";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Attribute } from "@prisma/client";
 
 // Server Action (inline for simplicity or keep in actions file)
 async function createAttribute(formData: FormData) {
@@ -40,7 +41,7 @@ async function deleteAttribute(id: string) {
 
 export default async function AttributesPage() {
     // Try fetch, fallback to empty
-    let attributes = [];
+    let attributes: Attribute[] = [];
     try {
         attributes = await Prisma.attribute.findMany({ orderBy: { createdAt: 'desc' } });
     } catch (e) {

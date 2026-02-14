@@ -1,16 +1,20 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === 'true',
+})
 
+const nextConfig: NextConfig = {
     typescript: {
-        ignoreBuildErrors: true,
+        ignoreBuildErrors: false,
     },
     images: {
         formats: ['image/avif', 'image/webp'],
         remotePatterns: [
             { protocol: "https", hostname: "utfs.io" },
             { protocol: "https", hostname: "images.unsplash.com" }
-        ]
+        ],
+        minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
     },
     poweredByHeader: false,
     compress: true,
@@ -23,10 +27,10 @@ const nextConfig: NextConfig = {
                         key: 'Content-Security-Policy',
                         value: `
                             default-src 'self';
-                            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://va.vercel-scripts.com;
+                            script-src 'self' https://js.stripe.com https://va.vercel-scripts.com;
                             style-src 'self' 'unsafe-inline';
                             img-src 'self' blob: data: https://*.meshy.ai https://res.cloudinary.com https://*.stripe.com https://utfs.io https://images.unsplash.com;
-                            connect-src 'self' https://api.meshy.ai https://api.stripe.com https://vitals.vercel-insights.com;
+                            connect-src 'self' https://api.meshy.ai https://api.stripe.com https://vitals.vercel-insights.com https://uploadthing.com https://utfs.io;
                             font-src 'self' data:;
                             frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
                             object-src 'none';
@@ -53,9 +57,24 @@ const nextConfig: NextConfig = {
                         value: "camera=(), microphone=(), geolocation=()"
                     }
                 ]
+            },
+            {
+                // Cache static assets (images, fonts, etc.) for 1 year
+                source: '/_next/static/:path*',
+                headers: [
+                    { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
+                ]
+            },
+            {
+                // API Routes: NO CACHE by default to prevent leaking user data.
+                // Specific routes can override this.
+                source: '/api/:path*',
+                headers: [
+                    { key: 'Cache-Control', value: 'private, no-cache, no-store, max-age=0' }
+                ]
             }
         ];
     },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

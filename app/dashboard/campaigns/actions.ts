@@ -47,7 +47,7 @@ export async function generateCampaignAction(topic: string) {
         return { success: true, data };
 
     } catch (error) {
-        logger.error("Campaign Generation Error", error);
+        logger.error({ err: error }, "Campaign Generation Error");
         return { success: false, error: "Failed to generate campaign" };
     }
 }

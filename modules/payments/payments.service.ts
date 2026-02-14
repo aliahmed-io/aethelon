@@ -11,11 +11,15 @@ export class PaymentService {
      */
     static async createCheckoutSession(order: Order, items: CartItem[], customerEmail?: string): Promise<Stripe.Checkout.Session> {
         try {
+            if (!process.env.NEXT_PUBLIC_URL) {
+                throw new PaymentError("NEXT_PUBLIC_URL is not configured");
+            }
+
             const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map(
                 (item) => ({
                     price_data: {
                         currency: "usd",
-                        unit_amount: Math.round(item.price * 100),
+                        unit_amount: item.price,
                         product_data: {
                             name: item.name,
                             images: [item.imageString],
@@ -29,7 +33,7 @@ export class PaymentService {
                 mode: "payment",
                 line_items: lineItems,
                 success_url: process.env.NEXT_PUBLIC_URL + "/checkout/success",
-                cancel_url: process.env.NEXT_PUBLIC_URL + "/checkout/cancel",
+                cancel_url: process.env.NEXT_PUBLIC_URL + "/store/checkout/cancel",
                 customer_email: customerEmail,
                 metadata: {
                     userId: order.userId || "",

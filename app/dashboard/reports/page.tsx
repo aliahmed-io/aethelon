@@ -187,10 +187,10 @@ export default async function ReportsPage() {
                                     <td className="px-6 py-4 font-mono text-muted-foreground text-xs">#{order.id.slice(-6)}</td>
                                     <td className="px-6 py-4 font-medium text-foreground">{order.User?.email || "Guest"}</td>
                                     <td className="px-6 py-4 text-muted-foreground text-xs">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                    <td className="px-6 py-4 text-right font-medium text-foreground">{formatPrice(order.amount)}</td>
+                                    <td className="px-6 py-4 text-right font-medium text-foreground">{formatPrice(order.amount / 100)}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center px-2 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest ${order.status === 'delivered' ? 'bg-emerald-100 text-emerald-700' :
-                                            order.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                                        <span className={`inline-flex items-center px-2 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest ${order.status === 'DELIVERED' ? 'bg-emerald-100 text-emerald-700' :
+                                            order.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
                                                 'bg-muted text-muted-foreground'
                                             }`}>
                                             {order.status}

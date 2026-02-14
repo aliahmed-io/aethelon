@@ -83,8 +83,39 @@ export async function addItem(productId: string, formData: FormData) {
     revalidatePath("/bag");
 }
 
-export async function checkOut() {
+export async function checkOut(formData: FormData) {
     const user = await requireUser();
+
+    // Parse Address from FormData
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const street1 = formData.get("street1") as string;
+    const street2 = formData.get("street2") as string;
+    const city = formData.get("city") as string;
+    const state = formData.get("state") as string;
+    const postalCode = formData.get("postalCode") as string;
+    const country = formData.get("country") as string || "US";
+    const phone = formData.get("phone") as string;
+
+    const shippingAddress = {
+        name: `${firstName} ${lastName}`.trim(),
+        street1,
+        street2,
+        city,
+        state,
+        postalCode,
+        country,
+        phone
+    };
+
+    // Simple validation (Consider using Zod)
+    if (!firstName || !street1 || !city || !state || !postalCode) {
+        // Since this is a server action called by a form, we can't easily return UI errors without `useFormState`.
+        // Ideally we redirect with error, OR rely on client-side `required` attributes for basic checking,
+        // but robust apps need server validation. 
+        // For now, we redirect with error query param.
+        return redirect("/checkout?error=Missing required shipping fields");
+    }
 
     // Rate Limit: 5 checkouts per minute per user (prevent inventory locking attacks)
     const { success } = await rateLimit(`checkout-${user.id}`, 5, "60 s");
@@ -97,13 +128,19 @@ export async function checkOut() {
     if (redis) {
         const cartData = await redis.get(`cart-${user.id}`);
         if (cartData) {
-            cart = JSON.parse(cartData) as Cart;
+            // Safely parse JSON
+            try {
+                cart = typeof cartData === 'string' ? JSON.parse(cartData) as Cart : cartData as Cart;
+            } catch (e) {
+                logger.error(e, "Failed to parse cart JSON during checkout");
+                cart = null; // Reset cart on error
+            }
         }
     }
 
     if (cart && cart.items && cart.items.length > 0) {
-        // 1. Create Order
-        const order = await OrderService.createFromCart(user.id, cart);
+        // 1. Create Order with Address
+        const order = await OrderService.createFromCart(user.id, cart, shippingAddress);
 
         // 2. Reserve Stock
         try {
@@ -122,7 +159,7 @@ export async function checkOut() {
         }
 
         // 3. Create Stripe Session
-        const session = await PaymentService.createCheckoutSession(order, cart.items);
+        const session = await PaymentService.createCheckoutSession(order, cart.items, user.email ?? undefined);
 
         return redirect(session.url as string);
     }
@@ -538,3 +575,34 @@ export async function loadMoreProducts({
         price: p.price / 100,
     }));
 }
+
+export async function bulkDeleteProducts(ids: string[]) {
+    await requireAdmin();
+
+    await prisma.product.deleteMany({
+        where: {
+            id: { in: ids }
+        }
+    });
+
+    revalidatePath("/dashboard/products");
+    revalidatePath("/store/dashboard/products");
+}
+
+export async function bulkUpdateProducts(updates: any[]) {
+    await requireAdmin();
+
+    const transactions = updates.map((update) => {
+        const { id, ...data } = update;
+        return prisma.product.update({
+            where: { id },
+            data
+        });
+    });
+
+    await prisma.$transaction(transactions);
+
+    revalidatePath("/dashboard/products");
+    revalidatePath("/store/dashboard/products");
+}
+

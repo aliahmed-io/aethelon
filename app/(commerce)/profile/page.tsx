@@ -135,10 +135,10 @@ export default async function ProfilePage() {
                                     </div>
                                     <div className="text-right">
                                         <span className="text-sm font-mono">{formatPrice(order.amount / 100)}</span>
-                                        <span className={`block text-[10px] uppercase tracking-wider mt-1 ${order.status === "delivered" ? "text-emerald-600" :
-                                                order.status === "shipped" ? "text-blue-600" :
-                                                    order.status === "cancelled" ? "text-red-600" :
-                                                        "text-muted-foreground"
+                                        <span className={`block text-[10px] uppercase tracking-wider mt-1 ${order.status === "DELIVERED" ? "text-emerald-600" :
+                                            order.status === "SHIPPED" ? "text-blue-600" :
+                                                (order.status === "CANCELLED" || order.status === "REFUNDED") ? "text-red-600" :
+                                                    "text-muted-foreground"
                                             }`}>
                                             {order.status}
                                         </span>

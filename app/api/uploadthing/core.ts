@@ -27,6 +27,11 @@ export const ourFileRouter = {
             const user = await getUser();
 
             if (!user) throw new UploadThingError("Unauthorized");
+
+            // Allow only specific admin email or check DB logic
+            const isAdmin = user.email === "aliha@aethelona.com"; // Simple allowlist for now matching existing patterns
+            if (!isAdmin) throw new UploadThingError("Forbidden");
+
             return { userId: user.id };
         })
         .onUploadComplete(async ({ metadata }) => {

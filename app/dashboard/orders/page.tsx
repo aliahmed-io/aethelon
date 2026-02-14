@@ -59,9 +59,9 @@ export default async function OrdersPage() {
                                 </TableCell>
                                 <TableCell>
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium uppercase tracking-wide border
-                                        ${order.status === 'delivered' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-                                            order.status === 'shipped' ? 'bg-indigo-100 text-indigo-700 border-indigo-200' :
-                                                order.status === 'pending' ? 'bg-zinc-100 text-zinc-600 border-zinc-200' :
+                                        ${order.status === 'DELIVERED' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                                            order.status === 'SHIPPED' ? 'bg-indigo-100 text-indigo-700 border-indigo-200' :
+                                                order.status === 'PENDING' ? 'bg-zinc-100 text-zinc-600 border-zinc-200' :
                                                     'bg-red-100 text-red-700 border-red-200'}`}>
                                         {order.status}
                                     </span>

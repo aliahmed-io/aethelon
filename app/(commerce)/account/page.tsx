@@ -52,9 +52,9 @@ export default async function AccountPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <Badge className={`uppercase tracking-wide text-[10px] border
-                                            ${order.status === 'delivered' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                                order.status === 'shipped' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                                                    order.status === 'pending' ? 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20' :
+                                            ${order.status === 'DELIVERED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                                order.status === 'SHIPPED' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
+                                                    order.status === 'CREATED' ? 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20' :
                                                         'bg-red-500/10 text-red-400 border-red-500/20'}`}>
                                             {order.status}
                                         </Badge>

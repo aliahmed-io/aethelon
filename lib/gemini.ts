@@ -47,3 +47,24 @@ export async function checkModelQuality(thumbnailUrl: string) {
         return null;
     }
 }
+
+export async function expandSearchQuery(userQuery: string) {
+    try {
+        if (!process.env.GEMINI_API_KEY) return { keywords: [userQuery], category: null };
+
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const prompt = `Act as an e-commerce search engine. Analyze this user query: "${userQuery}". 
+        Extract key search terms (synonyms, related vibes) and a potential product category.
+        Return ONLY valid JSON in this format: { "keywords": string[], "category": string | null }
+        Example: "comfy chair for reading" -> { "keywords": ["armchair", "lounge", "soft", "reading", "living room"], "category": "Furniture" }`;
+
+        const result = await qaBreaker.execute(() => model.generateContent(prompt));
+        const text = result.response.text();
+        const jsonStr = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+        return JSON.parse(jsonStr) as { keywords: string[], category: string | null };
+    } catch (error) {
+        logger.error({ err: error }, "Gemini Search Expansion Error");
+        return { keywords: [userQuery], category: null }; // Fallback
+    }
+}

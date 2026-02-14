@@ -60,7 +60,7 @@ export async function getPredictiveAnalytics() {
 
         forecast.push({
             date: dateStr,
-            predictedRevenue: Math.max(0, prediction) // No negative revenue
+            revenue: Math.max(0, prediction) // No negative revenue
         });
     }
 

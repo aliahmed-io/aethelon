@@ -11,14 +11,12 @@ import { UserDropdown } from "@/components/storefront/UserDropdown";
 
 interface NavbarProps {
     progress?: number;
+    isAdmin?: boolean;
 }
 
-export function Navbar({ progress }: NavbarProps) {
+export function Navbar({ progress, isAdmin = false }: NavbarProps) {
     const { openSearch } = useSearch();
     const { user, isAuthenticated } = useKindeBrowserClient();
-
-    // Admin Check Logic (Matches layout logic)
-    const isAdmin = user?.email === "alihassan182006@gmail.com" || user?.email?.endsWith("@aethelon.geneve.com");
 
     const isLanding = typeof progress !== 'undefined';
     const isVisible = isLanding ? progress > 0.02 : true;
@@ -137,7 +135,7 @@ export function Navbar({ progress }: NavbarProps) {
                             </LoginLink>
                         )}
                         <div className="grid grid-cols-2 gap-4 text-xs uppercase tracking-widest text-muted-foreground">
-                            <Link href="/legal/contact" className="hover:text-foreground">Contact Concierge</Link>
+                            <Link href="/contact" className="hover:text-foreground">Contact Concierge</Link>
                             <Link href="/legal/shipping" className="hover:text-foreground">Shipping & Returns</Link>
                         </div>
                     </div>

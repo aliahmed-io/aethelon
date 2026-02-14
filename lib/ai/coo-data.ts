@@ -92,7 +92,7 @@ export async function getBusinessSnapshot(): Promise<BusinessSnapshot> {
 
     // Order counts
     const [pendingCount, todayCount, weekCount, monthCount] = await Promise.all([
-        prisma.order.count({ where: { status: { in: ["pending", "shipped"] } } }),
+        prisma.order.count({ where: { status: { in: ["CREATED", "PAYMENT_PENDING", "SHIPPED"] } } }),
         prisma.order.count({ where: { createdAt: { gte: todayStart } } }),
         prisma.order.count({ where: { createdAt: { gte: weekStart } } }),
         prisma.order.count({ where: { createdAt: { gte: monthStart } } }),
@@ -263,8 +263,9 @@ export async function getCustomerInsights(): Promise<CustomerInsight> {
         take: 10,
     });
 
-    const topSpenders = await Promise.all(
+    const topSpenders = (await Promise.all(
         topSpendersRaw.map(async (g) => {
+            if (!g.userId) return null;
             const user = await prisma.user.findUnique({
                 where: { id: g.userId },
                 select: { email: true },
@@ -275,7 +276,7 @@ export async function getCustomerInsights(): Promise<CustomerInsight> {
                 totalSpent: (g._sum.amount || 0) / 100,
             };
         })
-    );
+    )).filter((x): x is { id: string; email: string; totalSpent: number } => Boolean(x));
 
     return {
         vipAtRisk: vipWithSpending.filter(v => v.totalSpent > 500),

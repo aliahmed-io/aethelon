@@ -8,6 +8,21 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
+
+        // Security: Verify Webhook Secret if configured
+        // Security: Verify Webhook Secret if configured
+        const authHeader = req.headers.get("authorization");
+
+        // Critical: Fail closed if secret is missing to prevent unauthenticated access
+        if (!process.env.MESHY_WEBHOOK_SECRET) {
+            logger.error("MESHY_WEBHOOK_SECRET is not configured. Rejecting webhook.");
+            return NextResponse.json({ error: "Server Configuration Error" }, { status: 500 });
+        }
+
+        if (authHeader !== `Bearer ${process.env.MESHY_WEBHOOK_SECRET}`) {
+            logger.warn("Unauthorized Meshy Webhook attempt");
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
         // Meshy sends different payload formats depending on the event version or specific API
         // We handle multiple variations here for robustness
         const id = (body as any).id ?? (body as any).task_id ?? (body as any).taskId ?? (body as any).result;
@@ -55,7 +70,7 @@ export async function POST(req: Request) {
                 const qaResult = await checkModelQuality(thumbnail_url);
 
                 if (qaResult) {
-                    logger.info(`Gemini QA for Product ${product.id}`, { qaResult });
+                    logger.info({ qaResult }, `Gemini QA for Product ${product.id}`);
                     // Optionally save this to a new field in the future
                 }
             }
@@ -80,7 +95,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        logger.error("Meshy Webhook Error", error);
+        logger.error({ err: error }, "Meshy Webhook Error");
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

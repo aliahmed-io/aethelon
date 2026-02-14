@@ -4,34 +4,44 @@
 
 **Project Name**: Aethelon
 **Architecture**: AI-Native Composable Commerce (Furniture & Lifestyle)
-**Stack**: T3 Stack (Next.js, TypeScript, Tailwind, Prisma) + Enterprise Integrations
-**Completion Status**: 100% Feature Complete. **Engineering Maturity Level**: Enterprise (Zero Lint, 100% Type Safety, Unit Tested).
+**Stack**: Next.js (App Router), TypeScript, Tailwind, Prisma + Enterprise Integrations
+**Completion Status**: Feature-complete with production hardening. **Engineering Maturity Level**: Enterprise (Lint + Unit Tested, Observability, Security Controls).
 
-### 💰 Valuation Assessment: $185,000 - $195,000 USD
-This valuation is derived from a "Cost-of-Replication" model, accounting for the **383 source files** and **~29,655 lines of code** that define Aethelon's bespoke AI, security, and immersive high-end furniture commerce features.
+### 💰 Valuation Assessment (Corrected & Market-Aligned)
 
-| Component Category | Development Estimate | Value Contribution |
-| :--- | :--- | :--- |
-| **Foundation & Architecture** | 120 Hours | $18,000 |
-| **Core Commerce Engine** | 160 Hours | $24,000 |
-| **AI & Intelligence Suite** | 220 Hours | $44,000 |
-| **Immersive UI/UX (Cinematic)** | 160 Hours | $32,000 |
-| **Admin & Operations (Automated)** | 120 Hours | $18,000 |
-| **Security & Reliability (Hardened)** | 160 Hours | $32,000 |
-| **SEO & Performance (Lighthouse)** | 80 Hours | $12,000 |
-| **Total Replicable Value** | **~1,080 Hours** | **~$190,000** |
+This project should be valued using two separate models, depending on whether you’re describing **engineering replacement cost** or **what someone might pay to acquire the asset today**.
 
-*Note: Valuation assumes US/Western Europe senior engineering rates ($175/hr blended) for specialized AI/3D/Security dev work.*
+### 1) Replacement Cost Estimate (Agency Equivalent)
+**$90,000 – $140,000 USD**
+
+This reflects what a serious agency would likely charge to rebuild the current platform from scratch (not including brand/marketing retainers), factoring in:
+- Commerce engine (orders/payments/inventory ledger)
+- Admin RBAC and operational tooling
+- External integrations (Stripe, Shippo, UploadThing, Resend, Redis rate limiting)
+- AI features (Concierge, AI COO, AI search/vision workflows)
+- 3D/AR workflows (model generation + viewer + mobile AR session)
+- Production hardening (webhooks/cron security, correctness fixes, observability)
+
+### 2) Market Asset Valuation (Pre-Revenue)
+**$55,000 – $85,000 USD**
+
+This is a realistic “what someone might pay” range today, assuming a clean repo, working demo deployment, and stable builds. It discounts for:
+- No proven revenue / traction stated
+- Single-developer maintainability risk
+- Integrations are API-based (not proprietary IP)
+
+### Positioning (Investor / Buyer Credible)
+**Aethelon is best presented as a $100k-level engineering foundation**: production-hardened, feature-complete, and extensible — ready for traction, not priced as traction.
 
 ---
 
 
 ## 2. Technical Architecture Breakdown
 
-Aethelon is built on a **Server-First** architecture using Next.js 15, prioritizing SEO, performance, and security.
+Aethelon is built on a **Server-First** architecture using Next.js (App Router), prioritizing SEO, performance, and security.
 
 ### 🖥️ Frontend layer
-*   **Framework**: Next.js 15 (App Router).
+*   **Framework**: Next.js (App Router).
 *   **Language**: TypeScript 5.x (Strict Mode).
 *   **Styling**: Tailwind CSS v3.4 + `clsx` + `tailwind-merge` for robust class handling.
 *   **Component System**: Headless UI (Radix Primitives) wrapped in custom "Shadcn-like" reusable components.
@@ -52,6 +62,11 @@ Aethelon is built on a **Server-First** architecture using Next.js 15, prioritiz
 *   **Logging**: Structured JSON logging via `pino` for production observability.
 *   **Authentication**: Kinde Auth (OIDC).
 *   **Cron Jobs**: Vercel Cron triggers (Reservations, Price Alerts).
+
+### ✅ Production Correctness (Recent Hardening)
+*   **Checkout & Orders Currency Integrity**: Order totals and line items are now stored and processed consistently in cents (prevents over/under-charging and reporting drift).
+*   **Customer Order Journeys**: Success → orders flow and cancel flow are aligned to real routes.
+*   **Order Status Normalization**: UI filters/badges and analytics now align with enum casing and real status transitions.
 
 ### 🗄️ Data Layer
 *   **Database**: PostgreSQL (hosted on Neon/Vercel Postgres) for relational data.
@@ -102,10 +117,14 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 13. **Persistent Cart**: Synced across tabs, survives refreshes, validates stock on load.
 14. **Inventory Reservation System**: 15-minute "soft hold" on stock when entering checkout prevents overselling.
 15. **Double-Entry Ledger**: `InventoryTransaction` table tracks every +1/-1 movement for auditability.
-16. **Stripe Payments**: Full payment intent flow with webhooks for secure status reconciliation (Paid/Failed).
-17. **Dynamic Tax/Shipping**: (Architecture ready) Support for shipping zones and calculation.
+16. **Stripe Payments**: Checkout session flow + webhook reconciliation, email capture, and correctness fixes on amount handling.
+106. **Dynamic Tax/Shipping**: Live carrier rates via Shippo API integration.
 18. **Discount Engine**: Support for fixed amount off, percentage off, and specific product targeting.
-19. **RMA System**: Return Merchandise Authorization flow allowing users to request returns and admins to approve/reject.
+116. **Legal Framework**: Dedicated GDPR/CCPA compliant pages for Privacy, Terms, and Cookies.
+117. **Subscription Logic**: Automated unsubscribe flow with status tracking.
+118. **Cart Recovery**: Dedicated cancellation retention page to capture abandoned checkouts.
+119. **Global Currency**: Multi-currency support (USD/EUR/GBP/JPY) with persistent user preference.
+120. **Semantic Search**: AI-driven query expansion to understand user intent beyond keywords.
 20. **Variant Attributes**: Robust handling of Size/Color combinations with independent stock tracking.
 21. **Interactive Size Guide**: Modal-based chart customizable per category.
 22. **Low Stock Scarcity**: UI alerts ("Only 2 left") triggered by configurable thresholds.
@@ -113,7 +132,7 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 24. **Verified Reviews**: Logic ensuring only confirmed purchasers can leave feedback.
 
 ### C. The "Experience" (UI/UX)
-25. **WebGL 3D Viewer**: Interactive 3D model viewer with orbit controls, zoom, and auto-rotate.
+25. **WebGL 3D Viewer**: Interactive 3D model viewer with orbit controls + robust fallback/error handling.
 26. **Audio Controller**: Global ambient sound toggle with fade logic.
 27. **Lenis Scroll**: Smooth, inertial scrolling implementation.
 28. **Parallax Loading**: Elements move at different speeds during scroll for depth.
@@ -133,19 +152,19 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 34. **Exec Dashboard**: Real-time sales velocity, AOV, and visitor counts.
 35. **Inventory Valuation**: Real-time COGS vs. Retail Value analysis.
 36. **Product CRUD**: Rich text editing, image upload, and variant management.
-37. **Order Fulfillment**: Interface to buy shipping labels (Shippo integration ready) and mark fulfilled.
+133. **Order Fulfillment**: Admin interface to generate and print Shippo shipping labels instantly.
 38. **Campaign Broadcasts**: Create and track email blasts.
 39. **Customer CRM**: View order history, LTV, and contact details.
 40. **RBAC Controls**: Middleware protecting admin routes.
 41. **Audit Logging**: Immutable history of all admin actions (Who changed price X?).
-42. **CSV Data Export**: One-click download of financial data.
+42. **CSV Data Export**: One-click download of financial data with explicit admin authorization on export actions.
 43. **System Health**: Uptime monitoring widget.
 
 ---
 
 ## 5. Resilience & Security Audit (New)
 
-### �️ Security Measures
+### 🛡️ Security Measures
 1.  **Rate Limiting**:
     *   Implemented `upstash/ratelimit` on critical paths.
     *   **Checkout**: 5 req/min (Prevents inventory hoarding attacks).
@@ -154,6 +173,7 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 2.  **Role-Based Access Control (RBAC)**:
     *   `requireAdmin()` helper secures all sensitive Server Actions.
     *   Fixed critical privilege escalation vulnerability in role management.
+    *   Export endpoints/actions locked to admin (prevents PII exfiltration via CSV exports).
 3.  **Content Security Policy (CSP)**:
     *   Strict headers preventing XSS and unauthorized script injection.
 4.  **Credential Safety**:
@@ -168,6 +188,8 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 2.  **Retry Policies / Dead Letter Queues**:
     *   **Email**: Exponential backoff (1s, 2s, 4s) for transactional emails (`sendEmailSafe`).
     *   **Webhooks**: Stripe webhook idempotency handling ensures 100% data integrity.
+    *   **Cron Hardening**: Cron routes enforce shared secret checks and fail-closed behavior.
+    *   **Webhook Hardening**: Reduced sensitive logging in Shippo webhook verification paths.
 3.  **Chaos Engineering**:
     *   `CHAOS_MODE` flag allows developers to simulate random API failures in testing.
 4.  **Error Handling & Observability**:
@@ -178,8 +200,8 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 ### 🧪 Quality Assurance
 1.  **Testing Strategy**:
     *   **Unit Tests**: Vitest suite covering critical business logic (Inventory Restock, Order State).
-    *   **Linting**: Zero-tolerance policy (0 errors, 0 warnings) enforced via CI.
-    *   **Type Safety**: Strict TypeScript configuration.
+    *   **Linting**: Enforced via CI (0 errors).
+    *   **Type Safety**: Strict TypeScript configuration with targeted pragmatic exceptions where necessary.
 2.  **Documentation**:
     *   **OPS.md**: Comprehensive runbook for Incident Response and Manual Workflows.
     *   **TSDoc**: 100% coverage on Service Modules (`modules/*`).
@@ -229,6 +251,15 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 *   **Images**: Automatic optimization (WebP/AVIF) via Next.js Image Optimization API.
 *   **Compute**: Heavy AI tasks offloaded to background workers or Edge functions where possible.
 
+121. **Analytics**: "Lifetime Value" Proxy (AOV) added to Dashboard.
+122. **Performance**: `@next/bundle-analyzer` integration and lazy loading of AR modules.
+123. **Edge Caching**: `stale-while-revalidate` headers for API and strict caching for assets.
+
+### 📉 Remaining Work (Deferred)
+*   **Phase 19**: Mobile App (React Native) - *Deferred by User Request*.
+
+> **Project Status**: ✅ COMPLETED & HANDED OVER.
+
 ---
 
 ## 7. Configuration Guide (Getting Started)
@@ -244,6 +275,35 @@ To reach full operational status:
 
 ---
 
-**Report Generated**: 2026-02-13
-**Status**: PRODUCTION READY (Enterprise Grade - Fully Hardened + Cinematic Polish)
-**Version**: 3.2.0-Diamond-Master
+**Report Updated**: 2026-02-14
+**Status**: PRODUCTION HARDENED (Security + Correctness + Admin Controls + Immersive Workflows)
+**Version**: 3.3.0-Hardening-Release
+
+---
+
+## 8. Hardening Changelog (Delta since last report)
+
+### Commerce Correctness
+* Checkout now captures and stores shipping address snapshots consistently.
+* Stripe checkout sessions now include customer email when available.
+* Cancel URL aligns with an existing route; cart return now points to the actual cart route.
+* Order creation now uses a consistent cents-based amount model (order amount + order item prices).
+
+### Admin Analytics & Exports
+* CSV export actions require admin authorization (prevents unauthorized export of users/orders/revenue).
+* Reports UI amount formatting now consistently displays cents → dollars.
+* Status casing in filters/badges aligned with enum values.
+
+### Webhooks & Cron
+* Cron routes enforce secret checks and fail closed.
+* Webhook verification logging reduced to avoid leaking sensitive computed values.
+
+### AR / 3D
+* Mobile AR entry flow now mounts the AR session and uses a shared XR store (previously could be a no-op).
+* Meshy 3D pipeline remains end-to-end: initiation → webhook update → viewer display.
+
+### AI Governance
+* Admin-only gating added for expensive/operational AI actions (3D generation, campaign generation, product description generation, status checks).
+
+### Dependency & Supply Chain
+* `npm audit` remediated to 0 vulnerabilities via forced dependency resolution.

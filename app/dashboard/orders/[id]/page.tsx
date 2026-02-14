@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { FulfillmentModal } from "../components/FulfillmentModal";
 import { RefundButton } from "../components/RefundButton";
+import { PrintLabelButton } from "../components/PrintLabelButton";
 import {
     Table,
     TableBody,
@@ -58,6 +59,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
 
     const allFulfilled = itemsWithShipping.every(i => i.shippedQuantity >= i.quantity);
     const partlyFulfilled = itemsWithShipping.some(i => i.shippedQuantity > 0);
+    const labelUrl = order.shipments.find(s => s.labelUrl)?.labelUrl;
 
     return (
         <div className="space-y-8 max-w-6xl mx-auto pb-20">
@@ -98,6 +100,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                         <Printer className="w-4 h-4" />
                         Print Order
                     </Button>
+                    <PrintLabelButton orderId={order.id} hasLabel={!!labelUrl} labelUrl={labelUrl} />
                     {!allFulfilled && order.status !== "CANCELLED" && (
                         <FulfillmentModal orderId={order.id} items={itemsWithShipping} />
                     )}

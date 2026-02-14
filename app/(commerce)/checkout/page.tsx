@@ -16,7 +16,23 @@ export default async function CheckoutPage() {
 
     if (!user) return redirect("/api/auth/login");
 
-    const cart: Cart | null = redis ? ((await redis.get(`cart-${user.id}`)) as Cart | null) : null;
+    let cart: Cart | null = null;
+    if (redis) {
+        const cartData = await redis.get(`cart-${user.id}`);
+        // Redis returns string/object depending on client. Upstash via HTTP returns object if json? 
+        // If using ioredis, it returns string. Code says ioredis.
+        // The 'Cart | null' cast suggests previous dev assumed object, but verify.
+        // Safest is to handle both.
+        if (typeof cartData === 'string') {
+            try {
+                cart = JSON.parse(cartData);
+            } catch {
+                cart = null;
+            }
+        } else {
+            cart = cartData as Cart | null;
+        }
+    }
 
     if (!cart || !cart.items || cart.items.length === 0) {
         return redirect("/bag");

@@ -13,10 +13,16 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const STATUS_CONFIG: Record<string, { icon: React.ComponentType<{ className?: string }>; color: string; bg: string; label: string }> = {
-    pending: { icon: Clock, color: "text-amber-600", bg: "bg-amber-100", label: "Processing" },
-    shipped: { icon: Truck, color: "text-blue-600", bg: "bg-blue-100", label: "In Transit" },
-    delivered: { icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-100", label: "Delivered" },
-    cancelled: { icon: Package, color: "text-red-600", bg: "bg-red-100", label: "Cancelled" },
+    CREATED: { icon: Clock, color: "text-amber-600", bg: "bg-amber-100", label: "Processing" },
+    PAYMENT_PENDING: { icon: Clock, color: "text-amber-600", bg: "bg-amber-100", label: "Processing" },
+    PAID: { icon: Clock, color: "text-amber-600", bg: "bg-amber-100", label: "Processing" },
+    ALLOCATED: { icon: Clock, color: "text-amber-600", bg: "bg-amber-100", label: "Processing" },
+    PARTIALLY_SHIPPED: { icon: Truck, color: "text-blue-600", bg: "bg-blue-100", label: "In Transit" },
+    SHIPPED: { icon: Truck, color: "text-blue-600", bg: "bg-blue-100", label: "In Transit" },
+    DELIVERED: { icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-100", label: "Delivered" },
+    CANCELLED: { icon: Package, color: "text-red-600", bg: "bg-red-100", label: "Cancelled" },
+    FAILED: { icon: Package, color: "text-red-600", bg: "bg-red-100", label: "Failed" },
+    REFUNDED: { icon: Package, color: "text-red-600", bg: "bg-red-100", label: "Refunded" },
 };
 
 async function lookupOrder(query: string) {
@@ -27,7 +33,7 @@ async function lookupOrder(query: string) {
         where: { id: query },
         include: {
             orderItems: { take: 4 },
-            shipment: true,
+            shipments: true,
         },
     });
 
@@ -38,7 +44,7 @@ async function lookupOrder(query: string) {
             take: 1,
             include: {
                 orderItems: { take: 4 },
-                shipment: true,
+                shipments: true,
             },
         });
         order = orders[0] || null;
@@ -101,8 +107,9 @@ export default async function TrackingPage({
                 )}
 
                 {order && (() => {
-                    const config = STATUS_CONFIG[order.status] || STATUS_CONFIG["pending"];
+                    const config = STATUS_CONFIG[order.status] || STATUS_CONFIG["CREATED"];
                     const StatusIcon = config.icon;
+                    const shipment = (order as any).shipments?.[0];
 
                     return (
                         <div className="border border-border rounded-sm overflow-hidden">
@@ -120,27 +127,27 @@ export default async function TrackingPage({
                             </div>
 
                             {/* Shipping details */}
-                            {order.shipment && (
+                            {shipment && (
                                 <div className="p-6 border-b border-border">
                                     <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-mono mb-4">Shipping</h2>
                                     <div className="space-y-2 text-sm">
-                                        {order.shipment.trackingNumber && (
+                                        {shipment.trackingNumber && (
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">Tracking #</span>
-                                                <span className="font-mono">{order.shipment.trackingNumber}</span>
+                                                <span className="font-mono">{shipment.trackingNumber}</span>
                                             </div>
                                         )}
-                                        {order.shipment.carrier && (
+                                        {shipment.carrier && (
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">Carrier</span>
-                                                <span>{order.shipment.carrier}</span>
+                                                <span>{shipment.carrier}</span>
                                             </div>
                                         )}
-                                        {order.shipment.eta && (
+                                        {shipment.eta && (
                                             <div className="flex justify-between">
                                                 <span className="text-muted-foreground">Estimated Delivery</span>
                                                 <span className="font-mono">
-                                                    {new Date(order.shipment.eta).toLocaleDateString("en-US", {
+                                                    {new Date(shipment.eta).toLocaleDateString("en-US", {
                                                         weekday: "short", month: "short", day: "numeric",
                                                     })}
                                                 </span>
@@ -153,10 +160,10 @@ export default async function TrackingPage({
                             {/* Items */}
                             <div className="p-6">
                                 <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-mono mb-4">
-                                    {order.orderItems.length} item{order.orderItems.length !== 1 ? "s" : ""}
+                                    {(order as any).orderItems.length} item{(order as any).orderItems.length !== 1 ? "s" : ""}
                                 </h2>
                                 <div className="space-y-3">
-                                    {order.orderItems.map((item) => (
+                                    {(order as any).orderItems.map((item: any) => (
                                         <div key={item.id} className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-muted rounded-sm overflow-hidden relative flex-shrink-0 border border-border">
                                                 {item.image && (
@@ -194,7 +201,7 @@ export default async function TrackingPage({
                 {/* Help */}
                 <div className="mt-12 text-center">
                     <p className="text-xs text-muted-foreground">
-                        Need help? <Link href="/legal/contact" className="text-accent hover:underline">Contact our concierge</Link>
+                        Need help? <Link href="/contact" className="text-accent hover:underline">Contact our concierge</Link>
                     </p>
                 </div>
             </div>

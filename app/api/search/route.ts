@@ -9,7 +9,9 @@ export const dynamic = 'force-dynamic';
 // GET handler for direct search queries
 export async function GET(request: NextRequest) {
     // Rate Limit: 60 requests per minute by IP
-    const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
+    // Fix: Use generic header check or trust proxy if configured
+    // @ts-ignore - NextRequest has .ip but types might be lagging or strict
+    const ip = request.ip ?? request.headers.get("x-forwarded-for")?.split(',')[0] ?? "127.0.0.1";
     const { success } = await rateLimit(`search-${ip}`, 60, "60 s");
 
     if (!success) {
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
         const { products, total } = await searchProducts({ query, category, minPrice, maxPrice, inStock, sortBy, limit });
         return NextResponse.json({ products, total, query, filters: { category, minPrice, maxPrice, inStock, sortBy } });
     } catch (error) {
-        logger.error("[Search API Error]", error);
+        logger.error({ err: error }, "[Search API Error]");
         return NextResponse.json({ error: "Failed to search products" }, { status: 500 });
     }
 }
@@ -54,7 +56,7 @@ export async function POST(request: NextRequest) {
         // For now, both types return the same results
         return NextResponse.json({ results: products, searchType });
     } catch (error) {
-        logger.error("[Search API Error]", error);
+        logger.error({ err: error }, "[Search API Error]");
         return NextResponse.json({ error: "Failed to search products", results: [] }, { status: 500 });
     }
 }
@@ -98,9 +100,9 @@ async function searchProducts({
         }
     }
 
-    // Price range
-    if (minPrice) where.price = { ...where.price, gte: parseInt(minPrice) * 100 };
-    if (maxPrice) where.price = { ...where.price, lte: parseInt(maxPrice) * 100 };
+    // Price range (Input is likely dollars e.g. "10.50", DB is cents)
+    if (minPrice) where.price = { ...where.price, gte: Math.round(parseFloat(minPrice) * 100) };
+    if (maxPrice) where.price = { ...where.price, lte: Math.round(parseFloat(maxPrice) * 100) };
 
     // In-stock
     if (inStock === "true") where.stockQuantity = { gt: 0 };

@@ -8,22 +8,48 @@ export class OrderService {
     /**
      * Creates a new order in CREATED state from a user's cart.
      */
-    static async createFromCart(userId: string, cart: Cart): Promise<Order> {
+    static async createFromCart(
+        userId: string,
+        cart: Cart,
+        shippingAddress?: {
+            name: string;
+            street1: string;
+            street2?: string;
+            city: string;
+            state: string;
+            postalCode: string;
+            country: string;
+            phone?: string;
+        }
+    ): Promise<Order> {
         if (!cart.items || cart.items.length === 0) {
             throw new ValidationError("Cannot create order from empty cart");
         }
 
+        const amountCents = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+
         const order = await prisma.order.create({
             data: {
                 userId,
-                amount: cart.items.reduce((total, item) => total + item.price * item.quantity, 0) * 100, // Amount in cents
+                amount: amountCents, // Amount in cents
                 status: "CREATED" as OrderStatus,
                 paymentStatus: "PENDING" as PaymentStatus,
+
+                // Shipping Address Snapshot
+                shippingName: shippingAddress?.name,
+                shippingStreet1: shippingAddress?.street1,
+                shippingStreet2: shippingAddress?.street2,
+                shippingCity: shippingAddress?.city,
+                shippingState: shippingAddress?.state,
+                shippingPostalCode: shippingAddress?.postalCode,
+                shippingCountry: shippingAddress?.country || "US",
+                shippingPhone: shippingAddress?.phone,
+
                 orderItems: {
                     create: cart.items.map((item) => ({
                         productId: item.id,
                         name: item.name,
-                        price: Math.round(item.price * 100), // Store in cents
+                        price: item.price, // Store in cents
                         quantity: item.quantity,
                         image: item.imageString,
                     })),

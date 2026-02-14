@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/db";
 import { format } from "date-fns";
+import { requireAdmin } from "@/lib/auth";
 
 // Helper to escape CSV fields
 const escapeCsvField = (field: unknown) => {
@@ -14,6 +15,7 @@ const escapeCsvField = (field: unknown) => {
 };
 
 export async function exportOrders() {
+    await requireAdmin();
     try {
         const orders = await prisma.order.findMany({
             include: {
@@ -50,6 +52,7 @@ export async function exportOrders() {
 }
 
 export async function exportUsers() {
+    await requireAdmin();
     try {
         const users = await prisma.user.findMany({
             orderBy: { createdAt: "desc" }
@@ -78,6 +81,7 @@ export async function exportUsers() {
 }
 
 export async function exportRevenue() {
+    await requireAdmin();
     try {
         // Aggregating revenue by day for the last 30 days
         const thirtyDaysAgo = new Date();

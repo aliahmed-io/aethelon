@@ -1,12 +1,13 @@
 import { Redis } from 'ioredis';
 
+const logger = require("@/lib/logger").default;
+
 const getRedis = () => {
     if (process.env.REDIS_URL) {
         const client = new Redis(process.env.REDIS_URL);
-        // Prevent crashing on connection errors
-        client.on('error', (_err) => {
-            // Silently handle error or log only once
-            // console.warn("Redis Error:", err.message); 
+
+        client.on('error', (err) => {
+            logger.error({ err }, "Redis Connection Error");
         });
         return client;
     }

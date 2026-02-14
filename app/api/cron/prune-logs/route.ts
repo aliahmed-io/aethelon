@@ -5,7 +5,7 @@ import logger from "@/lib/logger";
 export async function GET(req: NextRequest) {
     // 1. Authenticate Cron Request
     const authHeader = req.headers.get("authorization");
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
         return new NextResponse("Unauthorized", { status: 401 });
     }
 

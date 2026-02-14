@@ -4,7 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Box, Smartphone, Sparkles, ScanFace } from "lucide-react";
-import { ArWrapper } from "@/components/ar/ArWrapper";
+import dynamic from "next/dynamic";
+// Lazy load globally to avoid heavy AR scripts on initial load
+const ArWrapper = dynamic(
+    () => import("@/components/ar/ArWrapper").then((m) => m.ArWrapper),
+    { ssr: false }
+);
 import { ThreeDViewerLazy } from "@/components/product/ProductClientWrappers";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";

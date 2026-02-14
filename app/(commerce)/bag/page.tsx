@@ -23,7 +23,12 @@ export default async function BagPage() {
     let cart: Cart | null = null;
     if (redis) {
         try {
-            cart = (await redis.get(`cart-${user.id}`)) as Cart | null;
+            const cartData = await redis.get(`cart-${user.id}`);
+            if (typeof cartData === 'string') {
+                cart = JSON.parse(cartData);
+            } else {
+                cart = cartData as Cart | null;
+            }
         } catch {
             cart = null;
         }

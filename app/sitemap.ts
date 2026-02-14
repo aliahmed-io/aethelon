@@ -5,7 +5,8 @@ export const dynamic = 'force-dynamic';
 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    // Ensure we don't output localhost in production if env is missing
+    const baseUrl = process.env.NEXT_PUBLIC_URL || "https://aethelon.com";
 
     const products = await prisma.product.findMany({
         select: {

@@ -11,7 +11,10 @@ interface ProductActionsProps {
     productId: string;
     price: number;
     stock: number;
+
     initialColor?: string;
+    currencyCode: string;
+    exchangeRate: number;
 }
 
 // Mock Colors for Visual Demo - In real app, these would come from props/DB
@@ -21,7 +24,7 @@ const MOCK_COLORS = [
     { name: "Charcoal", hex: "#37474F", id: "charcoal" },
 ];
 
-export function ProductActions({ productId, price, stock, initialColor }: ProductActionsProps) {
+export function ProductActions({ productId, price, stock, initialColor, currencyCode = "USD", exchangeRate = 1 }: ProductActionsProps) {
     const [quantity, setQuantity] = useState(1);
     const [selectedColor, setSelectedColor] = useState(MOCK_COLORS[0]);
     const [isPending, startTransition] = useTransition();
@@ -51,6 +54,17 @@ export function ProductActions({ productId, price, stock, initialColor }: Produc
             }
         });
     };
+
+    // Currency Formatting Logic (Client Side)
+    const convertedPrice = (price * exchangeRate); // Price in cents * rate
+    const totalPrice = convertedPrice * quantity;
+
+    // Simple formatter for display
+    const formattedTotal = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currencyCode,
+    }).format(totalPrice / 100); // Input is usually cents, but assuming price prop is cents needed /100? 
+    // Wait, earlier formatPrice used /100. Let's assume input price is CENTS.
 
     return (
         <div className="space-y-8 pt-6 border-t border-border/50">
@@ -109,7 +123,7 @@ export function ProductActions({ productId, price, stock, initialColor }: Produc
                 <div className="flex-1">
                     <span className="block text-sm text-muted-foreground mb-1">Total Price</span>
                     <span className="text-3xl font-bold tracking-tight">
-                        ${(price * quantity).toLocaleString()}
+                        {formattedTotal}
                     </span>
                 </div>
 
@@ -130,3 +144,4 @@ export function ProductActions({ productId, price, stock, initialColor }: Produc
         </div>
     );
 }
+

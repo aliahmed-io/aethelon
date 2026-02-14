@@ -10,16 +10,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
     const authHeader = req.headers.get("authorization");
-    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        return new NextResponse("Unauthorized", { status: 401 });
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     try {
         // 1. Find Expired Orders (CREATED > 30 mins ago)
         const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
 
-        // Optimization: Limit to 50 to prevent timeout. 
-        // Cron should run frequently (e.g. every 5-10 mins).
         const expiredOrders = await prisma.order.findMany({
             take: 50,
             where: {
@@ -42,16 +40,11 @@ export async function GET(req: Request) {
             return NextResponse.json({ message: "No expired reservations found" });
         }
 
-        const results: any[] = [];
-
-        // 2. Release Stock & Cancel Order (Parallel)
-        await Promise.all(expiredOrders.map(async (order) => {
+        // 2. Release Stock & Cancel Order (Parallel with Map-Return)
+        const results = await Promise.all(expiredOrders.map(async (order) => {
             try {
-                // Ensure we don't double-cancel (Optimistic Lock check would be ideal, but status check helps)
-                // Also, InventoryService.releaseReservation handles the transaction
-
                 const itemsToRelease = order.orderItems
-                    .filter(i => i.productId) // Ensure productId exists
+                    .filter(i => i.productId)
                     .map(i => ({
                         productId: i.productId!,
                         quantity: i.quantity
@@ -63,18 +56,14 @@ export async function GET(req: Request) {
 
                 await prisma.order.update({
                     where: { id: order.id },
-                    data: {
-                        status: "CANCELLED"
-                        // If we added an 'EXPIRED' status, we would use it here.
-                        // For now, CANCELLED is semantically correct for abandonment.
-                    }
+                    data: { status: "CANCELLED" }
                 });
 
-                results.push({ id: order.id, status: "CANCELLED" });
+                return { id: order.id, status: "CANCELLED" };
 
             } catch (err: any) {
-                logger.error(`Failed to release order ${order.id}`, err);
-                results.push({ id: order.id, error: err.message });
+                logger.error({ err }, `Failed to release order ${order.id}`);
+                return { id: order.id, error: err.message };
             }
         }));
 

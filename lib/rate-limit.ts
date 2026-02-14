@@ -4,10 +4,10 @@ import logger from "@/lib/logger";
 
 export async function rateLimit(identifier: string, limit = 10, duration: "10 s" | "60 s" | "1 d" = "10 s") {
     if (!redis) {
-        // Fail closed or open? Open is safer for dev/if redis is down, but closed is safer for security.
-        // Given this is abuse prevention, let's just log and allow if redis is missing (fallback).
-        logger.warn("Redis not initialized, rate limiting disabled");
-        return { success: true };
+        // STRATEGY: Fail CLOSED for Security.
+        // Audit Requirement: Do not fail open.
+        logger.error("Redis not initialized, denying request for rate limit check");
+        return { success: false, limit, remaining: 0, reset: 0 };
     }
 
     const ratelimit = new Ratelimit({

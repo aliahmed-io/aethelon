@@ -10,12 +10,23 @@ import { useSearch } from '@/components/search/SearchContext';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink } from '@kinde-oss/kinde-auth-nextjs/components';
 
-export default function Navbar() {
+interface NavbarProps {
+    isAdmin?: boolean;
+}
+
+export default function Navbar({ isAdmin = false }: NavbarProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
     const { openSearch } = useSearch();
     const { isAuthenticated } = useKindeBrowserClient();
+
+    // ... (rest of hook logic) ...
+
+    // (skip to return)
+
+    // ... inside check ...
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -91,7 +102,7 @@ export default function Navbar() {
                         <ShoppingBag className="w-5 h-5" />
                     </Link>
                     {isAuthenticated ? (
-                        <Link href="/account" className="text-foreground hover:text-accent transition-colors p-2" aria-label="Account">
+                        <Link href={isAdmin ? "/dashboard" : "/account"} className="text-foreground hover:text-accent transition-colors p-2" aria-label="Account">
                             <User className="w-5 h-5" />
                         </Link>
                     ) : (

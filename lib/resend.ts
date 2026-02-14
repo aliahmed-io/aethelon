@@ -14,10 +14,13 @@ export function getResendFromEmail() {
 import logger from "@/lib/logger";
 
 if (!apiKey) {
-    logger.warn("⚠️ RESEND_API_KEY is missing in environment variables. Email sending will fail.");
+    if (process.env.NODE_ENV === "production") {
+        throw new Error("FATAL: RESEND_API_KEY is missing in production environment.");
+    }
+    logger.warn("⚠️ RESEND_API_KEY is missing. Email sending will fail.");
 }
 
-export const resend = new Resend(apiKey || "re_missing_key");
+export const resend = new Resend(apiKey || "re_test_mock_key");
 
 import { withRetry } from "@/lib/retry";
 import { CreateEmailOptions } from "resend";

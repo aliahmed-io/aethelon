@@ -14,10 +14,10 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const STATUS_STYLES: Record<string, string> = {
-    pending: "bg-amber-100 text-amber-800 border-amber-200",
-    shipped: "bg-blue-100 text-blue-800 border-blue-200",
-    delivered: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    cancelled: "bg-red-100 text-red-800 border-red-200",
+    PENDING: "bg-amber-100 text-amber-800 border-amber-200",
+    SHIPPED: "bg-blue-100 text-blue-800 border-blue-200",
+    DELIVERED: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    CANCELLED: "bg-red-100 text-red-800 border-red-200",
 };
 
 export default async function OrdersPage({
@@ -37,7 +37,7 @@ export default async function OrdersPage({
     const pageSize = 10;
 
     const where: Record<string, unknown> = { userId: kindeUser.id };
-    if (filterStatus && ["pending", "shipped", "delivered", "cancelled"].includes(filterStatus)) {
+    if (filterStatus && ["PENDING", "SHIPPED", "DELIVERED", "CANCELLED"].includes(filterStatus)) {
         where.status = filterStatus;
     }
 
@@ -68,10 +68,10 @@ export default async function OrdersPage({
                 <div className="flex flex-wrap gap-2 mb-8">
                     {[
                         { label: "All", value: undefined },
-                        { label: "Pending", value: "pending" },
-                        { label: "Shipped", value: "shipped" },
-                        { label: "Delivered", value: "delivered" },
-                        { label: "Cancelled", value: "cancelled" },
+                        { label: "Pending", value: "PENDING" },
+                        { label: "Shipped", value: "SHIPPED" },
+                        { label: "Delivered", value: "DELIVERED" },
+                        { label: "Cancelled", value: "CANCELLED" },
                     ].map((f) => (
                         <Link
                             key={f.label}

@@ -47,7 +47,7 @@ const BLOG_POSTS = [
     },
 ] as const;
 
-const CATEGORIES = ["All", ...new Set(BLOG_POSTS.map((p) => p.category))] as const;
+const CATEGORIES = ["All", ...Array.from(new Set(BLOG_POSTS.map((p) => p.category)))] as const;
 
 export function generateStaticParams() {
     return [];
@@ -72,8 +72,8 @@ export default function BlogPage() {
                         <span
                             key={cat}
                             className={`px-4 py-2 text-xs uppercase tracking-widest rounded-sm border transition-colors cursor-default ${cat === "All"
-                                    ? "bg-accent text-accent-foreground border-accent"
-                                    : "bg-transparent text-muted-foreground border-border hover:border-foreground"
+                                ? "bg-accent text-accent-foreground border-accent"
+                                : "bg-transparent text-muted-foreground border-border hover:border-foreground"
                                 }`}
                         >
                             {cat}

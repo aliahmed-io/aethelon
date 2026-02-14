@@ -23,7 +23,7 @@ type ShippingFormProps = {
     discountPercentage?: number;
 };
 
-export function ShippingForm({ }: ShippingFormProps) {
+export function ShippingForm({ initialAddress }: ShippingFormProps) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -43,17 +43,103 @@ export function ShippingForm({ }: ShippingFormProps) {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label className="uppercase text-xs tracking-widest text-muted-foreground">First Name</Label>
-                        <Input className="bg-background border-border text-foreground focus:border-accent transition-colors h-12" required placeholder="Name" />
+                        <Input
+                            name="firstName"
+                            className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                            required
+                            placeholder="First Name"
+                            defaultValue={initialAddress?.name?.split(" ")?.[0] ?? ""}
+                        />
                     </div>
                     <div className="space-y-2">
                         <Label className="uppercase text-xs tracking-widest text-muted-foreground">Last Name</Label>
-                        <Input className="bg-background border-border text-foreground focus:border-accent transition-colors h-12" required placeholder="Surname" />
+                        <Input
+                            name="lastName"
+                            className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                            required
+                            placeholder="Last Name"
+                            defaultValue={initialAddress?.name?.split(" ")?.slice(1).join(" ") ?? ""}
+                        />
                     </div>
                 </div>
 
                 <div className="space-y-2">
                     <Label className="uppercase text-xs tracking-widest text-muted-foreground">Address</Label>
-                    <Input className="bg-background border-border text-foreground focus:border-accent transition-colors h-12" required placeholder="Street Address" />
+                    <Input
+                        name="street1"
+                        className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                        required
+                        placeholder="Street Address"
+                        defaultValue={initialAddress?.street1 ?? ""}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label className="uppercase text-xs tracking-widest text-muted-foreground">Apartment, suite, etc. (optional)</Label>
+                    <Input
+                        name="street2"
+                        className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                        placeholder="Apartment, suite, unit, etc."
+                        defaultValue={initialAddress?.street2 ?? ""}
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label className="uppercase text-xs tracking-widest text-muted-foreground">City</Label>
+                        <Input
+                            name="city"
+                            className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                            required
+                            placeholder="City"
+                            defaultValue={initialAddress?.city ?? ""}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="uppercase text-xs tracking-widest text-muted-foreground">State / Province</Label>
+                        <Input
+                            name="state"
+                            className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                            required
+                            placeholder="State"
+                            defaultValue={initialAddress?.state ?? ""}
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label className="uppercase text-xs tracking-widest text-muted-foreground">Postal Code</Label>
+                        <Input
+                            name="postalCode"
+                            className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                            required
+                            placeholder="Postal Code"
+                            defaultValue={initialAddress?.postalCode ?? ""}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="uppercase text-xs tracking-widest text-muted-foreground">Country</Label>
+                        <Input
+                            name="country"
+                            className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                            required
+                            placeholder="Country"
+                            defaultValue={initialAddress?.country ?? "United States"}
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Label className="uppercase text-xs tracking-widest text-muted-foreground">Phone</Label>
+                    <Input
+                        name="phone"
+                        type="tel"
+                        className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
+                        required
+                        placeholder="Phone Number"
+                        defaultValue={initialAddress?.phone ?? ""}
+                    />
                 </div>
 
                 <Button type="submit" className="w-full h-14 bg-accent text-accent-foreground font-bold uppercase tracking-widest hover:bg-accent/90 mt-6 relative overflow-hidden group">

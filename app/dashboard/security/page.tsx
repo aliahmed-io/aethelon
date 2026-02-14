@@ -278,7 +278,7 @@ async function getDatabaseHealthData() {
     oldPendingDate.setDate(oldPendingDate.getDate() - 3);
     const oldPendingOrders = await prisma.order.count({
         where: {
-            status: "pending",
+            status: "CREATED",
             createdAt: { lt: oldPendingDate }
         }
     });
@@ -362,7 +362,7 @@ function ThreatStatusBanner({ level }: { level: "secure" | "moderate" | "elevate
 }
 
 function StatCard({ icon: Icon, label, value, subValue }: {
-    icon: React.ElementType;
+    icon: any;
     label: string;
     value: string | number;
     subValue?: string;

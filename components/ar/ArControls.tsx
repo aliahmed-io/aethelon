@@ -8,9 +8,9 @@ interface ArControlsProps {
 }
 
 export function ArControls({ onReset }: ArControlsProps) {
-    const { isPresenting } = useXR();
+    const { session } = useXR();
 
-    if (!isPresenting) return null;
+    if (!session) return null;
 
     return (
         <div className="absolute bottom-12 left-0 right-0 flex flex-col items-center justify-center pointer-events-none z-50">

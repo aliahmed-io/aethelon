@@ -32,7 +32,7 @@ export default function CheckoutSuccessPage() {
                 </p>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                    <Link href="/dashboard" className="w-full md:w-auto px-8 py-3 bg-muted border border-border hover:bg-accent/10 transition-colors text-xs font-bold uppercase tracking-widest rounded-sm">
+                    <Link href="/orders" className="w-full md:w-auto px-8 py-3 bg-muted border border-border hover:bg-accent/10 transition-colors text-xs font-bold uppercase tracking-widest rounded-sm">
                         View Order Status
                     </Link>
                     <Link href="/shop" className="w-full md:w-auto px-8 py-3 bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-xs font-bold uppercase tracking-widest rounded-sm flex items-center justify-center gap-2">
