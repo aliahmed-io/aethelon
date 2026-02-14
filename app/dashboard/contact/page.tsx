@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle, Trash2 } from "lucide-react";
-import { updateContactStatus, deleteContact } from "./actions";
+import { updateContactStatus, deleteContact } from "@/app/store/dashboard/contact/actions";
 
 export const dynamic = "force-dynamic";
 

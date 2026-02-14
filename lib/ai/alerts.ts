@@ -96,7 +96,7 @@ export async function runFraudScan() {
                 }
             }
         } catch (e) {
-            logger.error("AI Review Scan failed", e);
+            logger.error({ err: e }, "AI Review Scan failed");
         }
     }
 

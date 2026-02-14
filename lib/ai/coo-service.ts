@@ -133,7 +133,7 @@ async function getOrGenerate<T>(
 
         return result;
     } catch (error) {
-        logger.error(`[AI-CACHE] Error handling cache for ${key}`, error);
+        logger.error({ err: error }, `[AI-CACHE] Error handling cache for ${key}`);
         // Fallback to generating without cache if DB fails
         return await generator();
     }

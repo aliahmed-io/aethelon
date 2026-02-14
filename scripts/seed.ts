@@ -1,12 +1,7 @@
 import { PrismaClient, MainCategory, ProductStatus } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate';
 
-// Hardcoded connection string for stability as seen in previous scripts
-const connectionString = "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfaWQiOjEsInNlY3VyZV9rZXkiOiJza196UGJua3ZYMjN6c0ZXOGdJYk1iSHciLCJhcGlfa2V5IjoiMDFLRjYzVFRaQk1TNThWNFozVktZMVNXQzUiLCJ0ZW5hbnRfaWQiOiI5NThhZDU4NThmOWQ1MGIwOWQxYTM1Mjc1ZmU1NTdhYjg2NzEyOTUxNWFhNmRlZmY5NTJlMThmYjY3NDJkNzVhIiwiaW50ZXJuYWxfc2VjcmV0IjoiMTkzYmJkMzEtNGViMS00MWExLTgwZTUtYTBmMWEzOWExMGUxIn0.txXDqLIka8Q24nM5WrkO9PiRyX8TFjMB6HMgE34qEpw&connect_timeout=60";
-
-const prisma = new PrismaClient({
-    datasourceUrl: connectionString,
-}).$extends(withAccelerate());
+const prisma = new PrismaClient().$extends(withAccelerate());
 
 const furnitureCategories = [
     {

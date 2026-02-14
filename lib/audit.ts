@@ -25,6 +25,6 @@ export async function logAudit({
             },
         });
     } catch (error) {
-        logger.error("Failed to write audit log", error);
+        logger.error({ err: error }, "Failed to write audit log");
     }
 }

@@ -2,6 +2,7 @@
 
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { redis } from "@/lib/redis";
 import { Cart } from "@/lib/interfaces";
 import { revalidatePath, revalidateTag } from "next/cache";
@@ -589,11 +590,45 @@ export async function bulkDeleteProducts(ids: string[]) {
     revalidatePath("/store/dashboard/products");
 }
 
-export async function bulkUpdateProducts(updates: any[]) {
+type BulkProductUpdate = {
+    id: string;
+    status?: import("@prisma/client").ProductStatus;
+    price?: number;
+    isFeatured?: boolean;
+    discountPercentage?: number;
+    categoryId?: string;
+    mainCategory?: import("@prisma/client").MainCategory | null;
+    modelUrl?: string | null;
+    usdzUrl?: string | null;
+};
+
+export async function bulkUpdateProducts(updates: BulkProductUpdate[]) {
     await requireAdmin();
 
     const transactions = updates.map((update) => {
-        const { id, ...data } = update;
+        const {
+            id,
+            status,
+            price,
+            isFeatured,
+            discountPercentage,
+            categoryId,
+            mainCategory,
+            modelUrl,
+            usdzUrl,
+        } = update;
+
+        const data: import("@prisma/client").Prisma.ProductUpdateInput = {
+            ...(status !== undefined ? { status } : {}),
+            ...(price !== undefined ? { price } : {}),
+            ...(isFeatured !== undefined ? { isFeatured } : {}),
+            ...(discountPercentage !== undefined ? { discountPercentage } : {}),
+            ...(categoryId !== undefined ? { category: { connect: { id: categoryId } } } : {}),
+            ...(mainCategory !== undefined && mainCategory !== null ? { mainCategory } : {}),
+            ...(modelUrl !== undefined ? { modelUrl } : {}),
+            ...(usdzUrl !== undefined ? { usdzUrl } : {}),
+        };
+
         return prisma.product.update({
             where: { id },
             data
@@ -604,5 +639,58 @@ export async function bulkUpdateProducts(updates: any[]) {
 
     revalidatePath("/dashboard/products");
     revalidatePath("/store/dashboard/products");
+}
+
+export async function applyDiscount(formData: FormData) {
+    const code = formData.get("code") as string;
+    if (!code) return { error: "Discount code is required" };
+
+    try {
+        const discount = await prisma.discount.findUnique({
+            where: { code },
+        });
+
+        if (!discount || !discount.isActive) {
+            return { error: "Invalid or inactive discount code" };
+        }
+
+        if (discount.expiresAt && discount.expiresAt < new Date()) {
+            return { error: "Discount code has expired" };
+        }
+
+        const cookieStore = await cookies();
+        cookieStore.set("discountCode", code, {
+            maxAge: 60 * 60 * 24, // 24 hours
+            path: "/",
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+        });
+
+        revalidatePath("/bag");
+        revalidatePath("/checkout");
+        return { success: true, percentage: discount.percentage };
+    } catch (error) {
+        console.error("Apply Discount Error:", error);
+        return { error: "Failed to apply discount" };
+    }
+}
+
+export async function removeDiscount() {
+    try {
+        const cookieStore = await cookies();
+        cookieStore.delete({
+            name: "discountCode",
+            path: "/",
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+        });
+        revalidatePath("/bag");
+        revalidatePath("/checkout");
+        return { success: true };
+    } catch (error) {
+        console.error("Remove Discount Error:", error);
+        return { error: "Failed to remove discount" };
+    }
 }
 

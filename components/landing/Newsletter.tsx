@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { subscribeToNewsletter } from "@/app/api/newsletter/actions";
+import { subscribeToNewsletter } from "@/app/store/newsletter/actions";
 import { toast } from "sonner";
 
 export function Newsletter() {

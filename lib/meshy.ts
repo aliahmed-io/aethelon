@@ -65,7 +65,7 @@ export async function createMeshyTask(imageUrls: string[]) {
         const taskId = data?.taskId || data?.task_id || data?.id || data?.result;
         return { ...data, taskId };
     } catch (error) {
-        logger.error("Error creating Meshy task", error);
+        logger.error({ err: error }, "Error creating Meshy task");
         throw error;
     }
 }
@@ -75,7 +75,7 @@ export async function getMeshyTask(taskId: string) {
         const response = await client.get(`/multi-image-to-3d/${taskId}`);
         return response.data;
     } catch (error) {
-        logger.error("Error getting Meshy task", error);
+        logger.error({ err: error }, "Error getting Meshy task");
         throw error;
     }
 }

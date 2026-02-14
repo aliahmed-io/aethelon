@@ -2,7 +2,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { subscribeToNewsletter } from "@/app/api/newsletter/actions";
+import { subscribeToNewsletter } from "@/app/store/newsletter/actions";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { SubmitButton } from "@/components/SubmitButtons";

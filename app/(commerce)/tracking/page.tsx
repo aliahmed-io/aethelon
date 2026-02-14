@@ -109,7 +109,26 @@ export default async function TrackingPage({
                 {order && (() => {
                     const config = STATUS_CONFIG[order.status] || STATUS_CONFIG["CREATED"];
                     const StatusIcon = config.icon;
-                    const shipment = (order as any).shipments?.[0];
+                    type ShipmentSummary = {
+                        trackingNumber: string | null;
+                        carrier: string | null;
+                        eta: Date | string | null;
+                    };
+
+                    type OrderItemSummary = {
+                        id: string;
+                        name: string;
+                        quantity: number;
+                        price: number;
+                        image: string | null;
+                    };
+
+                    const hydratedOrder = order as typeof order & {
+                        shipments?: ShipmentSummary[];
+                        orderItems: OrderItemSummary[];
+                    };
+
+                    const shipment = hydratedOrder.shipments?.[0];
 
                     return (
                         <div className="border border-border rounded-sm overflow-hidden">
@@ -160,10 +179,10 @@ export default async function TrackingPage({
                             {/* Items */}
                             <div className="p-6">
                                 <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-mono mb-4">
-                                    {(order as any).orderItems.length} item{(order as any).orderItems.length !== 1 ? "s" : ""}
+                                    {hydratedOrder.orderItems.length} item{hydratedOrder.orderItems.length !== 1 ? "s" : ""}
                                 </h2>
                                 <div className="space-y-3">
-                                    {(order as any).orderItems.map((item: any) => (
+                                    {hydratedOrder.orderItems.map((item) => (
                                         <div key={item.id} className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-muted rounded-sm overflow-hidden relative flex-shrink-0 border border-border">
                                                 {item.image && (

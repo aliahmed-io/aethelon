@@ -61,7 +61,7 @@ async function main() {
     const prisma = new PrismaClient({
         log: ['warn', 'error'],
         accelerateUrl: connectionString,
-    }).$extends(withAccelerate());
+    } as any).$extends(withAccelerate());
 
     try {
         console.log("[Seed] Upserting Categories...");
@@ -215,7 +215,7 @@ async function main() {
 
                 const orderUser = pickOne(allUsers);
                 const p = pickOne(productMap);
-                const status = daysAgo > 7 ? OrderStatus.delivered : pickOne([OrderStatus.pending, OrderStatus.shipped]);
+                const status = daysAgo > 7 ? OrderStatus.DELIVERED : pickOne([OrderStatus.CREATED, OrderStatus.SHIPPED]);
 
                 await prisma.order.create({
                     data: {

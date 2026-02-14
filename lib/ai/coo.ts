@@ -251,7 +251,7 @@ export async function draftEmailCampaign(context: string, products: { name: stri
 
         return data;
     } catch (e) {
-        logger.error("AI Email Draft Error", e);
+        logger.error({ err: e }, "AI Email Draft Error");
         return null;
     }
 }

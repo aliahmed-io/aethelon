@@ -2,9 +2,9 @@
 
 import { useScroll, useSpring } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { Navbar } from "./Navbar";
-import ImageSequence from "./ImageSequence";
-import TextOverlays from "./TextOverlays";
+import { Navbar } from "../layout/Navbar";
+import ImageSequence from "../sections/ImageSequence";
+import TextOverlays from "../ui/TextOverlays";
 
 
 export default function ScrollController() {

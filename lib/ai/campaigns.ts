@@ -46,7 +46,7 @@ export async function generateCampaignDraft(context: string): Promise<CampaignDr
         const text = result.response.text();
         return JSON.parse(text) as CampaignDraft;
     } catch (e) {
-        logger.error("Campaign AI Error", e);
+        logger.error({ err: e }, "Campaign AI Error");
         return {
             subject: "Special Announcement from Aethelona",
             message: "We have some exciting updates for you. Check out our store for the latest collection!"

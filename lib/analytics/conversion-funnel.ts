@@ -151,7 +151,7 @@ async function getCompletedPurchases(since: Date): Promise<number> {
     return await prisma.order.count({
         where: {
             createdAt: { gte: since },
-            status: { in: ["shipped", "delivered"] }
+            status: { in: ["SHIPPED", "DELIVERED"] }
         }
     });
 }

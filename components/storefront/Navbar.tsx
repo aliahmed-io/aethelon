@@ -18,7 +18,8 @@ export async function Navbar() {
   let cart: Cart | null = null;
   if (user?.id && redis) {
     try {
-      cart = (await redis.get<Cart>(`cart-${user.id}`)) as Cart | null;
+      const data = await redis.get(`cart-${user.id}`);
+      cart = data ? (JSON.parse(data) as Cart) : null;
     } catch {
       cart = null;
     }

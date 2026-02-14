@@ -65,7 +65,7 @@ export async function getShippingRates(
 
         return shipment.rates;
     } catch (error) {
-        logger.error("Error fetching rates", error);
+        logger.error({ err: error }, "Error fetching rates");
         throw new Error("Failed to fetch shipping rates");
     }
 }
@@ -84,7 +84,7 @@ export async function purchaseLabel(rateId: string) {
 
         return transaction;
     } catch (error) {
-        logger.error("Error purchasing label", error);
+        logger.error({ err: error }, "Error purchasing label");
         throw new Error("Failed to purchase shipping label");
     }
 }

@@ -28,11 +28,12 @@ function Particles() {
     }, [count]);
 
     useFrame(() => {
-        if (!mesh.current) return;
+        const currentMesh = mesh.current;
+        if (!currentMesh) return;
 
         // Rotate entire system based on scroll
-        mesh.current.rotation.y = scrollProgress * Math.PI * 0.5;
-        mesh.current.rotation.z = scrollProgress * 0.2;
+        currentMesh.rotation.y = scrollProgress * Math.PI * 0.5;
+        currentMesh.rotation.z = scrollProgress * 0.2;
 
         particles.forEach((particle, i) => {
             const { factor, speed, xFactor, yFactor, zFactor } = particle;
@@ -67,10 +68,10 @@ function Particles() {
             dummy.rotation.set(s * 5, s * 5, s * 5);
             dummy.updateMatrix();
 
-            mesh.current.setMatrixAt(i, dummy.matrix);
+            currentMesh.setMatrixAt(i, dummy.matrix);
         });
 
-        mesh.current.instanceMatrix.needsUpdate = true;
+        currentMesh.instanceMatrix.needsUpdate = true;
     });
 
     return (
