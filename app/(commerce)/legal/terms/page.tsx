@@ -6,7 +6,7 @@ export default function TermsPage() {
     return (
         <article>
             <h1>Terms of Service</h1>
-            <p>Last updated: {new Date().toLocaleDateString()}</p>
+            <p>Last updated: 2026-02-14</p>
 
             <h2>1. Agreement to Terms</h2>
             <p>By accessing or using our website, you agree to be bound by these Terms of Service and our Privacy Policy.</p>

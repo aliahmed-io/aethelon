@@ -120,6 +120,7 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 16. **Stripe Payments**: Checkout session flow + webhook reconciliation, email capture, and correctness fixes on amount handling.
 106. **Dynamic Tax/Shipping**: Live carrier rates via Shippo API integration.
 18. **Discount Engine**: Support for fixed amount off, percentage off, and specific product targeting.
+19. **Discount Code Persistence**: Discount application/removal is implemented via server actions and a hardened cookie strategy (HttpOnly + SameSite Lax + Secure in production).
 116. **Legal Framework**: Dedicated GDPR/CCPA compliant pages for Privacy, Terms, and Cookies.
 117. **Subscription Logic**: Automated unsubscribe flow with status tracking.
 118. **Cart Recovery**: Dedicated cancellation retention page to capture abandoned checkouts.
@@ -158,6 +159,7 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 40. **RBAC Controls**: Middleware protecting admin routes.
 41. **Audit Logging**: Immutable history of all admin actions (Who changed price X?).
 42. **CSV Data Export**: One-click download of financial data with explicit admin authorization on export actions.
+44. **Bulk Product Operations**: Admin tools for bulk updating products and deleting products with server-side allowlisting to prevent accidental unsafe field changes.
 43. **System Health**: Uptime monitoring widget.
 
 ---
@@ -288,11 +290,13 @@ To reach full operational status:
 * Stripe checkout sessions now include customer email when available.
 * Cancel URL aligns with an existing route; cart return now points to the actual cart route.
 * Order creation now uses a consistent cents-based amount model (order amount + order item prices).
+* Discount codes can be applied and removed via server actions with hardened cookie settings (HttpOnly, SameSite=Lax, Secure in production).
 
 ### Admin Analytics & Exports
 * CSV export actions require admin authorization (prevents unauthorized export of users/orders/revenue).
 * Reports UI amount formatting now consistently displays cents → dollars.
 * Status casing in filters/badges aligned with enum values.
+* Bulk product update/delete actions are admin-gated and restricted to a safe server-side allowlist of mutable fields.
 
 ### Webhooks & Cron
 * Cron routes enforce secret checks and fail closed.
@@ -301,9 +305,11 @@ To reach full operational status:
 ### AR / 3D
 * Mobile AR entry flow now mounts the AR session and uses a shared XR store (previously could be a no-op).
 * Meshy 3D pipeline remains end-to-end: initiation → webhook update → viewer display.
+* `model-viewer` element typing stabilized to avoid build-time TS failures while preserving AR viewer functionality.
 
 ### AI Governance
 * Admin-only gating added for expensive/operational AI actions (3D generation, campaign generation, product description generation, status checks).
 
 ### Dependency & Supply Chain
 * `npm audit` remediated to 0 vulnerabilities via forced dependency resolution.
+* Removed hardcoded secrets from seed scripts and aligned build-time typing for external SDKs and admin tooling.

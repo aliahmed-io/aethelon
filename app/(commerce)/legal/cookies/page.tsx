@@ -6,7 +6,7 @@ export default function CookiesPage() {
     return (
         <article>
             <h1>Cookie Policy</h1>
-            <p>Last updated: {new Date().toLocaleDateString()}</p>
+            <p>Last updated: 2026-02-14</p>
 
             <h2>1. What Are Cookies</h2>
             <p>Cookies are small pieces of text sent by your web browser by a website you visit. A cookie file is stored in your web browser and allows the Service or a third-party to recognize you.</p>

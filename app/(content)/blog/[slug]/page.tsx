@@ -4,12 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Clock, Share2 } from "lucide-react";
 
+export const revalidate = 3600;
+
 /** Static blog data — replace with CMS integration when ready */
 const BLOG_POSTS: Record<string, {
     title: string;
     excerpt: string;
     category: string;
     date: string;
+    displayDateLong: string;
     image: string;
     readTime: string;
     content: string[];
@@ -19,6 +22,7 @@ const BLOG_POSTS: Record<string, {
         excerpt: "How we source, season, and shape FSC-certified American white oak into heirloom furniture that lasts generations.",
         category: "Craft",
         date: "2026-01-15",
+        displayDateLong: "January 15, 2026",
         image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=1200&auto=format&fit=crop",
         readTime: "6 min",
         content: [
@@ -34,6 +38,7 @@ const BLOG_POSTS: Record<string, {
         excerpt: "Our design team shares how natural light influences every silhouette, finish, and placement we recommend.",
         category: "Design",
         date: "2026-01-28",
+        displayDateLong: "January 28, 2026",
         image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
         readTime: "4 min",
         content: [
@@ -47,6 +52,7 @@ const BLOG_POSTS: Record<string, {
         excerpt: "Why the most restrained designs often deliver the deepest comfort — and how we achieve both.",
         category: "Philosophy",
         date: "2026-02-05",
+        displayDateLong: "February 5, 2026",
         image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=1200&auto=format&fit=crop",
         readTime: "5 min",
         content: [
@@ -60,6 +66,7 @@ const BLOG_POSTS: Record<string, {
         excerpt: "From forest to showroom, a transparent look at every step in our FSC-certified sourcing process.",
         category: "Sustainability",
         date: "2026-02-10",
+        displayDateLong: "February 10, 2026",
         image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=1200&auto=format&fit=crop",
         readTime: "7 min",
         content: [
@@ -113,7 +120,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                         <h1 className="text-4xl lg:text-5xl font-bold tracking-tighter mb-6">{post.title}</h1>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono mb-8">
                             <time dateTime={post.date}>
-                                {new Date(post.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                                {post.displayDateLong}
                             </time>
                             <span>·</span>
                             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {post.readTime} read</span>

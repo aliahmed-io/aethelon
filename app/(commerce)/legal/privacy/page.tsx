@@ -6,7 +6,7 @@ export default function PrivacyPage() {
     return (
         <article>
             <h1>Privacy Policy</h1>
-            <p>Last updated: {new Date().toLocaleDateString()}</p>
+            <p>Last updated: 2026-02-14</p>
 
             <h2>1. Introduction</h2>
             <p>Aethelon (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) respects your privacy and is committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website.</p>
