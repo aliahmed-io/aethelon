@@ -41,11 +41,11 @@ export async function GET(req: Request) {
         }
 
         // 2. Release Stock & Cancel Order (Parallel with Map-Return)
-        const results = await Promise.all(expiredOrders.map(async (order) => {
+        const results = await Promise.all(expiredOrders.map(async (order: any) => {
             try {
                 const itemsToRelease = order.orderItems
-                    .filter(i => i.productId)
-                    .map(i => ({
+                    .filter((i: any) => i.productId)
+                    .map((i: any) => ({
                         productId: i.productId!,
                         quantity: i.quantity
                     }));

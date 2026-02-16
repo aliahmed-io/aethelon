@@ -38,7 +38,7 @@ export async function checkPriceDrops() {
 
     // Filter purely in JS for simplicity as we can't easily do field comparison in standard Prisma query 
     // without raw SQL or extensions for this specific logic
-    const drops = items.filter(item => item.product.price < item.addedPrice);
+    const drops = items.filter((item: any) => item.product.price < item.addedPrice);
 
     if (drops.length === 0) return { count: 0 };
 

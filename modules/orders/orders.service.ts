@@ -99,7 +99,7 @@ export class OrderService {
             FAILED: ["CANCELLED"],
         };
 
-        const allowed = allowedTransitions[order.status];
+        const allowed = allowedTransitions[order.status as OrderStatus];
         if (!allowed || !allowed.includes(newStatus)) {
             // Allow idempotent transitions (transitions to self)
             if (order.status === newStatus) return order;

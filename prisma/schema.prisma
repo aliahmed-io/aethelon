@@ -1,9 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
+  extensions = [vector]
 }
 
 model User {
@@ -32,6 +34,16 @@ model User {
 enum UserRole {
   ADMIN
   USER
+}
+
+model SearchAnalytics {
+  id        String   @id @default(uuid())
+  query     String
+  userId    String?
+  results   Int
+  clicked   String?
+  converted Boolean? @default(false)
+  createdAt DateTime @default(now())
 }
 
 model Attribute {
@@ -89,6 +101,9 @@ model Product {
   reservedStock     Int   @default(0)
   weight            Float @default(1.0)
   lowStockThreshold Int   @default(5)
+
+  // Vector Search
+  embedding Unsupported("vector(768)")?
 
   mainCategory          MainCategory           @default(MEN)
   category              Category               @relation(fields: [categoryId], references: [id])

@@ -25,7 +25,7 @@ export async function ReviewList({ productId }: { productId: string }) {
 
     return (
         <div className="space-y-6">
-            {reviews.map((review) => (
+            {reviews.map((review: any) => (
                 <div key={review.id} className="bg-white/[0.02] border border-white/5 p-6 rounded-sm backdrop-blur-sm">
                     <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">

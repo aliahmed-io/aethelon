@@ -48,5 +48,5 @@ export default async function CampaignPage({ params }: { params: { slug: string 
         link: null // No link needed, we are on the page
     } : null;
 
-    return <CampaignClient heroBanner={fakeBanner} featuredProducts={campaign.products.map(cp => cp.product)} />;
+    return <CampaignClient heroBanner={fakeBanner} featuredProducts={campaign.products.map((cp: any) => cp.product)} />;
 }

@@ -77,8 +77,8 @@ export default async function OrdersPage({
                             key={f.label}
                             href={f.value ? `/orders?status=${f.value}` : "/orders"}
                             className={`px-4 py-2 text-xs uppercase tracking-widest rounded-sm border transition-colors ${filterStatus === f.value || (!filterStatus && !f.value)
-                                    ? "bg-accent text-accent-foreground border-accent"
-                                    : "bg-transparent text-muted-foreground border-border hover:border-foreground"
+                                ? "bg-accent text-accent-foreground border-accent"
+                                : "bg-transparent text-muted-foreground border-border hover:border-foreground"
                                 }`}
                         >
                             {f.label}
@@ -99,7 +99,7 @@ export default async function OrdersPage({
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {orders.map((order) => (
+                        {orders.map((order: any) => (
                             <Link
                                 key={order.id}
                                 href={`/orders/${order.id}`}
@@ -127,7 +127,7 @@ export default async function OrdersPage({
 
                                 {/* Item previews */}
                                 <div className="flex gap-3">
-                                    {order.orderItems.map((item) => (
+                                    {order.orderItems.map((item: any) => (
                                         <div key={item.id} className="w-14 h-14 bg-muted rounded-sm overflow-hidden relative flex-shrink-0 border border-border">
                                             {item.image && (
                                                 <Image

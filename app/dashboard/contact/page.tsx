@@ -48,7 +48,7 @@ export default async function ContactInbox() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            messages.map((msg) => (
+                            messages.map((msg: any) => (
                                 <TableRow key={msg.id} className={!msg.isRead ? "bg-muted/50 font-medium" : ""}>
                                     <TableCell>
                                         <div>{msg.name}</div>

@@ -36,7 +36,7 @@ export async function getBusinessMetrics() {
         },
     });
 
-    const totalRevenue = recentOrders.reduce((acc, order) => acc + order.amount, 0);
+    const totalRevenue = recentOrders.reduce((acc: number, order: any) => acc + order.amount, 0);
     const totalOrders = recentOrders.length;
     const averageOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders / 100).toFixed(2) : "0.00";
 
@@ -51,7 +51,7 @@ export async function getBusinessMetrics() {
         averageOrderValue: averageOrderValue,
         conversionRate: totalVisitors > 0 ? ((totalOrders / totalVisitors) * 100).toFixed(2) + "%" : "0%",
         recentTrend: "Stable", // Placeholder logic
-        topRecentOrders: topProducts.map(p => ({
+        topRecentOrders: topProducts.map((p: any) => ({
             amount: p.amount / 100,
             date: p.createdAt.toISOString().split('T')[0],
             customer: p.User ? `${p.User.firstName} ${p.User.lastName}` : "Guest"

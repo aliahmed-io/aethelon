@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import logger from "@/lib/logger";
 
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -28,7 +29,7 @@ export async function GET(req: Request) {
         });
 
         // Process in parallel and sum results
-        const results = await Promise.all(wishlistItems.map(async (item) => {
+        const results = await Promise.all(wishlistItems.map(async (item: any) => {
             const currentPrice = item.product.price;
             const baselinePrice = item.lastNotifiedPrice ?? item.addedPrice;
 
@@ -64,7 +65,7 @@ export async function GET(req: Request) {
             return 0;
         }));
 
-        const emailsSent = results.reduce((a: number, b) => a + b, 0);
+        const emailsSent = results.reduce((a: number, b: number) => a + b, 0);
 
         return NextResponse.json({ success: true, emailsSent });
     } catch (error) {

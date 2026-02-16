@@ -32,7 +32,7 @@ export async function sendBroadcastEmail(formData: FormData) {
         // For now, we send them sequentially (wrapped in promise.all for small-mid scale).
         // Resend handles some scale but we should be careful.
 
-        const emailPromises = users.map(user =>
+        const emailPromises = users.map((user: any) =>
             sendEmailSafe({
                 from,
                 to: user.email,

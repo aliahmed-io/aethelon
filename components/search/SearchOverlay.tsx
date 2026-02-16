@@ -140,7 +140,7 @@ export function SearchOverlay() {
     );
 }
 
-function ProductCard({ product, onClick }: { product: Product; onClick: () => void }) {
+function ProductCard({ product, onClick }: { product: Product & { relevance?: number; vectorScore?: number }; onClick: () => void }) {
     return (
         <div
             onClick={onClick}
@@ -158,6 +158,17 @@ function ProductCard({ product, onClick }: { product: Product; onClick: () => vo
                     <h4 className="font-medium text-sm truncate transition-colors text-foreground/80 group-hover:text-foreground">
                         {product.name}
                     </h4>
+                    {/* Recall Badge from Hybrid Search */}
+                    {(product.relevance && product.relevance > 0.8) && (
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded-sm border border-amber-500/20">
+                            Top Match
+                        </span>
+                    )}
+                    {(product.vectorScore && product.vectorScore > 0.7 && (!product.relevance || product.relevance <= 0.8)) && (
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded-sm border border-indigo-500/20">
+                            Semantic
+                        </span>
+                    )}
                 </div>
 
                 <p className="text-muted-foreground text-xs truncate font-light">{product.category}</p>

@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     });
 
-    const productUrls = products.map((product) => {
+    const productUrls = products.map((product: any) => {
         return {
             url: `${baseUrl}/shop/${product.id}`,
             lastModified: product.createdAt,
@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         };
     });
 
-    const categoryUrls = categories.map((category) => {
+    const categoryUrls = categories.map((category: any) => {
         return {
             url: `${baseUrl}/shop?category=${category.slug}`,
             lastModified: new Date(),

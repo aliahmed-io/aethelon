@@ -6,6 +6,10 @@ import { rateLimit } from "@/lib/rate-limit";
 export const dynamic = 'force-dynamic';
 
 
+import { searchProductsHybrid } from "@/lib/search/hybrid";
+
+import { trackSearchQuery } from "@/lib/search/analytics";
+
 // GET handler for direct search queries
 export async function GET(request: NextRequest) {
     // Rate Limit: 60 requests per minute by IP
@@ -32,7 +36,34 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const { products, total } = await searchProducts({ query, category, minPrice, maxPrice, inStock, sortBy, limit });
+        let products: any[] = [];
+        let total = 0;
+
+        // Use Hybrid Search if a textual query is present
+        if (query && query.trim()) {
+            products = await searchProductsHybrid({
+                query,
+                category: category || undefined,
+                minPrice: minPrice ? Math.round(parseFloat(minPrice) * 100) : undefined,
+                maxPrice: maxPrice ? Math.round(parseFloat(maxPrice) * 100) : undefined,
+                inStock: inStock === "true",
+                limit
+            });
+            total = products.length; // Hybrid search doesn't support total count efficiently yet
+
+            // Fire & Forget Analytics
+            trackSearchQuery({
+                query,
+                resultsCount: total,
+                userId: null
+            });
+        } else {
+            // Fallback to Standard DB Filter
+            const result = await searchProducts({ query, category, minPrice, maxPrice, inStock, sortBy, limit });
+            products = result.products;
+            total = result.total;
+        }
+
         return NextResponse.json({ products, total, query, filters: { category, minPrice, maxPrice, inStock, sortBy } });
     } catch (error) {
         logger.error({ err: error }, "[Search API Error]");

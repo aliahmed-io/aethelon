@@ -30,7 +30,7 @@ export async function runFraudScan() {
     });
 
     // Simple dedup using metadata check (inefficient but works for MVP)
-    const flaggedIds = new Set(alreadyFlaggedOrders.map(a => (a.metadata as any)?.orderId));
+    const flaggedIds = new Set(alreadyFlaggedOrders.map((a: any) => (a.metadata as any)?.orderId));
 
     for (const order of highValueOrders) {
         if (flaggedIds.has(order.id)) continue;
@@ -63,7 +63,7 @@ export async function runFraudScan() {
             Return a list of IDs that are suspicious.
             
             Reviews:
-            ${JSON.stringify(recentReviews.map(r => ({ id: r.id, comment: r.comment })))}
+            ${JSON.stringify(recentReviews.map((r: any) => ({ id: r.id, comment: r.comment })))}
             
             OUTPUT JSON: { "suspiciousIds": ["id1"] }
         `;
@@ -75,7 +75,7 @@ export async function runFraudScan() {
 
             for (const id of suspiciousIds) {
                 // Dedup check omitted for brevity in this block, but identical to above recommended
-                const review = recentReviews.find(r => r.id === id);
+                const review = recentReviews.find((r: any) => r.id === id);
                 if (review) {
                     // Check if alert exists
                     const exists = await prisma.alert.findFirst({

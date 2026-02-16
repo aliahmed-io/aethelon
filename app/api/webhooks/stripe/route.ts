@@ -58,7 +58,7 @@ export async function POST(req: Request) {
                 logger.warn({ orderId }, "Zombie Order Detected: Payment received after cancellation");
 
                 // Attempt to Recovery: Check if stock is available to "un-cancel"
-                const itemsToRecover = existingOrder.orderItems.map(item => ({
+                const itemsToRecover = existingOrder.orderItems.map((item: any) => ({
                     productId: item.productId!,
                     quantity: item.quantity
                 }));
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
                 try {
                     // We treat this as a fresh sale from an inventory perspective (no reservation exists anymore)
 
-                    await prisma.$transaction(async (tx) => {
+                    await prisma.$transaction(async (tx: any) => {
                         for (const item of itemsToRecover) {
                             const product = await tx.product.findUnique({ where: { id: item.productId } });
                             if (!product || product.stockQuantity < item.quantity) {
@@ -128,7 +128,7 @@ export async function POST(req: Request) {
                 }
             } else {
                 // NORMAL FLOW: Order is CREATED or PENDING
-                const items = existingOrder.orderItems.map(item => ({
+                const items = existingOrder.orderItems.map((item: any) => ({
                     productId: item.productId as string,
                     quantity: item.quantity
                 }));
@@ -190,7 +190,7 @@ export async function POST(req: Request) {
             if (existingOrder && existingOrder.status === "CREATED") {
                 logger.info({ orderId }, "Payment Failed/Expired. Releasing Stock.");
 
-                await InventoryService.releaseReservation(orderId, existingOrder.orderItems.map(i => ({
+                await InventoryService.releaseReservation(orderId, existingOrder.orderItems.map((i: any) => ({
                     productId: i.productId!,
                     quantity: i.quantity
                 })));

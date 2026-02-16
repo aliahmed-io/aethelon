@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import logger from "@/lib/logger";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
     // 1. Authenticate Cron Request
     const authHeader = req.headers.get("authorization");
@@ -45,7 +48,7 @@ export async function GET(req: NextRequest) {
             aiLogsDeleted: deletedAiLogs.count,
         });
     } catch (error) {
-        logger.error(error, "Failed to prune logs");
+        logger.error({ err: error }, "Failed to prune logs");
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }

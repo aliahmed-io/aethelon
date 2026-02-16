@@ -53,7 +53,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                             RECOMMENDED FOR YOU
                         </h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {recommendations.map((product) => (
+                            {recommendations.map((product: any) => (
                                 <div key={product.id} className="h-[400px]">
                                     <ProductCard item={product} />
                                 </div>

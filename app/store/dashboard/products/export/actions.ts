@@ -13,7 +13,7 @@ export async function exportProducts() {
             include: { category: true }
         });
 
-        const formattedData = products.map(p => ({
+        const formattedData = products.map((p: any) => ({
             id: p.id,
             name: p.name,
             price: p.price / 100,

@@ -127,7 +127,7 @@ export async function generateCooBrief(): Promise<CooBrief> {
     const metrics = await getMetrics();
 
     const lowStockDetails = metrics.lowStockProducts
-        .map(p => `${p.name} (Stock: ${p.stockQuantity}, Threshold: ${p.lowStockThreshold})`)
+        .map((p: any) => `${p.name} (Stock: ${p.stockQuantity}, Threshold: ${p.lowStockThreshold})`)
         .join("; ");
 
     const prompt = `
@@ -137,7 +137,7 @@ export async function generateCooBrief(): Promise<CooBrief> {
     METRICS (Last 30 Days):
     - Total Orders: ${metrics.orderCount}
     - Last Daily Revenue Recorded: $${metrics.revenueStat?.totalRevenue || 0}
-    - Top Rated Products: ${metrics.popularProducts.map(p => p.name).join(", ")}
+    - Top Rated Products: ${metrics.popularProducts.map((p: any) => p.name).join(", ")}
     - Low/Out of Stock Inventory: ${lowStockDetails}
 
     Your suggestions must be concrete. Supported Action Types:

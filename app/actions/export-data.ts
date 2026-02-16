@@ -28,7 +28,7 @@ export async function exportOrders() {
         });
 
         const headers = ["Order ID", "Date", "Customer Email", "Customer Name", "Total Amount", "Status", "Items Count", "Shipping Country"];
-        const rows = orders.map(order => [
+        const rows = orders.map((order: any) => [
             order.id,
             format(order.createdAt, "yyyy-MM-dd HH:mm:ss"),
             order.User?.email || "Guest",
@@ -41,7 +41,7 @@ export async function exportOrders() {
 
         const csvContent = [
             headers.join(","),
-            ...rows.map(row => row.map(escapeCsvField).join(","))
+            ...rows.map((row: any) => row.map(escapeCsvField).join(","))
         ].join("\n");
 
         return { success: true, data: csvContent, filename: `orders_export_${format(new Date(), "yyyyMMdd_HHmmss")}.csv` };
@@ -59,7 +59,7 @@ export async function exportUsers() {
         });
 
         const headers = ["User ID", "Email", "First Name", "Last Name", "Role", "Joined Date"];
-        const rows = users.map(user => [
+        const rows = users.map((user: any) => [
             user.id,
             user.email,
             user.firstName,
@@ -70,7 +70,7 @@ export async function exportUsers() {
 
         const csvContent = [
             headers.join(","),
-            ...rows.map(row => row.map(escapeCsvField).join(","))
+            ...rows.map((row: any) => row.map(escapeCsvField).join(","))
         ].join("\n");
 
         return { success: true, data: csvContent, filename: `users_export_${format(new Date(), "yyyyMMdd_HHmmss")}.csv` };
@@ -97,7 +97,7 @@ export async function exportRevenue() {
         });
 
         const headers = ["Date", "Total Revenue", "Total Orders", "Total Visitors"];
-        const rows = dailyStats.map(stat => [
+        const rows = dailyStats.map((stat: any) => [
             format(stat.date, "yyyy-MM-dd"),
             (stat.totalRevenue / 100).toFixed(2),
             stat.totalOrders,
@@ -106,7 +106,7 @@ export async function exportRevenue() {
 
         const csvContent = [
             headers.join(","),
-            ...rows.map(row => row.map(escapeCsvField).join(","))
+            ...rows.map((row: any) => row.map(escapeCsvField).join(","))
         ].join("\n");
 
         return { success: true, data: csvContent, filename: `revenue_export_${format(new Date(), "yyyyMMdd_HHmmss")}.csv` };

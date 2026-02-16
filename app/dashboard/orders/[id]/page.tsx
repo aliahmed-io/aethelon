@@ -46,20 +46,20 @@ export default async function OrderDetailPage({ params }: { params: { id: string
 
     // Calculate shipped quantities
     const shippedQuantities: Record<string, number> = {};
-    order.shipments.forEach(shipment => {
-        shipment.items.forEach(item => {
+    order.shipments.forEach((shipment: any) => {
+        shipment.items.forEach((item: any) => {
             shippedQuantities[item.orderItemId] = (shippedQuantities[item.orderItemId] || 0) + item.quantity;
         });
     });
 
-    const itemsWithShipping = order.orderItems.map(item => ({
+    const itemsWithShipping = order.orderItems.map((item: any) => ({
         ...item,
         shippedQuantity: shippedQuantities[item.id] || 0
     }));
 
-    const allFulfilled = itemsWithShipping.every(i => i.shippedQuantity >= i.quantity);
-    const partlyFulfilled = itemsWithShipping.some(i => i.shippedQuantity > 0);
-    const labelUrl = order.shipments.find(s => s.labelUrl)?.labelUrl;
+    const allFulfilled = itemsWithShipping.every((i: any) => i.shippedQuantity >= i.quantity);
+    const partlyFulfilled = itemsWithShipping.some((i: any) => i.shippedQuantity > 0);
+    const labelUrl = order.shipments.find((s: any) => s.labelUrl)?.labelUrl;
 
     return (
         <div className="space-y-8 max-w-6xl mx-auto pb-20">
@@ -138,7 +138,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {itemsWithShipping.map((item) => (
+                                    {itemsWithShipping.map((item: any) => (
                                         <TableRow key={item.id}>
                                             <TableCell>
                                                 <div className="font-medium">{item.name}</div>
@@ -189,7 +189,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {order.shipments.map(shipment => (
+                                        {order.shipments.map((shipment: any) => (
                                             <TableRow key={shipment.id}>
                                                 <TableCell className="font-mono">{shipment.trackingNumber}</TableCell>
                                                 <TableCell>{shipment.carrier}</TableCell>

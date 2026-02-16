@@ -571,7 +571,7 @@ export async function loadMoreProducts({
         },
     });
 
-    return products.map((p) => ({
+    return products.map((p: any) => ({
         ...p,
         price: p.price / 100,
     }));

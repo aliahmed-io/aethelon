@@ -22,7 +22,7 @@ export async function generateCampaignDraft(context: string): Promise<CampaignDr
         select: { name: true, price: true }
     });
 
-    const productsContext = topProducts.map(p => `${p.name} ($${p.price})`).join(", ");
+    const productsContext = topProducts.map((p: any) => `${p.name} ($${p.price})`).join(", ");
 
     const prompt = `
         You are an expert email marketer for "Aethelona" shoe store.

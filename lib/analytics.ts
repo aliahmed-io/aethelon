@@ -22,7 +22,7 @@ export async function getPredictiveAnalytics() {
 
     // 1. Group by Day
     const dailyRevenue: Record<string, number> = {};
-    data.forEach(order => {
+    data.forEach((order: any) => {
         const date = order.createdAt.toISOString().split('T')[0];
         dailyRevenue[date] = (dailyRevenue[date] || 0) + (order.amount / 100);
     });

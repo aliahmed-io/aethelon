@@ -1,5 +1,6 @@
 "use server";
 
+import { Product as PrismaProduct } from "@prisma/client";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import prisma from "../../../lib/db";
 import { Product } from "../../../lib/assistantTypes";
@@ -39,7 +40,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
 
         // 2. Search Database (Smart Retrieval)
         // A. Strict Match (User Query) - High Priority
-        let candidates = await prisma.product.findMany({
+        let candidates: PrismaProduct[] = await prisma.product.findMany({
             where: {
                 status: "published",
                 OR: [

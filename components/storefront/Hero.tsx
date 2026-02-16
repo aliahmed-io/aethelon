@@ -30,7 +30,7 @@ export async function Hero() {
   return (
     <Carousel className="mx-auto max-w-7xl">
       <CarouselContent>
-        {data.map((item, index) => (
+        {data.map((item: any, index: number) => (
           <CarouselItem key={item.id}>
             <div className="relative h-[60vh] lg:h-[80vh] max-h-[800px]">
               <Image

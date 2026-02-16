@@ -11,12 +11,17 @@ export const metadata: Metadata = {
 export const revalidate = 3600; // ISR: refresh every hour
 
 async function getCollections() {
-    const campaigns = await prisma.campaign.findMany({
-        where: { status: "ACTIVE" },
-        orderBy: { createdAt: "desc" },
-        include: { products: { take: 4, include: { product: true } } },
-    });
-    return campaigns;
+    try {
+        const campaigns = await prisma.campaign.findMany({
+            where: { status: "ACTIVE" },
+            orderBy: { createdAt: "desc" },
+            include: { products: { take: 4, include: { product: true } } },
+        });
+        return campaigns;
+    } catch (error) {
+        console.error("Failed to fetch collections (Build/Runtime):", error);
+        return [];
+    }
 }
 
 export default async function CollectionsPage() {
@@ -40,7 +45,7 @@ export default async function CollectionsPage() {
                     </div>
                 ) : (
                     <div className="space-y-20">
-                        {collections.map((collection, idx) => (
+                        {collections.map((collection: any, idx: number) => (
                             <Link
                                 key={collection.id}
                                 href={`/collections/${collection.slug}`}

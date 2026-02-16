@@ -100,18 +100,19 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 ## 4. Comprehensive Feature Inventory (Detailed)
 
 ### A. The "Brain" (AI & Intelligence)
-1.  **Semantic Search**: Vector-like search capability to understand intent behind queries (e.g., "minimalist living room").
-2.  **Visual Search ("Scan-to-Find")**: Capability to upload an image and find visually similar products in the catalog.
-3.  **AI Concierge**: Floating chatbot on the dashboard/storefront trained on catalog data.
-4.  **Generative Marketing (Gemini)**: Admin tool that auto-generates high-converting email copy (Subject + HTML Body) based on selected products.
-5.  **Voice Commerce**: Web Speech API integration allows users to dictate search queries ("Show me velvet sofas").
-6.  **Wishlist Price Agents**: Background listeners that track saved items and trigger alerts if the price drops below the "added" price.
-7.  **Predictive Forecasting**: Dashboard widget using linear regression on order history to predict next-month revenue.
-8.  **Sentiment Analysis Engine**: Automatically parses user reviews and assigns specific sentiment scores (Positive/Negative).
-9.  **AI COO Agent**: Admin widget that summarizes daily ops health ("Sales are up 20%, but returns are spiking on Chairs").
-10. **Meshy 3D Generation**: Connects to Meshy API to turn 2D product photos into glTF models.
-11. **Smart Sort**: Dynamic reordering of product lists based on trending status or user personalization.
-12. **Virtual Atelier (AR)**: "Room Analysis" feature allows users to upload a room photo, which the AI analyzes for lighting and space suitability for furniture.
+1.  **Hybrid Semantic Search**: `pgvector` + Gemini Embeddings (`text-embedding-004`) combine vector similarity with keyword matching for industry-leading relevance.
+2.  **Smart Ranking System**: Dynamic sorting algorithm (Vector Score + Popularity + Stock + Recency) boosts high-converting products.
+3.  **Visual Search ("Scan-to-Find")**: Capability to upload an image and find visually similar products via Gemini Vision.
+4.  **AI Concierge**: Floating chatbot on the dashboard/storefront trained on catalog data.
+5.  **Generative Marketing**: Admin tool that auto-generates high-converting email copy.
+6.  **Voice Commerce**: Web Speech API integration allows users to dictate queries.
+7.  **Search Analytics**: Dedicated tracking of user queries and zero-result fallbacks to inform inventory strategy.
+8.  **Wishlist Price Agents**: Background listeners tracking price drops.
+9.  **Predictive Forecasting**: Linear regression revenue prediction.
+10. **Sentiment Analysis**: Review sentiment scoring.
+11. **AI COO Agent**: Admin ops health summarization.
+12. **Meshy 3D Generation**: 2D-to-3D pipeline.
+13. **Virtual Atelier (AR)**: Room analysis and placement.
 
 ### B. The "Engine" (Commerce)
 13. **Persistent Cart**: Synced across tabs, survives refreshes, validates stock on load.
@@ -313,3 +314,9 @@ To reach full operational status:
 ### Dependency & Supply Chain
 * `npm audit` remediated to 0 vulnerabilities via forced dependency resolution.
 * Removed hardcoded secrets from seed scripts and aligned build-time typing for external SDKs and admin tooling.
+
+### Search & Discovery (Phase 30)
+* **Vector Search**: Enabled `pgvector` and backfilled 100% of catalog with Gemini embeddings (768 dimensions).
+* **Hybrid Logic**: Implemented hybrid scoring (Vector + Text + Popularity) for superior relevance.
+* **Analytics**: Added dedicated `SearchAnalytics` tracking to monitor query performance and conversion intent.
+* **UI**: Added "Top Match" and "Semantic" badges to search overlay to highlight AI availability.

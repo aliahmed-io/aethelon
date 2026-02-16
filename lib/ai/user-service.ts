@@ -91,7 +91,7 @@ export async function getUserContext(userId: string): Promise<ShopContext> {
             category: p.category?.name || "General",
             description: p.description
         })),
-        categories: categories.map(c => c.name)
+        categories: categories.map((c: any) => c.name)
     };
 }
 

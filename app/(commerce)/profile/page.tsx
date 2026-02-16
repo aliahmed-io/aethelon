@@ -107,7 +107,7 @@ export default async function ProfilePage() {
                         </p>
                     ) : (
                         <div className="space-y-3">
-                            {recentOrders.map((order) => (
+                            {recentOrders.map((order: any) => (
                                 <Link
                                     key={order.id}
                                     href={`/orders/${order.id}`}
@@ -158,7 +158,7 @@ export default async function ProfilePage() {
                         </p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {addresses.map((addr) => (
+                            {addresses.map((addr: any) => (
                                 <div key={addr.id} className="p-4 border border-border rounded-sm">
                                     {addr.isDefault && (
                                         <span className="text-[10px] uppercase tracking-widest text-accent font-bold mb-2 block">Default</span>

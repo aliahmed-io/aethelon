@@ -22,7 +22,7 @@ export async function importProducts(formData: FormData) {
         return { message: `Missing required headers: ${missing.join(", ")}` };
     }
 
-    const productsToCreate = [];
+    const productsToCreate: any[] = [];
     const errors = [];
 
     for (let i = 1; i < lines.length; i++) {

@@ -57,7 +57,7 @@ export default async function CampaignsPage() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            campaigns.map((item) => (
+                            campaigns.map((item: any) => (
                                 <TableRow key={item.id} className="border-white/10 hover:bg-white/5 transition-colors">
                                     <TableCell>
                                         <div className="relative w-16 h-16 bg-black/20 rounded-sm overflow-hidden">

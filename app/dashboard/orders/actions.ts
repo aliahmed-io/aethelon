@@ -36,7 +36,7 @@ export async function fulfillOrder(prevState: any, formData: FormData) {
     }
 
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             // 1. Create Shipment
             const shipment = await tx.shipment.create({
                 data: {
@@ -68,8 +68,8 @@ export async function fulfillOrder(prevState: any, formData: FormData) {
             });
 
             if (order) {
-                const totalOrdered = order.orderItems.reduce((acc, item) => acc + item.quantity, 0);
-                const totalShippedSoFar = order.shipments.reduce((acc, s) => acc + s.items.reduce((a, i) => a + i.quantity, 0), 0) + itemsToShip.reduce((itemsAcc, i) => itemsAcc + i.quantity, 0);
+                const totalOrdered = order.orderItems.reduce((acc: number, item: any) => acc + item.quantity, 0);
+                const totalShippedSoFar = order.shipments.reduce((acc: number, s: any) => acc + s.items.reduce((a: number, i: any) => a + i.quantity, 0), 0) + itemsToShip.reduce((itemsAcc: number, i: any) => itemsAcc + i.quantity, 0);
 
                 let newStatus = "PARTIALLY_SHIPPED";
                 if (totalShippedSoFar >= totalOrdered) {
@@ -125,7 +125,7 @@ export async function processReturn(prevState: any, formData: FormData) {
     const items: { productId: string, quantity: number, condition: "RESELLABLE" | "DAMAGED" }[] = JSON.parse(itemsJson);
 
     try {
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             // 1. Create Return Request / Record
             // Assuming we accept all for now, or this action IS the approval
             const returnRecord = await tx.returnRequest.create({
@@ -216,7 +216,7 @@ export async function refundOrder(formData: FormData) {
             console.warn("No payment transaction ID found for refund, skipping Stripe");
         }
 
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: any) => {
             // 2. Update Order Status
             await tx.order.update({
                 where: { id: orderId },
@@ -229,7 +229,7 @@ export async function refundOrder(formData: FormData) {
 
         // 3. Restock Inventory
         // We use InventoryService logic to restock and log to ledger
-        await InventoryService.processReturn(orderId, order.orderItems.map(i => ({
+        await InventoryService.processReturn(orderId, order.orderItems.map((i: any) => ({
             productId: i.productId!,
             quantity: i.quantity
         })));
@@ -316,7 +316,7 @@ export async function generateLabel(formData: FormData) {
                 labelUrl: label.labelUrl,
                 status: "PENDING", // Label created but not yet scanned
                 items: {
-                    create: order.orderItems.map(i => ({
+                    create: order.orderItems.map((i: any) => ({
                         orderItemId: i.id,
                         quantity: i.quantity
                     }))

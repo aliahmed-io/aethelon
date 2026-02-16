@@ -102,7 +102,7 @@ export async function getBusinessSnapshot(): Promise<BusinessSnapshot> {
     const [totalCustomers, newThisWeek, activeThisMonth] = await Promise.all([
         prisma.user.count(),
         prisma.user.count({ where: { createdAt: { gte: weekStart } } }),
-        prisma.order.groupBy({ by: ["userId"], where: { createdAt: { gte: monthStart } } }).then(g => g.length),
+        prisma.order.groupBy({ by: ["userId"], where: { createdAt: { gte: monthStart } } }).then((g: any) => g.length),
     ]);
 
     return {
@@ -137,8 +137,8 @@ export async function getInventoryAlerts(): Promise<InventoryAlert[]> {
     });
 
     return products
-        .filter(p => (p.stockQuantity ?? 0) < 20)
-        .map(p => {
+        .filter((p: any) => (p.stockQuantity ?? 0) < 20)
+        .map((p: any) => {
             const stock = p.stockQuantity ?? 0;
             let status: "critical" | "low" | "ok" = "ok";
             if (stock <= 3) status = "critical";
@@ -264,7 +264,7 @@ export async function getCustomerInsights(): Promise<CustomerInsight> {
     });
 
     const topSpenders = (await Promise.all(
-        topSpendersRaw.map(async (g) => {
+        topSpendersRaw.map(async (g: any) => {
             if (!g.userId) return null;
             const user = await prisma.user.findUnique({
                 where: { id: g.userId },
@@ -276,11 +276,11 @@ export async function getCustomerInsights(): Promise<CustomerInsight> {
                 totalSpent: (g._sum.amount || 0) / 100,
             };
         })
-    )).filter((x): x is { id: string; email: string; totalSpent: number } => Boolean(x));
+    )).filter((x: any): x is { id: string; email: string; totalSpent: number } => Boolean(x));
 
     return {
-        vipAtRisk: vipWithSpending.filter(v => v.totalSpent > 500),
-        newCustomers: newCustomers.map(c => ({
+        vipAtRisk: vipWithSpending.filter((v: any) => v.totalSpent > 500),
+        newCustomers: newCustomers.map((c: any) => ({
             id: c.id,
             email: c.email || "N/A",
             joinedAt: c.createdAt,
@@ -307,18 +307,18 @@ export async function getReviewSentiment(): Promise<ReviewSentiment> {
         };
     }
 
-    const avgRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+    const avgRating = reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length;
 
     const distribution = [1, 2, 3, 4, 5].map(stars => ({
         stars,
-        count: reviews.filter(r => r.rating === stars).length,
+        count: reviews.filter((r: any) => r.rating === stars).length,
     }));
 
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    const recentReviews = reviews.filter(r => r.createdAt >= weekAgo);
-    const recentPositive = recentReviews.filter(r => r.rating >= 4).length;
-    const recentNegative = recentReviews.filter(r => r.rating <= 2).length;
+    const recentReviews = reviews.filter((r: any) => r.createdAt >= weekAgo);
+    const recentPositive = recentReviews.filter((r: any) => r.rating >= 4).length;
+    const recentNegative = recentReviews.filter((r: any) => r.rating <= 2).length;
 
     return {
         averageRating: Math.round(avgRating * 10) / 10,
@@ -532,11 +532,11 @@ const _getSentimentDeepDive = unstable_cache(async (): Promise<SentimentDeepDive
         };
     }
 
-    const avgRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
+    const avgRating = reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length;
 
     // Simple keyword extraction (common words in positive vs negative reviews)
-    const positiveReviews = reviews.filter(r => r.rating >= 4);
-    const negativeReviews = reviews.filter(r => r.rating <= 2);
+    const positiveReviews = reviews.filter((r: any) => r.rating >= 4);
+    const negativeReviews = reviews.filter((r: any) => r.rating <= 2);
 
     const extractKeywords = (reviewList: typeof reviews): Map<string, number> => {
         const wordCount = new Map<string, number>();
@@ -569,14 +569,14 @@ const _getSentimentDeepDive = unstable_cache(async (): Promise<SentimentDeepDive
     const twoWeeksAgo = new Date();
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
-    const thisWeekReviews = reviews.filter(r => r.createdAt >= weekAgo);
-    const lastWeekReviews = reviews.filter(r => r.createdAt >= twoWeeksAgo && r.createdAt < weekAgo);
+    const thisWeekReviews = reviews.filter((r: any) => r.createdAt >= weekAgo);
+    const lastWeekReviews = reviews.filter((r: any) => r.createdAt >= twoWeeksAgo && r.createdAt < weekAgo);
 
     const thisWeekAvg = thisWeekReviews.length > 0
-        ? thisWeekReviews.reduce((a, r) => a + r.rating, 0) / thisWeekReviews.length
+        ? thisWeekReviews.reduce((a: number, r: any) => a + r.rating, 0) / thisWeekReviews.length
         : avgRating;
     const lastWeekAvg = lastWeekReviews.length > 0
-        ? lastWeekReviews.reduce((a, r) => a + r.rating, 0) / lastWeekReviews.length
+        ? lastWeekReviews.reduce((a: number, r: any) => a + r.rating, 0) / lastWeekReviews.length
         : avgRating;
 
     let recentTrend: "improving" | "declining" | "stable" = "stable";
@@ -725,12 +725,12 @@ export async function getVoCClusters(): Promise<VoCCluster[]> {
     const clusters: VoCCluster[] = [];
 
     for (const [topic, keywords] of Object.entries(topics)) {
-        const relevantReviews = reviews.filter(r =>
+        const relevantReviews = reviews.filter((r: any) =>
             r.comment && keywords.some(k => r.comment!.toLowerCase().includes(k))
         );
 
         if (relevantReviews.length > 0) {
-            const avgSentiment = relevantReviews.reduce((a, r) => a + r.rating, 0) / relevantReviews.length;
+            const avgSentiment = relevantReviews.reduce((a: number, r: any) => a + r.rating, 0) / relevantReviews.length;
             clusters.push({
                 topic,
                 sentiment: Math.round(avgSentiment * 10) / 10,

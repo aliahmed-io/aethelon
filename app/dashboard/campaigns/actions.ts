@@ -21,7 +21,7 @@ export async function generateCampaignAction(topic: string) {
             take: 20 // Take a sample
         });
 
-        const productContext = products.map(p => `- ${p.name} ($${p.price}): ${p.description?.slice(0, 50)}...`).join("\n");
+        const productContext = products.map((p: any) => `- ${p.name} ($${p.price}): ${p.description?.slice(0, 50)}...`).join("\n");
 
         const prompt = `
         You are a luxury marketing copywriter for Aethelon, a high-end furniture brand.

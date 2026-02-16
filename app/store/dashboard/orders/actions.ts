@@ -66,7 +66,7 @@ export async function buyShippingLabel(orderId: string, rateId: string) {
                 labelUrl: label.labelUrl,
                 status: "PENDING",
                 items: {
-                    create: order.orderItems.map(i => ({
+                    create: order.orderItems.map((i: any) => ({
                         orderItemId: i.id,
                         quantity: i.quantity
                     }))

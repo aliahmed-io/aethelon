@@ -75,7 +75,7 @@ export async function searchProductsAction(query: string): Promise<Product[]> {
         }));
 
     } catch (error) {
-        logger.error(error, "Search Action Error");
+        logger.error({ err: error }, "Search Action Error");
         return [];
     }
 }

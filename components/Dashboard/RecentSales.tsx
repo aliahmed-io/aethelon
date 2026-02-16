@@ -38,7 +38,7 @@ export async function RecentSales() {
 
     return (
         <div className="space-y-6">
-            {data.map((item) => (
+            {data.map((item: any) => (
                 <div className="flex items-center gap-4 group" key={item.id}>
                     <Avatar className="h-9 w-9 border border-border transition-all">
                         <AvatarImage src={item.User?.profileImage} alt="Avatar" />

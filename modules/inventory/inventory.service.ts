@@ -16,7 +16,7 @@ export class InventoryService {
      * Throws error if insufficient stock.
      */
     static async reserveStock(orderId: string, items: { productId: string; quantity: number }[]) {
-        return await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx: any) => {
             for (const item of items) {
                 // LOCK the product row for update to prevent race conditions
                 // Note: Prisma doesn't support "SELECT FOR UPDATE" natively easily without raw query, 
@@ -67,7 +67,7 @@ export class InventoryService {
      * Converts reservation to permanent deduction.
      */
     static async confirmSale(orderId: string, items: { productId: string; quantity: number }[]) {
-        return await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx: any) => {
             for (const item of items) {
                 // Fetch product cost and price for historical accuracy
                 const product = await tx.product.findUnique({ where: { id: item.productId } });
@@ -103,7 +103,7 @@ export class InventoryService {
      * Releases reservation (e.g., Payment Failed/Expired).
      */
     static async releaseReservation(orderId: string, items: { productId: string; quantity: number }[]) {
-        return await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx: any) => {
             for (const item of items) {
                 await tx.product.update({
                     where: { id: item.productId },
@@ -130,7 +130,7 @@ export class InventoryService {
      * Increases stock back.
      */
     static async processReturn(returnId: string, items: { productId: string; quantity: number }[]) {
-        return await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx: any) => {
             for (const item of items) {
                 await tx.product.update({
                     where: { id: item.productId },
@@ -159,7 +159,7 @@ export class InventoryService {
             throw new InventoryError("Quantity must be positive");
         }
 
-        return await prisma.$transaction(async (tx) => {
+        return await prisma.$transaction(async (tx: any) => {
             // 1. Update Product Stock
             await tx.product.update({
                 where: { id: productId },

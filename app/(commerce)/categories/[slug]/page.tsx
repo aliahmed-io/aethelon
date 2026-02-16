@@ -87,7 +87,7 @@ export default async function CategoryPage({
                     <p className="text-muted-foreground text-sm py-12 text-center">No products in this category yet.</p>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {products.map((product) => (
+                        {products.map((product: any) => (
                             <Link key={product.id} href={`/shop/${product.id}`} className="group">
                                 <div className="aspect-square relative overflow-hidden rounded-sm bg-muted mb-3">
                                     {product.images[0] && (

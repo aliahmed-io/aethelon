@@ -56,7 +56,7 @@ export default async function ReturnsDashboard() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            requests.map((req) => (
+                            requests.map((req: any) => (
                                 <TableRow key={req.id}>
                                     <TableCell className="font-medium">
                                         <Link href={`/dashboard/orders/${req.orderId}`} className="hover:underline text-blue-600">

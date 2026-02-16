@@ -19,7 +19,7 @@ async function getValuationData() {
     let totalRetailValue = 0;    // Potential revenue
     let totalItems = 0;
 
-    products.forEach(p => {
+    products.forEach((p: any) => {
         if (p.stockQuantity > 0) {
             totalItems += p.stockQuantity;
             totalInventoryValue += (p.stockQuantity * (p.costPrice / 100)); // Convert cents to dollars

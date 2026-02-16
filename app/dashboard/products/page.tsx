@@ -69,7 +69,7 @@ export default async function AdminProductsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {products.map((product) => (
+                        {products.map((product: any) => (
                             <TableRow key={product.id} className="border-border hover:bg-muted/30 transition-colors">
                                 <TableCell>
                                     <div className="relative w-12 h-12 bg-muted rounded-sm border border-border">

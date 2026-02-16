@@ -3,6 +3,9 @@ import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
 import { unstable_noStore as noStore } from "next/cache";
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
     noStore();
     const { getUser } = getKindeServerSession();
