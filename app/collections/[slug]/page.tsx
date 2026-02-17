@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import prisma from "@/lib/db";
-import { formatPrice } from "@/lib/utils";
+import { ProductCard } from "@/components/storefront/ProductCard";
 import type { CampaignWithProducts } from "@/lib/types/prisma-payloads";
 
 export const revalidate = 3600;
@@ -90,39 +90,20 @@ export default async function CollectionDetailPage({ params }: { params: Promise
                 {collection.products.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-12 text-center">This collection is being curated. Check back soon.</p>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
                         {collection.products.map((cp) => (
-                            <Link
+                            <ProductCard
                                 key={cp.productId}
-                                href={`/shop/${cp.productId}`}
-                                className="group"
-                            >
-                                <article>
-                                    <div className="aspect-square relative overflow-hidden rounded-sm bg-muted mb-4">
-                                        {cp.product.images[0] && (
-                                            <Image
-                                                src={cp.product.images[0]}
-                                                alt={cp.product.name}
-                                                fill
-                                                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                                sizes="(max-width: 768px) 100vw, 33vw"
-                                            />
-                                        )}
-                                        {cp.badge && (
-                                            <span className="absolute top-3 left-3 px-3 py-1 bg-accent text-accent-foreground text-[10px] uppercase tracking-widest font-bold rounded-sm">
-                                                {cp.badge}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <h3 className="text-sm font-medium group-hover:text-accent transition-colors mb-1">
-                                        {cp.product.name}
-                                    </h3>
-                                    <p className="text-xs text-muted-foreground font-mono">{formatPrice(cp.product.price)}</p>
-                                    {cp.highlightText && (
-                                        <p className="text-xs text-accent mt-1">{cp.highlightText}</p>
-                                    )}
-                                </article>
-                            </Link>
+                                item={{
+                                    id: cp.product.id,
+                                    name: cp.product.name,
+                                    description: cp.product.description,
+                                    price: cp.product.price,
+                                    images: cp.product.images,
+                                    discountPercentage: cp.product.discountPercentage,
+                                    modelUrl: cp.product.modelUrl,
+                                }}
+                            />
                         ))}
                     </div>
                 )}

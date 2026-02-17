@@ -23,7 +23,7 @@ export function ProductGrid({ products }: ProductGridProps) {
 
     return (
         <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700"
+            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700"
             data-testid="product-grid"
         >
             {products.map((product, idx) => (

@@ -1,6 +1,7 @@
 import Prisma from "@/lib/db";
 import { Suspense } from "react";
 import { ProductCard, LoadingProductCard } from "@/components/storefront/ProductCard";
+import { Product } from "@prisma/client";
 
 async function getData() {
     const data = await Prisma.product.findMany({
@@ -40,13 +41,13 @@ async function LoadFeaturedProducts() {
     const data = await getData();
 
     if (data.length === 0) {
-        return <div className="text-white/30 text-center py-20">No featured products available.</div>
+        return <div className="text-white/30 text-center py-20">No featured products available.</div>;
     }
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data.map((item: any) => (
-                <ProductCard key={item.id} item={item as any} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {data.map((item: Product) => (
+                <ProductCard key={item.id} item={item} />
             ))}
         </div>
     );
@@ -54,7 +55,7 @@ async function LoadFeaturedProducts() {
 
 function LoadingRows() {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             <LoadingProductCard />
             <LoadingProductCard />
             <LoadingProductCard />

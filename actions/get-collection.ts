@@ -82,6 +82,7 @@ async function getCategoryTreeIds(rootId: string): Promise<string[]> {
 
 // --- MAIN ACTION ---
 export async function getSmartCollection({ slugs, searchParams }: CollectionParams): Promise<SmartCollectionResult> {
+    console.log('getSmartCollection called with slugs:', slugs);
     const category = await resolveCategoryHierarchy(slugs);
 
     if (!category && slugs.length > 0 && slugs[0] !== 'all') {

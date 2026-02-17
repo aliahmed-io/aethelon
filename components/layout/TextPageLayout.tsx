@@ -27,7 +27,7 @@ export function TextPageLayout({ title, subtitle, children }: TextPageLayoutProp
                     )}
                 </div>
 
-                <div className="prose prose-lg max-w-none prose-headings:font-light prose-headings:uppercase prose-headings:tracking-wide prose-p:text-muted-foreground prose-p:leading-loose prose-a:text-foreground prose-a:underline hover:prose-a:text-accent animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-forwards opacity-0" style={{ animationFillMode: 'forwards' }}>
+                <div className="prose prose-lg max-w-none prose-headings:font-light prose-headings:uppercase prose-headings:tracking-wide prose-p:text-muted-foreground prose-p:leading-loose prose-a:text-foreground prose-a:underline hover:prose-a:text-accent" suppressHydrationWarning>
                     {children}
                 </div>
             </div>
