@@ -344,7 +344,6 @@ model Review {
   comment   String?
   userId    String
   productId String
-  productId String
   isHidden  Boolean  @default(false)
   createdAt DateTime @default(now())
   product   Product  @relation(fields: [productId], references: [id])

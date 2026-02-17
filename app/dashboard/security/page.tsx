@@ -134,7 +134,7 @@ async function getSecurityData() {
 async function getContentModerationData() {
     // Fetch recent reviews for spam analysis
     const recentReviewsRaw = await prisma.review.findMany({
-        // where: { isHidden: false }, // Field does not exist
+        where: { isHidden: false },
         orderBy: { createdAt: "desc" },
         take: 100,
         include: {
@@ -240,7 +240,7 @@ async function getDatabaseHealthData() {
     // 4. Expired discounts still active
     const expiredActiveDiscounts = await prisma.discount.count({
         where: {
-            isActive: true,
+            active: true,
             expiresAt: { lt: new Date() }
         }
     });

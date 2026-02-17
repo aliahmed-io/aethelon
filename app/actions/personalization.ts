@@ -55,7 +55,7 @@ export async function getRecommendedProducts() {
         // We'll fetch 4 products from the top category, and 2 from the second
         const recommendations = await prisma.product.findMany({
             where: {
-                categoryId: { in: topCategories },
+                categories: { some: { id: { in: topCategories } } },
                 status: "published"
             },
             take: 6,

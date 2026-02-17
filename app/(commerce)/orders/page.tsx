@@ -4,7 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import prisma from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { formatPrice } from "@/lib/utils";
+import type { OrderWithItems } from "@/lib/types/prisma-payloads";
 
 export const metadata: Metadata = {
     title: "Your Orders — Aethelon",
@@ -36,12 +38,12 @@ export default async function OrdersPage({
     const page = Math.max(1, parseInt(pageStr || "1", 10));
     const pageSize = 10;
 
-    const where: Record<string, unknown> = { userId: kindeUser.id };
+    const where: Prisma.OrderWhereInput = { userId: kindeUser.id };
     if (filterStatus && ["PENDING", "SHIPPED", "DELIVERED", "CANCELLED"].includes(filterStatus)) {
-        where.status = filterStatus;
+        where.status = filterStatus as Prisma.EnumOrderStatusFilter;
     }
 
-    const [orders, totalCount] = await Promise.all([
+    const [rawOrders, totalCount] = await Promise.all([
         prisma.order.findMany({
             where,
             orderBy: { createdAt: "desc" },
@@ -53,6 +55,8 @@ export default async function OrdersPage({
         }),
         prisma.order.count({ where }),
     ]);
+
+    const orders = rawOrders as unknown as OrderWithItems[];
 
     const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -127,7 +131,7 @@ export default async function OrdersPage({
 
                                 {/* Item previews */}
                                 <div className="flex gap-3">
-                                    {(order as any).orderItems.map((item: any) => (
+                                    {order.orderItems.map((item) => (
                                         <div key={item.id} className="w-14 h-14 bg-muted rounded-sm overflow-hidden relative flex-shrink-0 border border-border">
                                             {item.image && (
                                                 <Image
@@ -139,7 +143,7 @@ export default async function OrdersPage({
                                             )}
                                         </div>
                                     ))}
-                                    {(order as any).orderItems.length === 0 && (
+                                    {order.orderItems.length === 0 && (
                                         <span className="text-xs text-muted-foreground">No items</span>
                                     )}
                                 </div>

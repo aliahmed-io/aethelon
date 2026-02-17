@@ -2,6 +2,7 @@ import Prisma from "@/lib/db";
 import { CampaignClient } from "../CampaignClient";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import type { CampaignWithProducts } from "@/lib/types/prisma-payloads";
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     const campaign = await Prisma.campaign.findUnique({
@@ -33,7 +34,7 @@ export default async function CampaignPage({ params }: { params: { slug: string 
                 }
             }
         }
-    });
+    }) as unknown as CampaignWithProducts | null;
 
     if (!campaign) {
         return notFound();
@@ -48,8 +49,7 @@ export default async function CampaignPage({ params }: { params: { slug: string 
         link: null // No link needed, we are on the page
     } : null;
 
-    // Explicitly typing to avoid "any" and property access errors
-    const campaignWithProducts = campaign as any;
+    const featuredProducts = campaign.products.map((cp) => cp.product);
 
-    return <CampaignClient heroBanner={fakeBanner} featuredProducts={campaignWithProducts.products.map((cp: any) => cp.product)} />;
+    return <CampaignClient heroBanner={fakeBanner} featuredProducts={featuredProducts} />;
 }

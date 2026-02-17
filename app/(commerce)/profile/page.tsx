@@ -6,6 +6,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import prisma from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { Package, Heart, MapPin, Settings } from "lucide-react";
+import type { OrderWithItems } from "@/lib/types/prisma-payloads";
 
 export const metadata: Metadata = {
     title: "Your Account — Aethelon",
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 async function getProfileData(userId: string) {
-    const [user, recentOrders, wishlistCount, addresses] = await Promise.all([
+    const [user, rawRecentOrders, wishlistCount, addresses] = await Promise.all([
         prisma.user.findUnique({ where: { id: userId } }),
         prisma.order.findMany({
             where: { userId },
@@ -27,6 +28,7 @@ async function getProfileData(userId: string) {
         prisma.address.findMany({ where: { userId }, take: 3, orderBy: { isDefault: "desc" } }),
     ]);
 
+    const recentOrders = rawRecentOrders as unknown as OrderWithItems[];
     return { user, recentOrders, wishlistCount, addresses };
 }
 
@@ -115,10 +117,10 @@ export default async function ProfilePage() {
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 bg-muted rounded-sm overflow-hidden relative flex-shrink-0">
-                                            {(order as any).orderItems[0]?.image && (
+                                            {order.orderItems[0]?.image && (
                                                 <Image
-                                                    src={(order as any).orderItems[0].image}
-                                                    alt={(order as any).orderItems[0].name}
+                                                    src={order.orderItems[0].image}
+                                                    alt={order.orderItems[0].name}
                                                     fill
                                                     className="object-cover"
                                                 />

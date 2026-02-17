@@ -8,13 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { requestReturn } from "@/app/dashboard/orders/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
+import type { OrderWithItems } from "@/lib/types/prisma-payloads";
 
 export default async function ReturnPage({ params }: { params: { id: string } }) {
     const user = await requireUser();
     const order = await Prisma.order.findUnique({
         where: { id: params.id },
         include: { orderItems: true }
-    });
+    }) as unknown as OrderWithItems | null;
 
     if (!order) return notFound();
     if (order.userId !== user.id) return redirect("/orders"); // Security check
@@ -51,7 +52,7 @@ export default async function ReturnPage({ params }: { params: { id: string } })
                         <input type="hidden" name="orderId" value={order.id} />
 
                         <div className="space-y-4">
-                            {(order as any).orderItems.map((item: any) => (
+                            {order.orderItems.map((item) => (
                                 <div key={item.id} className="flex items-center justify-between border p-4 rounded-lg">
                                     <div className="flex-1">
                                         <p className="font-medium">{item.name}</p>

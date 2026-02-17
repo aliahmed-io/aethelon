@@ -4,6 +4,7 @@ import prisma from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
 import { Package, Truck, CheckCircle, Clock, Search } from "lucide-react";
+import type { OrderWithItemsAndShipments } from "@/lib/types/prisma-payloads";
 
 export const metadata: Metadata = {
     title: "Track Your Order — Aethelon",
@@ -25,7 +26,7 @@ const STATUS_CONFIG: Record<string, { icon: React.ComponentType<{ className?: st
     REFUNDED: { icon: Package, color: "text-red-600", bg: "bg-red-100", label: "Refunded" },
 };
 
-async function lookupOrder(query: string) {
+async function lookupOrder(query: string): Promise<OrderWithItemsAndShipments | null> {
     if (!query || query.length < 3) return null;
 
     // Try full ID first, then suffix match
@@ -35,7 +36,7 @@ async function lookupOrder(query: string) {
             orderItems: { take: 4 },
             shipments: true,
         },
-    });
+    }) as unknown as OrderWithItemsAndShipments | null;
 
     // If not found by exact ID, try matching the last 6 chars
     if (!order) {
@@ -46,7 +47,7 @@ async function lookupOrder(query: string) {
                 orderItems: { take: 4 },
                 shipments: true,
             },
-        });
+        }) as unknown as OrderWithItemsAndShipments[];
         order = orders[0] || null;
     }
 
@@ -182,7 +183,7 @@ export default async function TrackingPage({
                                     {hydratedOrder.orderItems.length} item{hydratedOrder.orderItems.length !== 1 ? "s" : ""}
                                 </h2>
                                 <div className="space-y-3">
-                                    {(hydratedOrder as any).orderItems.map((item: any) => (
+                                    {hydratedOrder.orderItems.map((item) => (
                                         <div key={item.id} className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-muted rounded-sm overflow-hidden relative flex-shrink-0 border border-border">
                                                 {item.image && (

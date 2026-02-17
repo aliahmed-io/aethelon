@@ -1,7 +1,7 @@
 "use server";
 
-import { Product as PrismaProduct } from "@prisma/client";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Product as PrismaProduct, Prisma } from "@prisma/client";
+import { GoogleGenerativeAI, GenerateContentResult } from "@google/generative-ai";
 import prisma from "../../../lib/db";
 import { Product } from "../../../lib/assistantTypes";
 
@@ -25,7 +25,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
             // Extract base64 data (remove prefix if present)
             const cleanBase64 = imageBase64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
 
-            const result = await visionModel.generateContent([
+            const result: GenerateContentResult = await visionModel.generateContent([
                 "Analyze this interior design image. Describe the style, key furniture types, dominant colors, and materials. Be concise. Return a comma-separated list of keywords.",
                 {
                     inlineData: {
@@ -34,7 +34,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
                     },
                 },
             ]);
-            const response = await result.response;
+            const response = result.response;
             imageAnalysis = response.text();
         }
 
@@ -61,15 +61,17 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
             }
 
             if (tokens.length > 0) {
+                const tokenConditions: Prisma.ProductWhereInput[] = tokens.map(token => ({
+                    OR: [
+                        { name: { contains: token, mode: "insensitive" as Prisma.QueryMode } },
+                        { description: { contains: token, mode: "insensitive" as Prisma.QueryMode } }
+                    ]
+                }));
+
                 const looseMatches = await prisma.product.findMany({
                     where: {
                         status: "published",
-                        OR: tokens.map(token => ({
-                            OR: [
-                                { name: { contains: token, mode: "insensitive" } },
-                                { description: { contains: token, mode: "insensitive" } }
-                            ]
-                        })) as any
+                        OR: tokenConditions
                     },
                     take: 10
                 });

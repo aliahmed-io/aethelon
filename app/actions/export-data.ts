@@ -3,6 +3,7 @@
 import prisma from "@/lib/db";
 import { format } from "date-fns";
 import { requireAdmin } from "@/lib/auth";
+import type { OrderWithItemsAndUser } from "@/lib/types/prisma-payloads";
 
 // Helper to escape CSV fields
 const escapeCsvField = (field: unknown) => {
@@ -25,17 +26,17 @@ export async function exportOrders() {
                 orderItems: true
             },
             orderBy: { createdAt: "desc" }
-        });
+        }) as unknown as OrderWithItemsAndUser[];
 
         const headers = ["Order ID", "Date", "Customer Email", "Customer Name", "Total Amount", "Status", "Items Count", "Shipping Country"];
         const rows = orders.map((order) => [
             order.id,
             format(order.createdAt, "yyyy-MM-dd HH:mm:ss"),
-            (order as any).User?.email || "Guest",
-            `${(order as any).User?.firstName || ""} ${(order as any).User?.lastName || ""}`.trim() || "Guest",
+            order.User?.email || "Guest",
+            `${order.User?.firstName || ""} ${order.User?.lastName || ""}`.trim() || "Guest",
             (order.amount / 100).toFixed(2), // Assuming amount is in cents
             order.status,
-            (order as any).orderItems.length,
+            order.orderItems.length,
             order.shippingCountry || "N/A"
         ]);
 

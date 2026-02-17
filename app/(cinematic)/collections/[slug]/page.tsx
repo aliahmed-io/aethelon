@@ -4,10 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import prisma from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
+import type { CampaignWithProducts } from "@/lib/types/prisma-payloads";
 
 export const revalidate = 3600;
 
-async function getCollection(slug: string) {
+async function getCollection(slug: string): Promise<CampaignWithProducts | null> {
     return prisma.campaign.findUnique({
         where: { slug },
         include: {
@@ -16,7 +17,7 @@ async function getCollection(slug: string) {
                 include: { product: true },
             },
         },
-    });
+    }) as unknown as CampaignWithProducts | null;
 }
 
 export async function generateStaticParams() {
@@ -82,15 +83,15 @@ export default async function CollectionDetailPage({ params }: { params: Promise
             <section className="container mx-auto max-w-6xl px-6 lg:px-12 py-16">
                 <div className="flex items-center justify-between mb-8">
                     <span className="text-xs uppercase tracking-widest text-muted-foreground font-mono">
-                        {(collection as any).products.length} piece{(collection as any).products.length !== 1 ? "s" : ""}
+                        {collection.products.length} piece{collection.products.length !== 1 ? "s" : ""}
                     </span>
                 </div>
 
-                {(collection as any).products.length === 0 ? (
+                {collection.products.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-12 text-center">This collection is being curated. Check back soon.</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {(collection as any).products.map((cp: any) => (
+                        {collection.products.map((cp) => (
                             <Link
                                 key={cp.productId}
                                 href={`/shop/${cp.productId}`}
