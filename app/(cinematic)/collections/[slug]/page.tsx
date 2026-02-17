@@ -19,18 +19,18 @@ async function getCollection(slug: string) {
     });
 }
 
-// export async function generateStaticParams() {
-//     try {
-//         const campaigns = await prisma.campaign.findMany({
-//             where: { status: "ACTIVE" },
-//             select: { slug: true },
-//         });
-//         return campaigns.map((c) => ({ slug: c.slug }));
-//     } catch (error) {
-//         console.error("Failed to generate static params for collections:", error);
-//         return [];
-//     }
-// }
+export async function generateStaticParams() {
+    try {
+        const campaigns = await prisma.campaign.findMany({
+            where: { status: "ACTIVE" },
+            select: { slug: true },
+        });
+        return campaigns.map((c) => ({ slug: c.slug }));
+    } catch (error) {
+        console.error("Failed to generate static params for collections:", error);
+        return [];
+    }
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -82,15 +82,15 @@ export default async function CollectionDetailPage({ params }: { params: Promise
             <section className="container mx-auto max-w-6xl px-6 lg:px-12 py-16">
                 <div className="flex items-center justify-between mb-8">
                     <span className="text-xs uppercase tracking-widest text-muted-foreground font-mono">
-                        {collection.products.length} piece{collection.products.length !== 1 ? "s" : ""}
+                        {(collection as any).products.length} piece{(collection as any).products.length !== 1 ? "s" : ""}
                     </span>
                 </div>
 
-                {collection.products.length === 0 ? (
+                {(collection as any).products.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-12 text-center">This collection is being curated. Check back soon.</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {collection.products.map((cp: any) => (
+                        {(collection as any).products.map((cp: any) => (
                             <Link
                                 key={cp.productId}
                                 href={`/shop/${cp.productId}`}

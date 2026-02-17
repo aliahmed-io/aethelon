@@ -176,11 +176,6 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                                 {order.shipments[0].carrier && (
                                     <p className="text-xs text-muted-foreground mt-1">via {order.shipments[0].carrier}</p>
                                 )}
-                                {order.shipments[0].eta && (
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        ETA: {new Date(order.shipments[0].eta).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                                    </p>
-                                )}
                             </div>
                         )}
 
@@ -188,13 +183,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                         {order.payment && (
                             <div className="p-6 border border-border rounded-sm">
                                 <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-mono mb-4">Payment</h2>
-                                <p className="text-sm">{order.payment.provider}</p>
-                                <p className={`text-xs uppercase tracking-widest mt-1 ${order.payment.status === "COMPLETED" ? "text-emerald-600" :
-                                    order.payment.status === "FAILED" ? "text-red-600" :
-                                        "text-muted-foreground"
-                                    }`}>
-                                    {order.payment.status}
+                                <p className="text-sm font-mono">
+                                    {order.payment.paymentMethod || "Credit Card"} ending in ****
                                 </p>
+                                <div className={`mt-2 inline-flex items-center gap-2 px-2 py-1 rounded-sm text-xs font-bold ${order.payment.status === "PAID" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                                    {order.payment.status}
+                                </div>
                             </div>
                         )}
                     </div>

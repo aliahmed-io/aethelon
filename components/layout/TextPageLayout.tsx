@@ -1,7 +1,7 @@
 "use client";
 
 // import { motion } from "framer-motion"; // Removed for performance
-import { Navbar } from "./Navbar";
+import Navbar from "@/components/ui/Navbar";
 import { ReactNode } from "react";
 
 interface TextPageLayoutProps {

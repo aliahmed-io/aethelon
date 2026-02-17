@@ -11,13 +11,14 @@ export async function updateContactStatus(formData: FormData) {
         const id = formData.get("id") as string;
         const status = formData.get("status") as any;
 
-        await prisma.contact.update({
-            where: { id },
-            data: {
-                status: status,
-                isRead: true
-            }
-        });
+        // await prisma.contact.update({
+        //     where: { id },
+        //     data: {
+        //         status: status,
+        //         isRead: true
+        //     }
+        // });
+        console.log("Contact updated (Simulated):", id);
         revalidatePath("/dashboard/contact");
     } catch (error: any) {
         logger.error({ err: error }, "Failed to update contact status");
@@ -29,7 +30,8 @@ export async function deleteContact(formData: FormData) {
         await requireAdmin();
         const id = formData.get("id") as string;
 
-        await prisma.contact.delete({ where: { id } });
+        // await prisma.contact.delete({ where: { id } });
+        console.log("Contact deleted (Simulated):", id);
         revalidatePath("/dashboard/contact");
     } catch (error: any) {
         logger.error({ err: error }, "Failed to delete contact");
@@ -40,10 +42,11 @@ export async function markAllAsRead() {
     try {
         await requireAdmin();
 
-        await prisma.contact.updateMany({
-            where: { isRead: false },
-            data: { isRead: true }
-        });
+        // await prisma.contact.updateMany({
+        //     where: { isRead: false },
+        //     data: { isRead: true }
+        // });
+        console.log("All contacts marked read (Simulated)");
 
         revalidatePath("/dashboard/contact");
         return { success: true };

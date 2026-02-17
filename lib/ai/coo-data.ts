@@ -163,13 +163,15 @@ export async function getTopProducts(days: number = 30): Promise<TopProduct[]> {
 
     const orderItems = await prisma.orderItem.findMany({
         where: { order: { createdAt: { gte: since } } },
-        select: {
-            productId: true,
-            quantity: true,
-            price: true,
-            name: true,
-            image: true,
-        },
+        include: {
+            product: {
+                select: {
+                    name: true,
+                    images: true,
+                    categories: { select: { name: true } }
+                }
+            }
+        }
     });
 
     const productMap = new Map<string, { name: string; units: number; revenue: number; image: string }>();
@@ -177,15 +179,19 @@ export async function getTopProducts(days: number = 30): Promise<TopProduct[]> {
     for (const item of orderItems) {
         if (!item.productId) continue;
         const existing = productMap.get(item.productId);
+
+        const productName = item.product?.name || "Unknown Product";
+        const productImage = item.product?.images?.[0] || "";
+
         if (existing) {
             existing.units += item.quantity;
             existing.revenue += item.price * item.quantity;
         } else {
             productMap.set(item.productId, {
-                name: item.name,
+                name: productName,
                 units: item.quantity,
                 revenue: item.price * item.quantity,
-                image: item.image || "",
+                image: productImage,
             });
         }
     }

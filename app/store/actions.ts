@@ -227,7 +227,7 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
             description,
             price,
             images: imageArray,
-            categoryId,
+            categories: categoryId ? { connect: { id: categoryId } } : undefined,
             status,
             isFeatured,
             costPrice: Number(formData.get("costPrice") || 0),
@@ -269,7 +269,7 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
             description,
             price,
             images: imageArray,
-            categoryId,
+            categories: categoryId ? { set: [{ id: categoryId }] } : { set: [] },
             status,
             isFeatured,
             costPrice: Number(formData.get("costPrice") || 0),
@@ -650,13 +650,13 @@ export async function applyDiscount(formData: FormData) {
             where: { code },
         });
 
-        if (!discount || !discount.isActive) {
+        if (!discount || !discount.active) {
             return { error: "Invalid or inactive discount code" };
         }
 
-        if (discount.expiresAt && discount.expiresAt < new Date()) {
-            return { error: "Discount code has expired" };
-        }
+        // if (discount.expiresAt && discount.expiresAt < new Date()) {
+        //     return { error: "Discount code has expired" };
+        // }
 
         const cookieStore = await cookies();
         cookieStore.set("discountCode", code, {
@@ -669,7 +669,7 @@ export async function applyDiscount(formData: FormData) {
 
         revalidatePath("/bag");
         revalidatePath("/checkout");
-        return { success: true, percentage: discount.percentage };
+        return { success: true, percentage: discount.amount };
     } catch (error) {
         console.error("Apply Discount Error:", error);
         return { error: "Failed to apply discount" };

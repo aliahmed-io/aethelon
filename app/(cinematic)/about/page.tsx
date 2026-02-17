@@ -1,7 +1,6 @@
 
-import { Navbar } from "@/components/layout/Navbar";
+import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/layout/Footer";
-
 
 export const metadata = {
     title: "About Us | Aethelon",
@@ -11,7 +10,6 @@ export default function AboutPage() {
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
             <Navbar />
-
             <div className="container mx-auto px-6 lg:px-12 max-w-5xl">
                 {/* Hero */}
                 <div className="mb-24 text-center">

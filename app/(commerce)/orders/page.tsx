@@ -99,7 +99,7 @@ export default async function OrdersPage({
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {orders.map((order: any) => (
+                        {orders.map((order) => (
                             <Link
                                 key={order.id}
                                 href={`/orders/${order.id}`}
@@ -127,19 +127,19 @@ export default async function OrdersPage({
 
                                 {/* Item previews */}
                                 <div className="flex gap-3">
-                                    {order.orderItems.map((item: any) => (
+                                    {(order as any).orderItems.map((item: any) => (
                                         <div key={item.id} className="w-14 h-14 bg-muted rounded-sm overflow-hidden relative flex-shrink-0 border border-border">
                                             {item.image && (
                                                 <Image
-                                                    src={item.image}
-                                                    alt={item.name}
+                                                    src={item.image || ""}
+                                                    alt={item.name || "Product Image"}
                                                     fill
                                                     className="object-cover"
                                                 />
                                             )}
                                         </div>
                                     ))}
-                                    {order.orderItems.length === 0 && (
+                                    {(order as any).orderItems.length === 0 && (
                                         <span className="text-xs text-muted-foreground">No items</span>
                                     )}
                                 </div>

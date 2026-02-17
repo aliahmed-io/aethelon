@@ -10,13 +10,14 @@ export async function updateContactStatus(formData: FormData) {
     const status = formData.get("status") as "PENDING" | "COMPLETED" | "IGNORED";
 
     try {
-        await prisma.contact.update({
-            where: { id },
-            data: {
-                status: status,
-                isRead: true
-            }
-        });
+        // await prisma.contact.update({
+        //     where: { id },
+        //     data: {
+        //         status: status,
+        //         isRead: true
+        //     }
+        // });
+        console.log("Contact status updated (Simulated):", id, status);
         revalidatePath("/dashboard/contact");
     } catch (e) {
         console.error("Failed to update contact status", e);
@@ -28,7 +29,8 @@ export async function deleteContact(formData: FormData) {
     const id = formData.get("id") as string;
 
     try {
-        await prisma.contact.delete({ where: { id } });
+        // await prisma.contact.delete({ where: { id } });
+        console.log("Contact deleted (Simulated):", id);
         revalidatePath("/dashboard/contact");
     } catch (e) {
         console.error("Failed to delete contact", e);

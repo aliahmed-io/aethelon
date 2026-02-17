@@ -17,7 +17,7 @@ export async function generateCampaignAction(topic: string) {
         // 1. Fetch available products to contextually recommend
         const products = await prisma.product.findMany({
             where: { status: "published" },
-            select: { id: true, name: true, description: true, price: true, categoryId: true },
+            select: { id: true, name: true, description: true, price: true, categories: { select: { name: true } } },
             take: 20 // Take a sample
         });
 

@@ -51,7 +51,7 @@ export default async function ReturnPage({ params }: { params: { id: string } })
                         <input type="hidden" name="orderId" value={order.id} />
 
                         <div className="space-y-4">
-                            {order.orderItems.map((item: any) => (
+                            {(order as any).orderItems.map((item: any) => (
                                 <div key={item.id} className="flex items-center justify-between border p-4 rounded-lg">
                                     <div className="flex-1">
                                         <p className="font-medium">{item.name}</p>

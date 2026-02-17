@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Navbar } from "@/components/layout/Navbar";
+import Navbar from "@/components/ui/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowDown } from "lucide-react";

@@ -6,7 +6,7 @@ import { formatDistance } from "date-fns";
 async function getReviews(productId: string) {
     const data = await prisma.review.findMany({
         where: { productId },
-        include: { User: true },
+        include: { user: true },
         orderBy: { createdAt: "desc" },
     });
     return data;
@@ -30,14 +30,14 @@ export async function ReviewList({ productId }: { productId: string }) {
                     <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
                             <Avatar className="w-10 h-10 border border-white/10">
-                                <AvatarImage src={review.User?.profileImage} />
+                                <AvatarImage src={review.user?.profileImage} />
                                 <AvatarFallback className="bg-white/10 text-white text-xs">
-                                    {review.User?.firstName?.slice(0, 1) || "U"}
+                                    {review.user?.firstName?.slice(0, 1) || "U"}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
                                 <p className="text-sm font-medium text-white">
-                                    {review.User?.firstName || "Anonymous User"}
+                                    {review.user?.firstName || "Anonymous User"}
                                 </p>
                                 <p className="text-xs text-white/40">
                                     {formatDistance(new Date(review.createdAt), new Date(), { addSuffix: true })}

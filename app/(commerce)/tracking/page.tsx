@@ -182,7 +182,7 @@ export default async function TrackingPage({
                                     {hydratedOrder.orderItems.length} item{hydratedOrder.orderItems.length !== 1 ? "s" : ""}
                                 </h2>
                                 <div className="space-y-3">
-                                    {hydratedOrder.orderItems.map((item: any) => (
+                                    {(hydratedOrder as any).orderItems.map((item: any) => (
                                         <div key={item.id} className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-muted rounded-sm overflow-hidden relative flex-shrink-0 border border-border">
                                                 {item.image && (

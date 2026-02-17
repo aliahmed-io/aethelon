@@ -2,7 +2,7 @@
 
 import { useScroll, useSpring } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { Navbar } from "../layout/Navbar";
+import Navbar from "@/components/ui/Navbar";
 import ImageSequence from "../sections/ImageSequence";
 import TextOverlays from "../ui/TextOverlays";
 
@@ -37,7 +37,7 @@ export default function ScrollController() {
     return (
         <div className="relative bg-background">
             {/* Navbar (fixed) */}
-            <Navbar progress={scrollProgress} />
+            <Navbar />
 
             {/* Scrollable Container */}
             <div ref={containerRef} className="h-[500vh] relative">

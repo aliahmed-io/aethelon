@@ -19,7 +19,7 @@ async function getData() {
     prisma.order.findMany({
       where: {
         payment: {
-          status: "COMPLETED",
+          status: "PAID",
         },
       },
       select: {

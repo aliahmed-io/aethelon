@@ -107,7 +107,7 @@ export default async function ProfilePage() {
                         </p>
                     ) : (
                         <div className="space-y-3">
-                            {recentOrders.map((order: any) => (
+                            {recentOrders.map((order) => (
                                 <Link
                                     key={order.id}
                                     href={`/orders/${order.id}`}
@@ -115,10 +115,10 @@ export default async function ProfilePage() {
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 bg-muted rounded-sm overflow-hidden relative flex-shrink-0">
-                                            {order.orderItems[0]?.image && (
+                                            {(order as any).orderItems[0]?.image && (
                                                 <Image
-                                                    src={order.orderItems[0].image}
-                                                    alt={order.orderItems[0].name}
+                                                    src={(order as any).orderItems[0].image}
+                                                    alt={(order as any).orderItems[0].name}
                                                     fill
                                                     className="object-cover"
                                                 />
@@ -158,7 +158,7 @@ export default async function ProfilePage() {
                         </p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {addresses.map((addr: any) => (
+                            {addresses.map((addr) => (
                                 <div key={addr.id} className="p-4 border border-border rounded-sm">
                                     {addr.isDefault && (
                                         <span className="text-[10px] uppercase tracking-widest text-accent font-bold mb-2 block">Default</span>

@@ -44,7 +44,10 @@ export async function generateMetadata(
 export default async function ProductPage({ params }: ProductPageProps) {
     const { id } = await params;
     const currentCurrency = await CurrencyService.getCurrency();
-    const product = await Prisma.product.findUnique({ where: { id } });
+    const product = await Prisma.product.findUnique({
+        where: { id },
+        include: { categories: true }
+    });
 
     if (!product) return notFound();
 
@@ -56,7 +59,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 name: product.name,
                 price: product.price,
                 images: product.images,
-                categoryId: product.categoryId
+                categoryId: product.categories[0]?.id || "" // Fallback to first category or empty string
             }} />
 
             <div className="container mx-auto px-6 lg:px-12 py-24 lg:py-32">

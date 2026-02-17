@@ -33,11 +33,11 @@ interface ReviewWithRelations {
     comment: string | null;
     rating: number;
     createdAt: Date;
-    User: {
+    user: {
         email: string;
         firstName: string | null;
     } | null;
-    Product: {
+    product: {
         name: string;
     } | null;
 }
@@ -134,14 +134,12 @@ async function getSecurityData() {
 async function getContentModerationData() {
     // Fetch recent reviews for spam analysis
     const recentReviewsRaw = await prisma.review.findMany({
-        where: {
-            isHidden: false
-        },
+        // where: { isHidden: false }, // Field does not exist
         orderBy: { createdAt: "desc" },
         take: 100,
         include: {
-            User: { select: { email: true, firstName: true } },
-            Product: { select: { name: true } }
+            user: { select: { email: true, firstName: true } },
+            product: { select: { name: true } }
         }
     });
     const recentReviews = recentReviewsRaw as unknown as ReviewWithRelations[];
@@ -154,8 +152,8 @@ async function getContentModerationData() {
         id: review.id,
         content: review.comment,
         rating: review.rating,
-        userEmail: review.User?.email || "Unknown",
-        productName: review.Product?.name || "Unknown",
+        userEmail: review.user?.email || "Unknown",
+        productName: review.product?.name || "Unknown",
         createdAt: review.createdAt,
         flagReason: detectFlagReason(review.comment || "")
     }));
@@ -175,8 +173,8 @@ async function getContentModerationData() {
             id: r.id,
             content: r.comment,
             rating: r.rating,
-            userEmail: r.User?.email || "Unknown",
-            productName: r.Product?.name || "Unknown",
+            userEmail: r.user?.email || "Unknown",
+            productName: r.product?.name || "Unknown",
             createdAt: r.createdAt
         }))
     };
@@ -210,7 +208,7 @@ async function getDatabaseHealthData() {
 
     // 2. Products without categories
     const productsWithoutCategory = await prisma.product.count({
-        where: { categoryId: "" }
+        where: { categories: { none: {} } }
     });
     if (productsWithoutCategory > 0) {
         issues.push({

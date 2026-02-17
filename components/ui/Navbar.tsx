@@ -40,6 +40,7 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
     const navLinks = [
         { href: '/', label: 'Home' },
         { href: '/shop', label: 'Shop' },
+        { href: '/collections/all', label: 'Categories' },
         { href: '/ai-search', label: 'AI Search' },
         { href: '/ai-vision', label: 'Room Visualizer' },
         { href: '/about', label: 'Story' },

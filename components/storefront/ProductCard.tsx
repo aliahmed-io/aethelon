@@ -29,13 +29,13 @@ export function ProductCard({ item, priority = false }: iAppProps) {
     <div className="group relative w-full max-w-[400px] h-[580px] rounded-[32px] overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
 
       {/* Background Image - Full Cover */}
-      <div className="absolute inset-0 bg-zinc-800">
+      <div className="absolute inset-0 bg-zinc-800 overflow-hidden rounded-[32px]">
         <Image
           src={item.images[0]}
           alt={item.name}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-          className="object-cover object-center scale-105 transition-transform duration-700 group-hover:scale-110"
+          className="object-cover object-center scale-105 transition-transform duration-700 will-change-transform group-hover:scale-110"
           priority={priority}
         />
 

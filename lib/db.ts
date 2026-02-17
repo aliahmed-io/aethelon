@@ -1,24 +1,17 @@
 import { PrismaClient } from "@prisma/client";
+import { withAccelerate } from '@prisma/extension-accelerate';
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+  }).$extends(withAccelerate());
 };
 
 declare global {
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
-const prisma =
-  process.env.DATABASE_URL
-    ? globalThis.prismaGlobal ?? prismaClientSingleton()
-    : (new Proxy(
-      {},
-      {
-        get() {
-          throw new Error("DATABASE_URL is missing");
-        },
-      }
-    ) as unknown as ReturnType<typeof prismaClientSingleton>);
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
 export default prisma;
 

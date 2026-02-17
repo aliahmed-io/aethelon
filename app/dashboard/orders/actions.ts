@@ -210,8 +210,8 @@ export async function refundOrder(formData: FormData) {
         if (order.status === "REFUNDED" || order.status === "CANCELLED") return { message: "Order already cancelled/refunded" };
 
         // 1. Process Stripe Refund
-        if (order.payment?.transactionId) {
-            await PaymentService.refund(order.payment.transactionId);
+        if (order.payment?.stripePaymentIntentId) {
+            await PaymentService.refund(order.payment.stripePaymentIntentId);
         } else {
             console.warn("No payment transaction ID found for refund, skipping Stripe");
         }

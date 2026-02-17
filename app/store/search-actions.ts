@@ -56,7 +56,7 @@ export async function searchProductsAction(query: string): Promise<Product[]> {
                 description: true,
                 price: true,
                 images: true,
-                category: { select: { name: true } },
+                categories: { select: { name: true } },
                 mainCategory: true,
                 stockQuantity: true,
             }

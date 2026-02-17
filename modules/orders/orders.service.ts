@@ -43,7 +43,7 @@ export class OrderService {
                 shippingState: shippingAddress?.state,
                 shippingPostalCode: shippingAddress?.postalCode,
                 shippingCountry: shippingAddress?.country || "US",
-                shippingPhone: shippingAddress?.phone,
+                // shippingPhone: shippingAddress?.phone, // Removed as it doesn't exist in Prisma schema
 
                 orderItems: {
                     create: cart.items.map((item) => ({

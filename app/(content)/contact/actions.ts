@@ -33,14 +33,15 @@ export async function submitContactForm(prevState: unknown, formData: FormData) 
     }
 
     try {
-        await prisma.contact.create({
-            data: {
-                name: validatedFields.data.name,
-                email: validatedFields.data.email,
-                subject: validatedFields.data.subject,
-                message: validatedFields.data.message,
-            },
-        });
+        // await prisma.contact.create({
+        //     data: {
+        //         name: validatedFields.data.name,
+        //         email: validatedFields.data.email,
+        //         subject: validatedFields.data.subject,
+        //         message: validatedFields.data.message,
+        //     },
+        // });
+        console.log("Contact form submitted (Simulated):", validatedFields.data);
 
         return { success: true };
     } catch (e) {

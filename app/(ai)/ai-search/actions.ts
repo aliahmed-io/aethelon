@@ -56,7 +56,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
             const tokens = query.split(/\s+/).filter(t => t.length > 3); // Only significant words
             if (imageAnalysis) {
                 // Add top 3 keywords from image analysis
-                const imageKeywords = imageAnalysis.split(',').slice(0, 3).map(k => k.trim());
+                const imageKeywords = (imageAnalysis || "").split(',').slice(0, 3).map(k => k.trim());
                 tokens.push(...imageKeywords);
             }
 
@@ -69,7 +69,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
                                 { name: { contains: token, mode: "insensitive" } },
                                 { description: { contains: token, mode: "insensitive" } }
                             ]
-                        }))
+                        })) as any
                     },
                     take: 10
                 });

@@ -10,7 +10,7 @@ export async function exportProducts() {
 
         const products = await prisma.product.findMany({
             orderBy: { createdAt: "desc" },
-            include: { category: true }
+            include: { categories: true }
         });
 
         const formattedData = products.map((p: any) => ({
@@ -18,7 +18,7 @@ export async function exportProducts() {
             name: p.name,
             price: p.price / 100,
             status: p.status,
-            category: p.category?.name || "Uncategorized",
+            category: p.categories[0]?.name || "Uncategorized",
             mainCategory: p.mainCategory,
             stock: p.stockQuantity,
             createdAt: p.createdAt.toISOString()

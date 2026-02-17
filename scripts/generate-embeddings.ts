@@ -14,7 +14,7 @@ async function main() {
             name: true,
             description: true,
             tags: true,
-            category: { select: { name: true } }
+            categories: { select: { name: true } }
         }
     });
 
@@ -26,9 +26,10 @@ async function main() {
     for (const product of products) {
         try {
             // Construct semantic text
+            const categoryNames = product.categories.map(c => c.name).join(', ');
             const textToEmbed = `
                 Name: ${product.name}
-                Category: ${product.category?.name || 'Unknown'}
+                Categories: ${categoryNames || 'Unknown'}
                 Description: ${product.description}
                 Tags: ${product.tags.join(', ')}
             `.trim();

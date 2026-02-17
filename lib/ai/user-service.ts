@@ -66,7 +66,7 @@ export async function getUserContext(userId: string): Promise<ShopContext> {
     const featuredProducts: any[] = await prisma.product.findMany({
         where: { isFeatured: true, status: 'published' },
         take: 5,
-        select: { name: true, price: true, category: { select: { name: true } }, description: true }
+        select: { name: true, price: true, categories: { select: { name: true } }, description: true }
     });
 
     const categories = await prisma.category.findMany({

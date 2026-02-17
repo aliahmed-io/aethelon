@@ -51,7 +51,7 @@ export async function runFraudScan() {
     const recentReviews = await prisma.review.findMany({
         take: 10,
         orderBy: { createdAt: "desc" },
-        include: { Product: true }
+        include: { product: true }
     });
 
     if (GEN_AI_API_KEY && recentReviews.length > 0) {
@@ -85,10 +85,10 @@ export async function runFraudScan() {
                     if (!exists) {
                         await prisma.alert.create({
                             data: {
-                                type: "REVIEW_FLAG",
-                                severity: "MEDIUM",
-                                message: `Suspicious review detected on ${review.Product.name}`,
-                                metadata: { reviewId: id, comment: review.comment }
+                                type: "CONTENT_MODERATION",
+                                severity: "HIGH",
+                                message: `Suspicious review detected: ${(review.comment || "").substring(0, 50)}... on product ${(review as any).product?.name || review.productId}`,
+                                metadata: { reviewId: review.id, userId: review.userId },
                             }
                         });
                         alertsGenerated++;

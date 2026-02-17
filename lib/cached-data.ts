@@ -20,7 +20,7 @@ export const getCachedProductCatalog = unstable_cache(
                 sizes: true,
                 imageDescription: true, // Vision AI description
                 mainCategory: true,
-                category: {
+                categories: {
                     select: {
                         name: true,
                     },

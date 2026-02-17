@@ -47,7 +47,7 @@ export async function POST(req: Request) {
             }
 
             // IDEMPOTENCY CHECK
-            if (existingOrder.status === "PAID" || existingOrder.status === "ALLOCATED" || existingOrder.paymentStatus === "COMPLETED") {
+            if (existingOrder.status === "PAID" || existingOrder.status === "ALLOCATED") {
                 return new NextResponse("Order already processed", { status: 200 });
             }
 
@@ -139,14 +139,14 @@ export async function POST(req: Request) {
                     where: { id: orderId },
                     data: {
                         status: "PAID",
-                        paymentStatus: "COMPLETED",
+                        // paymentStatus: "COMPLETED", // Invalid field
                         payment: {
                             create: {
                                 amount: session.amount_total || existingOrder.amount,
                                 currency: session.currency || "usd",
-                                provider: "Stripe",
-                                status: "COMPLETED",
-                                transactionId: session.payment_intent as string,
+                                paymentMethod: "Stripe", // Correct field
+                                status: "PAID", // Correct enum
+                                stripePaymentIntentId: session.payment_intent as string,
                             }
                         }
                     }

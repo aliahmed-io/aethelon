@@ -51,7 +51,7 @@ async function getStats() {
         Prisma.review.findMany({
             take: 4,
             orderBy: { createdAt: 'desc' },
-            include: { User: true }
+            include: { user: true }
         }),
         Prisma.order.findMany({
             take: 5,

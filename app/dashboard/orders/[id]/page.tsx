@@ -25,11 +25,24 @@ async function getOrder(id: string) {
         where: { id },
         include: {
             User: true,
-            orderItems: true,
-            shipments: {
-                include: { items: true }
+            orderItems: {
+                include: {
+                    product: {
+                        include: {
+                            categories: {
+                                select: { name: true },
+                                take: 1
+                            }
+                        }
+                    }
+                }
             },
-            payment: true
+            payment: true,
+            shipments: {
+                include: {
+                    items: true
+                }
+            }
         }
     });
 
@@ -82,7 +95,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                                 {order.status}
                             </Badge>
                             <Badge variant={
-                                order.paymentStatus === "COMPLETED" ? "outline" : "destructive"
+                                order.paymentStatus === "PAID" ? "outline" : "destructive"
                             }>
                                 Payment: {order.paymentStatus}
                             </Badge>

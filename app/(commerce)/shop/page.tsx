@@ -1,9 +1,9 @@
 import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
-import Prisma from "@/lib/db";
+import prisma from "@/lib/db";
 import { getRecommendedProducts } from "@/app/actions/personalization";
-import { ProductStatus, MainCategory } from "@prisma/client";
+import { ProductStatus, MainCategory, Product } from "@prisma/client";
 
 // We need to handle searchParams in page
 interface ShopPageProps {
@@ -23,7 +23,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
 
     const [products, recommendations] = await Promise.all([
-        Prisma.product.findMany({
+        prisma.product.findMany({
             where,
             orderBy: { createdAt: "desc" },
         }),
@@ -53,7 +53,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                             RECOMMENDED FOR YOU
                         </h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {recommendations.map((product: any) => (
+                            {recommendations.map((product: Product) => (
                                 <div key={product.id} className="h-[400px]">
                                     <ProductCard item={product} />
                                 </div>

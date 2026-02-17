@@ -45,7 +45,7 @@ export async function checkPriceDrops() {
     // Group by user
     const alerts: Record<string, PriceDropAlert> = {};
 
-    for (const item of drops) {
+    for (const item of (drops as any[])) {
         if (!alerts[item.userId]) {
             alerts[item.userId] = {
                 userId: item.userId,

@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, Suspense, useCallback } from 'react';
 import { Search, Camera, ArrowRight, Sparkles, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Navbar } from '../../../components/layout/Navbar';
 import { performAiSearch } from './actions';
 import { Product } from '../../../lib/assistantTypes';
 import Image from 'next/image';
@@ -91,7 +90,6 @@ function AISearchContent() {
 
     return (
         <div className="min-h-screen bg-background pt-32 pb-12 px-6">
-            <Navbar />
             <div className="container mx-auto max-w-6xl">
 
                 {/* Search Header */}

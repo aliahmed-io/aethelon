@@ -59,15 +59,11 @@ export async function searchProductsHybrid(options: SearchOptions): Promise<Hybr
 
     // Category Filter
     if (category && category !== 'all') {
-        if (["MEN", "WOMEN", "KIDS"].includes(category.toUpperCase())) {
-            // Whitelisted enum value, safe to interpolate
-            filterClauses.push(`"mainCategory" = '${category.toUpperCase()}'`);
-        } else {
-            // Dynamic string, use parameter
-            filterClauses.push(`"categoryId" IN (SELECT id FROM "Category" WHERE name ILIKE $${paramIndex})`);
-            sqlParams.push(`%${category}%`);
-            paramIndex++;
-        }
+        // Use implicit M-N table _CategoryToProduct
+        // A = CategoryId, B = ProductId
+        filterClauses.push(`id IN (SELECT "B" FROM "_CategoryToProduct" JOIN "Category" ON "A" = "Category".id WHERE "Category".name ILIKE $${paramIndex})`);
+        sqlParams.push(`%${category}%`);
+        paramIndex++;
     }
 
     // Price Filters

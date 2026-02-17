@@ -123,12 +123,7 @@ async function searchProducts({
 
     // Category filter
     if (category && category !== "all") {
-        const validCategories = ["MEN", "WOMEN", "KIDS"];
-        if (validCategories.includes(category.toUpperCase())) {
-            where.mainCategory = category.toUpperCase();
-        } else {
-            where.category = { name: { contains: category, mode: "insensitive" } };
-        }
+        where.categories = { some: { name: { contains: category, mode: "insensitive" } } };
     }
 
     // Price range (Input is likely dollars e.g. "10.50", DB is cents)
@@ -161,7 +156,7 @@ async function searchProducts({
                 stockQuantity: true,
                 averageRating: true,
                 reviewCount: true,
-                category: { select: { name: true } }
+                categories: { select: { name: true } }
             }
         }),
         prisma.product.count({ where })

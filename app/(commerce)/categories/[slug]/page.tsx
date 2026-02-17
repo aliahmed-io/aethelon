@@ -8,7 +8,7 @@ import { ChevronRight } from "lucide-react";
 
 async function getCategoryWithProducts(slug: string, page: number) {
     const pageSize = 12;
-    const category = await prisma.category.findUnique({
+    const category = await prisma.category.findFirst({
         where: { slug },
     });
 
@@ -16,13 +16,19 @@ async function getCategoryWithProducts(slug: string, page: number) {
 
     const [products, totalCount] = await Promise.all([
         prisma.product.findMany({
-            where: { categoryId: category.id, status: "published" },
+            where: {
+                categories: { some: { id: category.id } },
+                status: "published"
+            },
             orderBy: { createdAt: "desc" },
             skip: (page - 1) * pageSize,
             take: pageSize,
         }),
         prisma.product.count({
-            where: { categoryId: category.id, status: "published" },
+            where: {
+                categories: { some: { id: category.id } },
+                status: "published"
+            },
         }),
     ]);
 
@@ -87,7 +93,7 @@ export default async function CategoryPage({
                     <p className="text-muted-foreground text-sm py-12 text-center">No products in this category yet.</p>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {products.map((product: any) => (
+                        {products.map((product) => (
                             <Link key={product.id} href={`/shop/${product.id}`} className="group">
                                 <div className="aspect-square relative overflow-hidden rounded-sm bg-muted mb-3">
                                     {product.images[0] && (
