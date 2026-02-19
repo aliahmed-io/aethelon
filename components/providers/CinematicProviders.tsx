@@ -2,10 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-const CustomCursor = dynamic(
-    () => import("@/components/ui/CustomCursor"),
-    { ssr: false, loading: () => null }
-);
+
 const AudioController = dynamic(
     () => import("@/components/features/AudioController"),
     { ssr: false, loading: () => null }
@@ -23,7 +20,6 @@ const Chatbot = dynamic(
 export function CinematicProviders() {
     return (
         <>
-            <CustomCursor />
             <AudioController />
             <Chatbot />
         </>

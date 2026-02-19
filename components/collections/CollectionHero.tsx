@@ -41,7 +41,7 @@ export function CollectionHero({ title, description, image, breadcrumbs }: Colle
                     <div className="flex items-center gap-2 text-sm text-white/80 mb-4 capitalize">
                         <Link href="/" className="hover:text-white transition-colors">Home</Link>
                         <span>/</span>
-                        <Link href="/collections" className="hover:text-white transition-colors">Collections</Link>
+                        <Link href="/categories" className="hover:text-white transition-colors">Categories</Link>
                         {breadcrumbs.map((crumb, idx) => (
                             <div key={crumb} className="flex items-center gap-2">
                                 <span>/</span>

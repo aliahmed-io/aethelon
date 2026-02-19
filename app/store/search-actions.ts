@@ -6,7 +6,7 @@ import logger from "@/lib/logger";
 
 import { expandSearchQuery } from "@/lib/gemini";
 
-export async function searchProductsAction(query: string): Promise<Product[]> {
+export async function queryProductsAction(query: string): Promise<Product[]> {
     if (!query || !query.trim()) return [];
 
     try {

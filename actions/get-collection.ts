@@ -28,12 +28,6 @@ async function resolveCategoryHierarchy(slugs: string[]) {
 
     const targetSlug = slugs[slugs.length - 1];
 
-    // Find category by slug
-    // In a real robust system, we would verify the entire path (parent checks)
-    // For MVP, unique slug + parentId composite is enough, but we just find by slug matches.
-    // Since slug+parentId is unique, we might have duplicates of 'sofas'.
-    // We need to resolve the path.
-
     // Fetch all categories with this slug
     const candidates = await prisma.category.findMany({
         where: { slug: targetSlug },
@@ -63,9 +57,6 @@ async function getCategoryTreeIds(rootId: string): Promise<string[]> {
 
     // 2. Recursively get their children (BFS/DFS)
     // For MVP, 1 level deep is often enough, but let's do 2 levels max 
-    // or use a raw recursive CTE if optimizing. 
-    // Here we assume max depth 2 for simplicity.
-
     let ids = [rootId, ...children.map(c => c.id)];
 
     // Fetch grandchildren
@@ -122,36 +113,59 @@ export async function getSmartCollection({ slugs, searchParams }: CollectionPara
         if (searchParams.priceMax) where.price.lte = Number(searchParams.priceMax) * 100;
     }
 
-    // 3. Fetch Products (Base Set)
-    // We fetch a bit more than needed to allow for re-ranking
+    // 3. Ranking Configuration
+    let orderBy: Prisma.ProductOrderByWithRelationInput = { staticScore: 'desc' };
+
+    if (searchParams?.sort) {
+        switch (searchParams.sort) {
+            case 'price-asc':
+                orderBy = { price: 'asc' };
+                break;
+            case 'price-desc':
+                orderBy = { price: 'desc' };
+                break;
+            case 'newest':
+                orderBy = { createdAt: 'desc' };
+                break;
+            case 'oldest':
+                orderBy = { createdAt: 'asc' };
+                break;
+            case 'relevance':
+                orderBy = { staticScore: 'desc' };
+                break;
+        }
+    }
+
+    // Pagination
+    const page = Number(searchParams?.page) || 1;
+    const limit = 100; // Fixed for now, or make dynamic
+    const skip = (page - 1) * limit;
+
+    // 4. Fetch Products
     const products = await prisma.product.findMany({
         where,
-        take: 100, // Fetch top 100 candidates
+        take: limit,
+        skip: skip,
         include: {
             categories: true,
-            inventoryTransactions: false, // Don't need history, just stock check (field is stockQuantity)
+            inventoryTransactions: false,
         },
-        orderBy: {
-            // Default sort if no smart ranking
-            staticScore: 'desc'
-        }
+        orderBy: orderBy
     });
-
-    // 4. Smart Ranking (In-Memory)
-    // If we had a specific user semantic query, we would use vector search here instead of findMany
-    // For standard collection view, we rely on `staticScore` + dynamic boosts.
 
     const rankedProducts = products;
 
-    // Apply Inventory Boost (Dynamic)
-    // Push out-of-stock to bottom
+    // 5. In-Memory Inventory Boost
+    // Keep out-of-stock items at the bottom regardless of sort
     rankedProducts.sort((a, b) => {
         const aStock = a.stockQuantity > 0 ? 1 : 0;
         const bStock = b.stockQuantity > 0 ? 1 : 0;
-        if (aStock !== bStock) return bStock - aStock; // 1 before 0
 
-        // Secondary: Static Score
-        return (b.staticScore || 0) - (a.staticScore || 0);
+        // Always prioritize in-stock items
+        if (aStock !== bStock) return bStock - aStock;
+
+        // If stock status is same, preserve database sort (which is stable-ish)
+        return 0;
     });
 
     return {

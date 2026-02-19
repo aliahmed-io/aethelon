@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
         formats: ['image/avif', 'image/webp'],
         remotePatterns: [
             { protocol: "https", hostname: "utfs.io" },
-            { protocol: "https", hostname: "images.unsplash.com" }
+            { protocol: "https", hostname: "images.unsplash.com" },
+            { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/**" }
         ],
         minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
     },
@@ -29,7 +30,7 @@ const nextConfig: NextConfig = {
                             default-src 'self';
                             script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://va.vercel-scripts.com;
                             style-src 'self' 'unsafe-inline';
-                            img-src 'self' blob: data: https://*.meshy.ai https://res.cloudinary.com https://*.stripe.com https://utfs.io https://images.unsplash.com;
+                            img-src 'self' blob: data: https://*.meshy.ai https://res.cloudinary.com https://*.stripe.com https://utfs.io https://images.unsplash.com https://*.googleusercontent.com;
                             connect-src 'self' https://api.meshy.ai https://api.stripe.com https://vitals.vercel-insights.com https://uploadthing.com https://utfs.io;
                             font-src 'self' data:;
                             frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
@@ -54,7 +55,7 @@ const nextConfig: NextConfig = {
                     },
                     {
                         key: 'Permissions-Policy',
-                        value: "camera=(), microphone=(), geolocation=()"
+                        value: "camera=(), microphone=(self), geolocation=()"
                     }
                 ]
             },

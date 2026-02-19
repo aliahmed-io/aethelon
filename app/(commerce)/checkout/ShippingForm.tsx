@@ -6,24 +6,78 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CartItem } from "@/lib/interfaces";
 import { checkOut } from "@/app/store/actions";
+import { Address } from "@prisma/client";
+import { useState, useEffect } from "react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type ShippingFormProps = {
-    initialAddress?: {
-        name: string;
-        street1: string;
-        street2?: string | null;
-        city: string;
-        state: string;
-        postalCode: string;
-        country: string;
-        phone?: string | null;
-    } | null;
+    initialAddress?: Address | null;
+    savedAddresses: Address[];
     cartItems: CartItem[];
     discountCode?: string;
     discountPercentage?: number;
 };
 
-export function ShippingForm({ initialAddress }: ShippingFormProps) {
+export function ShippingForm({ initialAddress, savedAddresses, cartItems }: ShippingFormProps) {
+    const [selectedAddressId, setSelectedAddressId] = useState<string>(initialAddress?.id || "new");
+    const [formValues, setFormValues] = useState({
+        firstName: "",
+        lastName: "",
+        street1: "",
+        street2: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "United States",
+        phone: ""
+    });
+
+    // Initialize logic
+    useEffect(() => {
+        if (initialAddress) {
+            updateFormWithAddress(initialAddress);
+        }
+    }, [initialAddress]);
+
+    const updateFormWithAddress = (address: Address) => {
+        const [firstName, ...lastNameParts] = address.name.split(" ");
+        setFormValues({
+            firstName: firstName || "",
+            lastName: lastNameParts.join(" ") || "",
+            street1: address.street1,
+            street2: address.street2 || "",
+            city: address.city,
+            state: address.state,
+            postalCode: address.postalCode,
+            country: address.country,
+            phone: address.phone || ""
+        });
+    };
+
+    const handleAddressSelection = (id: string) => {
+        setSelectedAddressId(id);
+        if (id === "new") {
+            setFormValues({
+                firstName: "",
+                lastName: "",
+                street1: "",
+                street2: "",
+                city: "",
+                state: "",
+                postalCode: "",
+                country: "United States",
+                phone: ""
+            });
+        } else {
+            const addr = savedAddresses.find(a => a.id === id);
+            if (addr) updateFormWithAddress(addr);
+        }
+    };
+
+    const handleInputChange = (field: keyof typeof formValues, value: string) => {
+        setFormValues(prev => ({ ...prev, [field]: value }));
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -35,6 +89,32 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-foreground/[0.01] to-transparent pointer-events-none" />
 
             <h2 className="text-xl font-light mb-6 uppercase tracking-widest">Shipping Details</h2>
+
+            {savedAddresses.length > 0 && (
+                <div className="mb-8">
+                    <Label className="uppercase text-xs tracking-widest text-muted-foreground mb-4 block">Saved Addresses</Label>
+                    <RadioGroup value={selectedAddressId} onValueChange={handleAddressSelection} className="flex flex-col gap-3">
+                        {savedAddresses.map((addr) => (
+                            <div key={addr.id} className={`flex items-start space-x-3 border p-4 rounded-sm transition-colors ${selectedAddressId === addr.id ? 'border-accent bg-accent/5' : 'border-border'}`}>
+                                <RadioGroupItem value={addr.id} id={addr.id} className="mt-1" />
+                                <Label htmlFor={addr.id} className="cursor-pointer flex-1">
+                                    <div className="font-bold text-sm uppercase tracking-wide">{addr.name}</div>
+                                    <div className="text-xs text-muted-foreground mt-1">
+                                        {addr.street1}, {addr.city}, {addr.state} {addr.postalCode}
+                                    </div>
+                                </Label>
+                            </div>
+                        ))}
+                        <div className={`flex items-start space-x-3 border p-4 rounded-sm transition-colors ${selectedAddressId === "new" ? 'border-accent bg-accent/5' : 'border-border'}`}>
+                            <RadioGroupItem value="new" id="new-address" className="mt-1" />
+                            <Label htmlFor="new-address" className="cursor-pointer font-bold text-sm uppercase tracking-wide">
+                                Use a new address
+                            </Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+            )}
+
             <p className="text-muted-foreground mb-8 text-sm">
                 Enter your details below. Payment will be handled securely via Stripe.
             </p>
@@ -48,7 +128,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                             className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                             required
                             placeholder="First Name"
-                            defaultValue={initialAddress?.name?.split(" ")?.[0] ?? ""}
+                            value={formValues.firstName}
+                            onChange={(e) => handleInputChange("firstName", e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
@@ -58,7 +139,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                             className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                             required
                             placeholder="Last Name"
-                            defaultValue={initialAddress?.name?.split(" ")?.slice(1).join(" ") ?? ""}
+                            value={formValues.lastName}
+                            onChange={(e) => handleInputChange("lastName", e.target.value)}
                         />
                     </div>
                 </div>
@@ -70,7 +152,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                         className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                         required
                         placeholder="Street Address"
-                        defaultValue={initialAddress?.street1 ?? ""}
+                        value={formValues.street1}
+                        onChange={(e) => handleInputChange("street1", e.target.value)}
                     />
                 </div>
 
@@ -80,7 +163,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                         name="street2"
                         className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                         placeholder="Apartment, suite, unit, etc."
-                        defaultValue={initialAddress?.street2 ?? ""}
+                        value={formValues.street2}
+                        onChange={(e) => handleInputChange("street2", e.target.value)}
                     />
                 </div>
 
@@ -92,7 +176,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                             className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                             required
                             placeholder="City"
-                            defaultValue={initialAddress?.city ?? ""}
+                            value={formValues.city}
+                            onChange={(e) => handleInputChange("city", e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
@@ -102,7 +187,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                             className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                             required
                             placeholder="State"
-                            defaultValue={initialAddress?.state ?? ""}
+                            value={formValues.state}
+                            onChange={(e) => handleInputChange("state", e.target.value)}
                         />
                     </div>
                 </div>
@@ -115,7 +201,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                             className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                             required
                             placeholder="Postal Code"
-                            defaultValue={initialAddress?.postalCode ?? ""}
+                            value={formValues.postalCode}
+                            onChange={(e) => handleInputChange("postalCode", e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
@@ -125,7 +212,8 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                             className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                             required
                             placeholder="Country"
-                            defaultValue={initialAddress?.country ?? "United States"}
+                            value={formValues.country}
+                            onChange={(e) => handleInputChange("country", e.target.value)}
                         />
                     </div>
                 </div>
@@ -138,9 +226,24 @@ export function ShippingForm({ initialAddress }: ShippingFormProps) {
                         className="bg-background border-border text-foreground focus:border-accent transition-colors h-12"
                         required
                         placeholder="Phone Number"
-                        defaultValue={initialAddress?.phone ?? ""}
+                        value={formValues.phone}
+                        onChange={(e) => handleInputChange("phone", e.target.value)}
                     />
                 </div>
+
+                {/* Save Address Checkbox */}
+                {selectedAddressId === "new" && (
+                    <div className="flex items-center space-x-2 pt-4 border-t border-border">
+                        <input
+                            type="checkbox"
+                            name="saveAddress"
+                            id="saveAddress"
+                            className="accent-accent w-4 h-4 cursor-pointer"
+                        />
+                        <Label htmlFor="saveAddress" className="text-sm cursor-pointer select-none">Save this address for future use</Label>
+                    </div>
+                )}
+
 
                 <Button type="submit" className="w-full h-14 bg-accent text-accent-foreground font-bold uppercase tracking-widest hover:bg-accent/90 mt-6 relative overflow-hidden group">
                     <span className="relative z-10 flex items-center justify-center gap-2">

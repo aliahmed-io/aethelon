@@ -19,7 +19,7 @@ export default function AtelierPage() {
                         <div className="mb-12">
                             <span className="text-muted-foreground text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Beta Access</span>
                             <h1 className="text-5xl md:text-7xl font-light tracking-tighter mb-6">
-                                VIRTUAL <br /> ATELIER
+                                TRY-ON
                             </h1>
                             <p className="text-muted-foreground max-w-lg text-lg font-light leading-relaxed">
                                 Experience our furniture in your space using advanced generative AI.

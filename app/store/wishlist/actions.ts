@@ -13,6 +13,24 @@ export async function toggleWishlist(productId: string) {
         return { success: false, error: "Must be logged in" };
     }
 
+    // Sync User
+    await prisma.user.upsert({
+        where: { id: user.id },
+        update: {
+            email: user.email!,
+            firstName: user.given_name || "",
+            lastName: user.family_name || "",
+            profileImage: user.picture || ""
+        },
+        create: {
+            id: user.id,
+            email: user.email!,
+            firstName: user.given_name || "",
+            lastName: user.family_name || "",
+            profileImage: user.picture || ""
+        }
+    });
+
     try {
         const existing = await prisma.wishlistItem.findFirst({
             where: {

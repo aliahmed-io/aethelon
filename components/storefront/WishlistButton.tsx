@@ -8,20 +8,29 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+import { useRouter } from "next/navigation";
+
 interface WishlistButtonProps {
     productId: string;
 }
 
 export function WishlistButton({ productId }: WishlistButtonProps) {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        getWishlistStatus(productId).then((status) => {
-            setIsWishlisted(status);
-            setIsLoading(false);
-        });
+        getWishlistStatus(productId)
+            .then((status) => {
+                setIsWishlisted(status);
+            })
+            .catch(() => {
+                setIsWishlisted(false);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, [productId]);
 
     const handleToggle = (e: React.MouseEvent) => {
@@ -34,6 +43,11 @@ export function WishlistButton({ productId }: WishlistButtonProps) {
                 setIsWishlisted(res.isWishlisted!);
                 toast.success(res.isWishlisted ? "Added to wishlist" : "Removed from wishlist");
             } else {
+                if (res.error === "Must be logged in") {
+                    toast.error("Please sign in to save items to your wishlist");
+                    router.push("/api/auth/login");
+                    return;
+                }
                 toast.error(res.error || "Something went wrong");
             }
         });
@@ -58,7 +72,7 @@ export function WishlistButton({ productId }: WishlistButtonProps) {
             <Heart
                 className={cn(
                     "w-5 h-5 transition-colors",
-                    isWishlisted ? "fill-red-500 text-red-500" : "text-muted-foreground"
+                    isWishlisted ? "fill-accent text-accent" : "text-muted-foreground"
                 )}
             />
         </Button>

@@ -37,11 +37,12 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Navigation Links Configuration (Updated)
     const navLinks = [
         { href: '/', label: 'Home' },
         { href: '/shop', label: 'Shop' },
-        { href: '/collections/all', label: 'Categories' },
-        { href: '/ai-search', label: 'AI Search' },
+        { href: '/categories', label: 'Categories' },
+        { href: '/ai-search', label: 'Advanced Search' },
         { href: '/ai-vision', label: 'Room Visualizer' },
         { href: '/about', label: 'Story' },
     ];

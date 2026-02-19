@@ -62,7 +62,7 @@ const FAQ_SECTIONS = [
         items: [
             {
                 question: "Do you offer interior design consultations?",
-                answer: "Our Virtual Atelier provides AI-powered room visualization. For hands-on assistance, our Design Concierge team offers complimentary 30-minute consultations for orders above $5,000.",
+                answer: "Our Try-On provides AI-powered room visualization. For hands-on assistance, our Design Concierge team offers complimentary 30-minute consultations for orders above $5,000.",
             },
             {
                 question: "Can I customize fabrics and finishes?",

@@ -115,7 +115,31 @@ export async function checkOut(formData: FormData) {
         // Ideally we redirect with error, OR rely on client-side `required` attributes for basic checking,
         // but robust apps need server validation. 
         // For now, we redirect with error query param.
-        return redirect("/checkout?error=Missing required shipping fields");
+        return redirect("/bag?error=Missing required shipping fields");
+    }
+
+    // Save Address Logic
+    const shouldSaveAddress = formData.get("saveAddress") === "on";
+    if (shouldSaveAddress) {
+        try {
+            await prisma.address.create({
+                data: {
+                    userId: user.id,
+                    name: "Saved during checkout", // Default alias
+                    street1: shippingAddress.street1,
+                    street2: shippingAddress.street2,
+                    city: shippingAddress.city,
+                    state: shippingAddress.state,
+                    postalCode: shippingAddress.postalCode,
+                    country: shippingAddress.country,
+                    phone: shippingAddress.phone,
+                    isDefault: false
+                }
+            });
+        } catch (error) {
+            console.error("Failed to save address during checkout:", error);
+            // Non-blocking error, proceed with checkout
+        }
     }
 
     // Rate Limit: 5 checkouts per minute per user (prevent inventory locking attacks)

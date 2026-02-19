@@ -2,19 +2,26 @@ import { ReactNode } from "react";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/layout/Footer";
 import { isAdminUser } from "@/lib/auth";
+import { AIChatbotProvider } from "@/components/providers/AIChatbotProvider";
 
 /**
  * Commerce layout — lean, transactional.
- * No cinematic enhancements (cursor, scroll, audio, chatbot).
+ * No heavy cinematic visuals, but includes functional enhancements like chatbot.
  * Optimized for conversion-critical flows: shop, cart, checkout.
  */
 export default async function CommerceLayout({ children }: { children: ReactNode }) {
-    const isAdmin = await isAdminUser();
+    let isAdmin = false;
+    try {
+        isAdmin = await isAdminUser();
+    } catch (error) {
+        console.error("Failed to check admin status:", error);
+    }
 
     return (
         <>
             <Navbar isAdmin={isAdmin} />
             {children}
+            <AIChatbotProvider />
             <Footer />
         </>
     );

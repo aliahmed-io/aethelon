@@ -3,52 +3,33 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import prisma from "@/lib/db";
-import { formatPrice } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ProductCard } from "@/components/storefront/ProductCard";
+import { getSmartCollection } from "@/actions/get-collection";
+import { CollectionHero } from "@/components/collections/CollectionHero";
+import { CollectionFilterBar } from "@/components/collections/CollectionFilterBar";
 
-async function getCategoryWithProducts(slug: string, page: number) {
-    const pageSize = 12;
-    const category = await prisma.category.findFirst({
-        where: { slug },
-    });
-
-    if (!category) return null;
-
-    const [products, totalCount] = await Promise.all([
-        prisma.product.findMany({
-            where: {
-                categories: { some: { id: category.id } },
-                status: "published"
-            },
-            orderBy: { createdAt: "desc" },
-            skip: (page - 1) * pageSize,
-            take: pageSize,
-        }),
-        prisma.product.count({
-            where: {
-                categories: { some: { id: category.id } },
-                status: "published"
-            },
-        }),
-    ]);
-
-    return {
-        category,
-        products,
-        totalCount,
-        totalPages: Math.ceil(totalCount / pageSize),
-        currentPage: page,
-    };
-}
+export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
-    const data = await getCategoryWithProducts(slug, 1);
-    if (!data) return { title: "Category Not Found — Aethelon" };
-    return {
-        title: `${data.category.name} — Aethelon`,
-        description: data.category.description || `Browse ${data.category.name} furniture at Aethelon.`,
-    };
+
+    if (slug === 'all') {
+        return {
+            title: 'All Categories | Aethelon',
+            description: 'Explore our complete catalog of premium furniture.'
+        };
+    }
+
+    // Try Smart Collection
+    const data = await getSmartCollection({ slugs: [slug] });
+    if (data?.category) {
+        return {
+            title: `${data.category.name} — Aethelon`,
+            description: data.category.description || `Browse ${data.category.name} furniture at Aethelon.`,
+        };
+    }
+
+    return { title: "Category Not Found — Aethelon" };
 }
 
 export default async function CategoryPage({
@@ -56,91 +37,55 @@ export default async function CategoryPage({
     searchParams,
 }: {
     params: Promise<{ slug: string }>;
-    searchParams: Promise<{ page?: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const { slug } = await params;
-    const { page: pageStr } = await searchParams;
-    const page = Math.max(1, parseInt(pageStr || "1", 10));
+    const resolvedSearchParams = await searchParams;
 
-    const data = await getCategoryWithProducts(slug, page);
-    if (!data) return notFound();
+    // Handle "all" slug manually or pass to getSmartCollection
+    // getSmartCollection handles empty array or matching logic.
+    // If slug is "all", let's pass it as a special case or empty array?
+    // My getSmartCollection logic:
+    // if (!category && slugs.length > 0 && slugs[0] !== 'all') return empty
+    // So if slug is 'all', it proceeds to fetch products with no category filter.
 
-    const { category, products, totalCount, totalPages, currentPage } = data;
+    // We pass [slug] (e.g. ['all'] or ['living']).
+    const data = await getSmartCollection({
+        slugs: [slug],
+        searchParams: resolvedSearchParams
+    });
+
+    if (!data.category && slug !== 'all') {
+        notFound();
+    }
+
+    const categoryName = data.category?.name || "All Products";
+    const categoryDesc = data.category?.description || "Explore our complete catalog of premium furniture.";
+    const categoryImage = data.category?.image || "/assets/placeholder.svg";
 
     return (
-        <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
-            <div className="container mx-auto max-w-6xl px-6 lg:px-12">
-                {/* Breadcrumb */}
-                <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-8" aria-label="Breadcrumb">
-                    <Link href="/shop" className="hover:text-foreground transition-colors">Shop</Link>
-                    <ChevronRight className="w-3 h-3" />
-                    <span className="text-foreground">{category.name}</span>
-                </nav>
+        <main className="min-h-screen bg-background text-foreground pb-20">
+            {/* Category Hero */}
+            <CollectionHero
+                title={categoryName}
+                description={categoryDesc}
+                image={categoryImage}
+                breadcrumbs={[slug]}
+            />
 
-                {/* Header */}
-                <header className="mb-12">
-                    <h1 className="text-3xl lg:text-4xl font-bold tracking-tighter mb-3">{category.name}</h1>
-                    {category.description && (
-                        <p className="text-muted-foreground text-sm max-w-lg">{category.description}</p>
-                    )}
-                    <p className="text-xs text-muted-foreground font-mono mt-4">
-                        {totalCount} product{totalCount !== 1 ? "s" : ""}
-                    </p>
-                </header>
+            <div className="container mx-auto px-4 md:px-8 mt-12">
+                <CollectionFilterBar totalCount={data.totalCount} />
 
-                {/* Product Grid */}
-                {products.length === 0 ? (
-                    <p className="text-muted-foreground text-sm py-12 text-center">No products in this category yet.</p>
+                {data.products.length === 0 ? (
+                    <div className="py-20 text-center">
+                        <p className="text-muted-foreground text-lg">No products found in this category.</p>
+                    </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {products.map((product) => (
-                            <Link key={product.id} href={`/shop/${product.id}`} className="group">
-                                <div className="aspect-square relative overflow-hidden rounded-sm bg-muted mb-3">
-                                    {product.images[0] && (
-                                        <Image
-                                            src={product.images[0]}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                            sizes="(max-width: 768px) 50vw, 25vw"
-                                        />
-                                    )}
-                                    {product.discountPercentage > 0 && (
-                                        <span className="absolute top-2 right-2 px-2 py-1 bg-red-600 text-white text-[10px] uppercase tracking-widest font-bold rounded-sm">
-                                            -{product.discountPercentage}%
-                                        </span>
-                                    )}
-                                </div>
-                                <h3 className="text-sm font-medium truncate group-hover:text-accent transition-colors">{product.name}</h3>
-                                <p className="text-xs text-muted-foreground font-mono">{formatPrice(product.price)}</p>
-                            </Link>
+                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+                        {data.products.map((product) => (
+                            <ProductCard key={product.id} item={product} />
                         ))}
                     </div>
-                )}
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                    <nav className="flex items-center justify-center gap-2 mt-16" aria-label="Pagination">
-                        {currentPage > 1 && (
-                            <Link
-                                href={`/categories/${slug}?page=${currentPage - 1}`}
-                                className="px-4 py-2 border border-border text-xs uppercase tracking-widest hover:bg-accent hover:text-accent-foreground transition-colors rounded-sm"
-                            >
-                                Previous
-                            </Link>
-                        )}
-                        <span className="text-xs text-muted-foreground font-mono px-4">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        {currentPage < totalPages && (
-                            <Link
-                                href={`/categories/${slug}?page=${currentPage + 1}`}
-                                className="px-4 py-2 border border-border text-xs uppercase tracking-widest hover:bg-accent hover:text-accent-foreground transition-colors rounded-sm"
-                            >
-                                Next
-                            </Link>
-                        )}
-                    </nav>
                 )}
             </div>
         </main>

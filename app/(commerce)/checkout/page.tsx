@@ -38,9 +38,12 @@ export default async function CheckoutPage() {
         return redirect("/bag");
     }
 
-    const initialAddress = await prisma.address.findFirst({
+    const addresses = await prisma.address.findMany({
         where: { userId: user.id },
+        orderBy: { isDefault: "desc" },
     });
+
+    const initialAddress = addresses.find(a => a.isDefault) || addresses[0] || null;
 
     return (
         <main className="min-h-screen bg-background text-foreground pt-24 pb-20 relative overflow-hidden">
@@ -57,6 +60,7 @@ export default async function CheckoutPage() {
                 {/* Left: Forms */}
                 <div className="lg:col-span-7">
                     <ShippingForm
+                        savedAddresses={addresses}
                         initialAddress={initialAddress}
                         cartItems={cart.items}
                         discountCode={cart.discountCode}

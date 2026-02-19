@@ -51,9 +51,9 @@ export default function CustomCursor({ enabled = true }: CustomCursorProps) {
     useEffect(() => {
         if (!enabled) return;
 
-        // Detect touch device
+        // Detect touch device (only disable if primary input is touch)
         const checkTouch = () => {
-            isTouch.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            isTouch.current = window.matchMedia("(pointer: coarse)").matches;
             if (isTouch.current) {
                 document.body.classList.remove('custom-cursor');
             } else {

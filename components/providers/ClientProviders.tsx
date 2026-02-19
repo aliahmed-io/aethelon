@@ -19,10 +19,16 @@ const SearchOverlay = dynamic(
 export function ClientProviders({ children }: { children: React.ReactNode }) {
     return (
         <>
+            <CustomCursor />
             {children}
             <SearchOverlay />
             <MobileNav />
         </>
     );
 }
+
+const CustomCursor = dynamic(
+    () => import("@/components/ui/CustomCursor"),
+    { ssr: false, loading: () => null }
+);
 

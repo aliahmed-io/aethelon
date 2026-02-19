@@ -13,6 +13,8 @@ model User {
   email                  String
   firstName              String
   lastName               String
+  socialTitle            String?
+  birthdate              DateTime?
   profileImage           String
   createdAt              DateTime              @default(now())
   chatSessions           ChatSession[]

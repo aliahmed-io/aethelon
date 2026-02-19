@@ -176,7 +176,7 @@ export default function Chatbot() {
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                        className="fixed bottom-6 right-6 z-40 bg-accent text-accent-foreground rounded-full shadow-lg hover:shadow-xl transition-shadow group"
+                        className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 bg-accent text-accent-foreground rounded-full shadow-lg hover:shadow-xl transition-shadow group"
                         onClick={() => setIsOpen(true)}
                         aria-label="Open concierge chat"
                     >
@@ -198,7 +198,7 @@ export default function Chatbot() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        className="fixed bottom-6 right-6 w-full max-w-sm bg-background/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl z-40 overflow-hidden flex flex-col h-[520px]"
+                        className="fixed bottom-20 md:bottom-6 right-4 md:right-6 w-[calc(100vw-2rem)] md:w-full max-w-sm bg-background/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col h-[calc(100vh-10rem)] md:h-[520px] max-h-[520px]"
                     >
                         {/* Header */}
                         <div className="p-4 border-b border-border bg-muted/30 flex items-center justify-between">

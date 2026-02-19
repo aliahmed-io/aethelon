@@ -53,7 +53,7 @@ export function UserDropdown({ email, name, userImage, isAdmin = false }: UserDr
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild className="focus:bg-muted focus:text-foreground cursor-pointer rounded-sm">
-                    <Link href="/wishlist" className="flex items-center gap-2">
+                    <Link href="/account/wishlist" className="flex items-center gap-2">
                         <Heart className="w-4 h-4 text-muted-foreground" /> My Wishlist
                     </Link>
                 </DropdownMenuItem>

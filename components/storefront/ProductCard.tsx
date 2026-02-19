@@ -31,7 +31,7 @@ export function ProductCard({ item, priority = false }: iAppProps) {
     >
       <div className="transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]">
         {/* Image Section */}
-        <div className="relative aspect-square overflow-hidden rounded-sm bg-neutral-100 dark:bg-neutral-900">
+        <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary">
           <Image
             src={item.images[0]}
             alt={item.name}
@@ -49,8 +49,12 @@ export function ProductCard({ item, priority = false }: iAppProps) {
           )}
 
           {/* Wishlist */}
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="bg-white dark:bg-zinc-800 rounded-full p-2 shadow-md border border-neutral-200 dark:border-white/10 hover:bg-neutral-50 dark:hover:bg-zinc-700 transition-colors">
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+          <div
+            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          >
+            <div className="bg-white rounded-full p-2 shadow-md border border-neutral-200 hover:bg-neutral-50 transition-colors">
               <WishlistButton productId={item.id} />
             </div>
           </div>
@@ -83,7 +87,7 @@ export function ProductCard({ item, priority = false }: iAppProps) {
 export function LoadingProductCard() {
   return (
     <div className="animate-pulse">
-      <div className="aspect-square rounded-sm bg-neutral-100 dark:bg-neutral-900" />
+      <div className="aspect-square rounded-sm bg-secondary" />
       <div className="pt-4 pb-2 space-y-2">
         <div className="h-2.5 bg-muted rounded w-16" />
         <div className="h-3.5 bg-muted rounded w-3/4" />

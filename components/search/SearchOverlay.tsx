@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, Loader2, ShoppingBag, ArrowRight, Sparkles } from "lucide-react";
+import { Search, X, Loader2, ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSearch } from "./SearchContext";
@@ -10,8 +10,9 @@ import { useDebounce } from "use-debounce";
 import { Product } from "@/lib/assistantTypes";
 import { formatPrice } from "@/lib/utils";
 import clsx from "clsx";
-import { searchProductsAction } from "@/app/store/search-actions";
+import { queryProductsAction } from "@/app/store/search-actions";
 import { VoiceSearch } from "./VoiceSearch";
+
 
 
 
@@ -48,7 +49,7 @@ export function SearchOverlay() {
             setLoading(true);
             try {
                 // Server Action Call (Next.js 15 pattern)
-                const products = await searchProductsAction(debouncedQuery);
+                const products = await queryProductsAction(debouncedQuery);
                 setResults(products);
             } catch (error) {
                 console.error("Search action failed", error);
@@ -73,15 +74,15 @@ export function SearchOverlay() {
                         className="fixed inset-0 z-[100] bg-foreground/30 backdrop-blur-md"
                     />
 
-                    <div className="fixed inset-0 z-[101] flex items-start justify-center pt-12 md:pt-24 pointer-events-none px-4">
+                    <div className="fixed inset-0 z-[101] flex items-start justify-center pt-4 md:pt-24 pointer-events-none px-2 md:px-4">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: -20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -20 }}
                             transition={{ duration: 0.2, ease: "circOut" }}
-                            className="w-full max-w-3xl bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-xl pointer-events-auto overflow-hidden ring-1 ring-border"
+                            className="w-full max-w-3xl bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-none md:rounded-xl pointer-events-auto overflow-hidden ring-1 ring-border max-h-[100vh] md:max-h-[85vh]"
                         >
-                            <div className="flex items-center border-b border-border px-6 py-6 bg-muted/30">
+                            <div className="flex items-center border-b border-border px-4 md:px-6 py-4 md:py-6 bg-muted/30">
                                 <Search className="mr-4 h-5 w-5 text-muted-foreground" />
                                 <input
                                     ref={inputRef}
@@ -89,7 +90,7 @@ export function SearchOverlay() {
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
                                     placeholder="Search our collection..."
-                                    className="flex-1 bg-transparent text-xl outline-none placeholder:text-muted-foreground/40 text-foreground font-light tracking-wide"
+                                    className="flex-1 bg-transparent text-base md:text-xl outline-none placeholder:text-muted-foreground/40 text-foreground font-light tracking-wide"
                                 />
                                 <VoiceSearch onResult={(text) => setQuery(text)} />
                                 <button type="button" onClick={closeSearch} className="hover:bg-muted p-2 rounded-full transition-colors">
@@ -97,7 +98,7 @@ export function SearchOverlay() {
                                 </button>
                             </div>
 
-                            <div className="max-h-[65vh] overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                            <div className="flex-1 overflow-y-auto p-4 md:p-6 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
                                 {loading ? (
                                     <div className="flex flex-col items-center justify-center py-12 gap-4">
                                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -126,7 +127,7 @@ export function SearchOverlay() {
                                 ) : (
                                     <div className="py-16 text-center text-muted-foreground/60">
                                         <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-muted mb-4">
-                                            <Sparkles className="h-6 w-6 text-accent" />
+                                            <Search className="h-6 w-6 text-muted-foreground" />
                                         </div>
                                         <p className="text-sm font-light">Try &quot;leather sofa&quot; or search by name</p>
                                     </div>
@@ -158,17 +159,6 @@ function ProductCard({ product, onClick }: { product: Product & { relevance?: nu
                     <h4 className="font-medium text-sm truncate transition-colors text-foreground/80 group-hover:text-foreground">
                         {product.name}
                     </h4>
-                    {/* Recall Badge from Hybrid Search */}
-                    {(product.relevance && product.relevance > 0.8) && (
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded-sm border border-amber-500/20">
-                            Top Match
-                        </span>
-                    )}
-                    {(product.vectorScore && product.vectorScore > 0.7 && (!product.relevance || product.relevance <= 0.8)) && (
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded-sm border border-indigo-500/20">
-                            Semantic
-                        </span>
-                    )}
                 </div>
 
                 <p className="text-muted-foreground text-xs truncate font-light">{product.category}</p>
