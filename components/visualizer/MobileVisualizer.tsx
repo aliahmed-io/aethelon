@@ -71,14 +71,25 @@ export function MobileVisualizer({
     setLightingMode,
     modelScale,
     setModelScale,
+    analysisResult,
+    onApplyAiSettings,
+    isAnalyzing,
 }: VisualizerSharedProps) {
     const { isWebXrSupported } = useCapabilities();
     const [isArOpen, setIsArOpen] = useState(false);
     const [isCatalogOpen, setIsCatalogOpen] = useState(false);
     const [isRoomPickerOpen, setIsRoomPickerOpen] = useState(false);
+    const [isAiPanelOpen, setIsAiPanelOpen] = useState(false); // AI Panel State
     const [isModelLoading, setIsModelLoading] = useState(false);
     const viewerRef = useRef<HTMLElement>(null);
     const uploadRef = useRef<HTMLInputElement>(null);
+
+    // Auto-open AI panel when analysis completes
+    useEffect(() => {
+        if (analysisResult) {
+            setIsAiPanelOpen(true);
+        }
+    }, [analysisResult]);
 
     // model-viewer load events
     useEffect(() => {
@@ -148,6 +159,69 @@ export function MobileVisualizer({
                 </div>
             )}
 
+            {/* ── AI Results Panel (Mobile Brain) ───────────────────── */}
+            {isAiPanelOpen && analysisResult && (
+                <div className="absolute top-16 left-4 right-4 z-40 bg-background/95 backdrop-blur-md border border-border rounded-sm shadow-2xl p-4 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2 text-accent">
+                            <Sparkles className="w-4 h-4" />
+                            <h3 className="text-xs font-bold uppercase tracking-widest">
+                                AI Analysis
+                            </h3>
+                        </div>
+                        <button
+                            onClick={() => setIsAiPanelOpen(false)}
+                            className="text-muted-foreground hover:text-foreground"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="bg-muted/50 p-3 rounded-sm border border-border/50">
+                            <p className="text-sm leading-relaxed text-foreground">
+                                {analysisResult.placementAdvice}
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="p-2 border border-border rounded-sm">
+                                <span className="text-[10px] uppercase text-muted-foreground block mb-1">
+                                    Style Match
+                                </span>
+                                <div className="flex items-center gap-2">
+                                    <div className="h-1.5 flex-1 bg-muted rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-accent"
+                                            style={{
+                                                width: `${analysisResult.styleCompatibility}%`,
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="text-xs font-mono">
+                                        {analysisResult.styleCompatibility}%
+                                    </span>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    onApplyAiSettings();
+                                    setIsAiPanelOpen(false);
+                                }}
+                                className="p-2 border border-accent/30 bg-accent/5 hover:bg-accent/10 rounded-sm flex flex-col items-center justify-center text-center gap-1 transition-colors"
+                            >
+                                <span className="text-[10px] uppercase text-accent font-semibold">
+                                    Apply Lighting
+                                </span>
+                                <span className="text-[10px] text-muted-foreground">
+                                    {analysisResult.lightingMode}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* ── Top Bar ────────────────────────────────────────────── */}
             <header className="h-14 border-b border-border flex items-center justify-between px-4 flex-shrink-0 bg-background/95 backdrop-blur-sm z-10">
                 <Link
@@ -158,20 +232,34 @@ export function MobileVisualizer({
                     <span className="sr-only">Back</span>
                 </Link>
 
-                <div className="flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-accent" />
+                <div className="flex items-center gap-1.5 translate-x-3">
+                    {/* Center Title roughly */}
                     <span className="text-sm font-display uppercase tracking-wider">
-                        Room Visualizer
+                        Visualizer
                     </span>
                 </div>
 
-                <button
-                    onClick={cycleLighting}
-                    className="p-2 rounded-sm hover:bg-muted transition-colors"
-                    aria-label={`Current lighting: ${lightingMode}. Tap to change.`}
-                >
-                    <LightingIcon className="w-4 h-4 text-muted-foreground" />
-                </button>
+                <div className="flex items-center gap-2">
+                    {/* Only show Brain button if we have a result or are analyzing */}
+                    {(analysisResult || isAnalyzing) && (
+                        <button
+                            onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
+                            className={`p-2 rounded-sm transition-colors ${isAiPanelOpen ? "bg-accent text-accent-foreground" : "hover:bg-muted text-accent"
+                                } ${isAnalyzing ? "animate-pulse" : ""}`}
+                            aria-label="AI Insights"
+                        >
+                            <Sparkles className="w-4 h-4" />
+                        </button>
+                    )}
+
+                    <button
+                        onClick={cycleLighting}
+                        className="p-2 rounded-sm hover:bg-muted transition-colors"
+                        aria-label={`Current lighting: ${lightingMode}. Tap to change.`}
+                    >
+                        <LightingIcon className="w-4 h-4 text-muted-foreground" />
+                    </button>
+                </div>
             </header>
 
             {/* ── 3D Canvas ──────────────────────────────────────────── */}
@@ -293,15 +381,16 @@ export function MobileVisualizer({
                             }}
                             className="w-full flex items-center gap-2 p-1.5 rounded-sm text-left hover:bg-muted text-xs text-muted-foreground"
                         >
-                            <div className="w-10 h-7 rounded-sm border border-dashed border-border flex items-center justify-center flex-shrink-0">
-                                <Upload className="w-3 h-3" />
+                            <div className="w-10 h-7 rounded-sm border border-dashed border-border flex items-center justify-center flex-shrink-0 text-accent">
+                                <Sparkles className="w-3 h-3" />
                             </div>
-                            Upload photo
+                            <span className="font-medium text-accent">Scan Room (AI)</span>
                         </button>
                         <input
                             ref={uploadRef}
                             type="file"
                             accept="image/*"
+                            capture="environment" // Forces camera on mobile
                             onChange={handleRoomUpload}
                             className="hidden"
                         />
