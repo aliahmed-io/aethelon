@@ -11,6 +11,7 @@ export interface HybridSearchResult extends Product {
     relevance: number;
     vectorScore: number;
     textScore: number;
+    categoryName?: string;
 }
 
 interface SearchOptions {
@@ -91,31 +92,32 @@ export async function searchProductsHybrid(options: SearchOptions): Promise<Hybr
     try {
         const results = await prisma.$queryRawUnsafe<any[]>(`
             SELECT 
-                id,
-                name,
-                description,
-                price,
-                images,
-                "mainCategory",
-                "stockQuantity",
-                "averageRating",
-                "reviewCount",
-                "categoryId",
-                1 - (embedding <=> $1::vector) as vector_score,
-                ts_rank_cd(to_tsvector('english', name || ' ' || description), plainto_tsquery('english', $2)) as text_score
-            FROM "Product"
+                p.id,
+                p.name,
+                p.description,
+                p.price,
+                p.images,
+                p."mainCategory",
+                p."stockQuantity",
+                p."averageRating",
+                p."reviewCount",
+                c.name as "categoryName",
+                1 - (p.embedding <=> $1::vector) as vector_score,
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description), plainto_tsquery('english', $2)) as text_score
+            FROM "Product" p
+            LEFT JOIN "Category" c ON p."categoryId" = c.id
             WHERE 
-                ${whereSql}
+                ${whereSql.replace(/"/g, 'p."').replace(/status/g, 'p.status').replace(/price/g, 'p.price').replace(/stockQuantity/g, 'p."stockQuantity"')}
                 AND (
-                    (1 - (embedding <=> $1::vector)) > 0.5 -- Semantic Threshold
+                    (1 - (p.embedding <=> $1::vector)) > 0.5 -- Semantic Threshold
                     OR
-                    to_tsvector('english', name || ' ' || description) @@ plainto_tsquery('english', $2)
+                    to_tsvector('english', p.name || ' ' || p.description) @@ plainto_tsquery('english', $2)
                 )
             ORDER BY (
-                (1 - (embedding <=> $1::vector)) * ${VECTOR_WEIGHT} + 
-                ts_rank_cd(to_tsvector('english', name || ' ' || description), plainto_tsquery('english', $2)) * ${TEXT_WEIGHT} +
-                (log("reviewCount" + 1) * 0.05) + -- Popularity Boost (Logarithmic)
-                (CASE WHEN "stockQuantity" > 0 THEN 0.1 ELSE 0 END) -- In-Stock Boost
+                (1 - (p.embedding <=> $1::vector)) * ${VECTOR_WEIGHT} + 
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description), plainto_tsquery('english', $2)) * ${TEXT_WEIGHT} +
+                (log(p."reviewCount" + 1) * 0.05) + 
+                (CASE WHEN p."stockQuantity" > 0 THEN 0.1 ELSE 0 END) 
             ) DESC
             LIMIT $3;
         `, ...sqlParams);
@@ -123,6 +125,7 @@ export async function searchProductsHybrid(options: SearchOptions): Promise<Hybr
         // Map and normalize scores
         return results.map((r: any) => ({
             ...r,
+            categoryName: r.categoryName,
             relevance: (r.vector_score * VECTOR_WEIGHT) + (r.text_score * TEXT_WEIGHT),
             vectorScore: r.vector_score,
             textScore: r.text_score

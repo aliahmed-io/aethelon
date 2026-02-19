@@ -278,9 +278,9 @@ To reach full operational status:
 
 ---
 
-**Report Updated**: 2026-02-14
-**Status**: PRODUCTION HARDENED (Security + Correctness + Admin Controls + Immersive Workflows)
-**Version**: 3.3.0-Hardening-Release
+**Report Updated**: 2026-02-19
+**Status**: PRODUCTION HARDENED (Security + Correctness + Admin Controls + Commerce Engine)
+**Version**: 3.4.0-Commerce-Release
 
 ---
 
@@ -320,3 +320,41 @@ To reach full operational status:
 * **Hybrid Logic**: Implemented hybrid scoring (Vector + Text + Popularity) for superior relevance.
 * **Analytics**: Added dedicated `SearchAnalytics` tracking to monitor query performance and conversion intent.
 * **UI**: Added "Top Match" and "Semantic" badges to search overlay to highlight AI availability.
+
+### Discount/Coupon System (Phase 31)
+* **Admin CRUD**: Full discount management at `/dashboard/discounts` — create (auto-generate code, type/amount/expiry), list (status badges, usage counts), toggle active/inactive, delete.
+* **Checkout Integration**: `checkOut` action reads discount cookie, validates against DB (active check + expiry check), passes to `OrderService.createFromCart`.
+* **OrderService**: `createFromCart` now accepts optional `discount` param, calculates PERCENTAGE or FIXED discount off subtotal, links `discountId` FK to the order record.
+* **Expiry Enforcement**: `applyDiscount` action now validates expiry dates (previously commented out).
+* **Cookie Lifecycle**: Discount cookie set on apply, cleared on checkout completion, preserved across cart modifications.
+
+### Settings Persistence (Phase 31)
+* **Data Model**: New `StoreConfig` Prisma model (key-value with JSON payload) added to `schema.prisma`.
+* **Server Actions**: `getSettings`/`updateSettings` using `Prisma.sql` raw queries with graceful pre-migration fallback.
+* **Admin UI**: Rewritten settings page with `SettingsForm` client component — category-grouped toggles (AI Modules, System), `useTransition` save, toast feedback.
+
+### Admin Styling Standardization (Phase 31)
+* Replaced all hardcoded dark-mode styles (`bg-white/5`, `text-white`, `border-white/10`) with semantic design tokens (`bg-card`, `text-foreground`, `border-border`, `text-muted-foreground`) across Banner, Campaigns, and Newsletter pages.
+* Newsletter page: removed mock subscriber/open-rate data, replaced with "connect provider" placeholders.
+* Contact and Returns pages: heading typography updated to luxury admin pattern (`font-light uppercase tracking-tight`).
+
+### Abandoned Cart Recovery (Phase 32)
+* **Data Model**: New `AbandonedCart` model — stores cart snapshot (JSON), email, total, item count, email drip state, and recovery timestamp. Indexed for efficient cron queries.
+* **Save Logic**: `saveCartForRecovery` server action upserts latest cart from Redis into DB. `markCartRecovered` marks carts on successful checkout.
+* **Email Drip Cron** (`/api/cron/abandoned-carts`, hourly): 2-stage email sequence — gentle reminder at 1h ("You left something behind"), urgency at 24h ("Items selling fast"). Branded HTML with item table, total, and CTA.
+* **Admin Dashboard** (`/dashboard/cart-recovery`): 5 stat cards (total, recovered, pending, recovery rate, abandoned value) + full cart table with status badges (Recovered/Expired/Pending) and delete action.
+* **Checkout Integration**: `markCartRecovered` called after order creation to prevent email sends for completed purchases.
+* **Cron Config**: `vercel.json` updated with `0 * * * *` schedule.
+
+### Taxes / VAT System (Phase 32)
+* **Data Model**: New `TaxRule` model — country (ISO), optional region, rate (decimal), inclusive/exclusive flag, active toggle. `@@unique([country, region])` for deterministic lookups.
+* **TaxService** (`modules/tax/tax.service.ts`): Cascading lookup (region-specific → country-only), correct inclusive (VAT) and exclusive (Sales Tax) math.
+* **Order Integration**: `Order` model extended with `taxAmount`, `taxRate`, `taxName` snapshot fields. `OrderService.createFromCart` accepts 5th tax parameter, applies exclusive tax to total.
+* **Checkout Flow**: Tax calculated from shipping country/state via `TaxService.getTaxForAddress` before order creation.
+* **Admin CRUD** (`/dashboard/tax-rules`): Inline create form (country ISO, region, name, rate %, inclusive checkbox) + table with toggle/delete actions.
+
+### Inventory Enhancements (Phase 32)
+* **Backorder Support**: New `allowBackorder` (Boolean) and `backorderLimit` (Int) fields on `Product` model. `InventoryService.reserveStock` now allows reservations beyond physical stock if backorder capacity permits.
+* **Low Stock Alerts**: `confirmSale` now checks remaining stock against `lowStockThreshold` post-deduction. Sends branded HTML admin email with product table (name, remaining, threshold) when triggered.
+* **Storefront Badge**: New `StockBadge` component — renders "Low Stock" (amber), "Backorder" (blue), or "Out of Stock" (red) badges based on inventory levels.
+* **Admin Sidebar**: Added "Cart Recovery" and "Tax Rules" navigation links.

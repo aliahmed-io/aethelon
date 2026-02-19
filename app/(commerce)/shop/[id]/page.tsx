@@ -51,6 +51,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     if (!product) return notFound();
 
+    // Fetch related products with 3D models for AR switcher
+    const related3DProducts = await Prisma.product.findMany({
+        where: {
+            modelUrl: { not: null },
+            id: { not: product.id },
+            categories: { some: { id: { in: product.categories.map(c => c.id) } } }
+        },
+        take: 4,
+        select: { id: true, name: true, modelUrl: true, images: true }
+    });
+
+    // Fallback: if not enough category matches, get any featured 3D products
+    if (related3DProducts.length < 4) {
+        const moreProducts = await Prisma.product.findMany({
+            where: {
+                modelUrl: { not: null },
+                id: { notIn: [product.id, ...related3DProducts.map(p => p.id)] },
+                isFeatured: true
+            },
+            take: 4 - related3DProducts.length,
+            select: { id: true, name: true, modelUrl: true, images: true }
+        });
+        related3DProducts.push(...moreProducts);
+    }
+
     return (
         <main className="min-h-screen bg-background text-foreground animate-in fade-in duration-1000">
             {/* Analytics */}
@@ -94,6 +119,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             images={product.images}
                             productName={product.name}
                             modelUrl={product.modelUrl}
+                            related3DProducts={related3DProducts.map(p => ({
+                                id: p.id,
+                                name: p.name,
+                                modelUrl: p.modelUrl!,
+                                image: p.images[0] || ""
+                            }))}
                         />
                     </div>
                 </div>

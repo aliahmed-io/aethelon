@@ -193,22 +193,29 @@ Respond as the AI COO in clear Markdown.`;
  * Generate Morning Briefing with 6-hour Cache
  */
 export async function generateMorningBriefing(): Promise<MorningBriefing> {
+    const fallbackBriefing: MorningBriefing = {
+        summary: "AI System Offline. Check API Configuration.",
+        alerts: ["Gemini API Key missing or invalid."],
+        topPriorities: ["Update .env with valid key"],
+        generatedAt: new Date().toISOString(),
+    };
+
     // Generate cache key based on 6-hour blocks (00, 06, 12, 18)
-    // ensuring everyone sees the same briefing in that window
     const now = new Date();
     const block = Math.floor(now.getHours() / 6);
     const dateKey = now.toISOString().split('T')[0];
     const cacheKey = `morning_briefing_${dateKey}_block_${block}`;
 
     return getOrGenerate(cacheKey, async () => {
-        const ai = getAI();
-        const model = ai.getGenerativeModel({ model: MODEL_NAME });
+        try {
+            const ai = getAI();
+            const model = ai.getGenerativeModel({ model: MODEL_NAME });
 
-        const businessContext = await getFullBusinessContext();
-        await startSession();
-        const optimizedData = optimizeContext(businessContext);
+            const businessContext = await getFullBusinessContext();
+            await startSession();
+            const optimizedData = optimizeContext(businessContext);
 
-        const briefingPrompt = `${SYSTEM_PROMPT}
+            const briefingPrompt = `${SYSTEM_PROMPT}
 
 ## CURRENT BUSINESS DATA
 ${JSON.stringify(optimizedData, null, 2)}
@@ -227,10 +234,9 @@ Format EXACTLY as JSON:
 }
 `;
 
-        const result = await model.generateContent(briefingPrompt);
-        const responseText = result.response.text();
+            const result = await model.generateContent(briefingPrompt);
+            const responseText = result.response.text();
 
-        try {
             const jsonMatch = responseText.match(/\{[\s\S]*\}/);
             if (!jsonMatch) throw new Error("No JSON found");
             const parsed = JSON.parse(jsonMatch[0]);
@@ -241,13 +247,9 @@ Format EXACTLY as JSON:
                 topPriorities: parsed.topPriorities || [],
                 generatedAt: new Date().toISOString(),
             };
-        } catch {
-            return {
-                summary: "Business data loaded. Check dashboard for details.",
-                alerts: [],
-                topPriorities: ["Review Inventory", "Analyze Sales"],
-                generatedAt: new Date().toISOString(),
-            };
+        } catch (error) {
+            console.error("Morning Briefing Generation Failed:", error);
+            return fallbackBriefing;
         }
     }, 360); // 360 minutes = 6 hours
 }
@@ -262,12 +264,13 @@ export async function generateRecommendations(): Promise<string[]> {
     const cacheKey = `recommendations_${dateKey}_block_${block}`;
 
     return getOrGenerate(cacheKey, async () => {
-        const ai = getAI();
-        const model = ai.getGenerativeModel({ model: MODEL_NAME });
-        const context = await getFullBusinessContext();
-        const optimizedData = optimizeContext(context);
+        try {
+            const ai = getAI();
+            const model = ai.getGenerativeModel({ model: MODEL_NAME });
+            const context = await getFullBusinessContext();
+            const optimizedData = optimizeContext(context);
 
-        const prompt = `${SYSTEM_PROMPT}
+            const prompt = `${SYSTEM_PROMPT}
 
 ## CURRENT BUSINESS DATA
 ${JSON.stringify(optimizedData, null, 2)}
@@ -277,15 +280,15 @@ Generate 3-5 specific, actionable recommendations based on data.
 Format as JSON array of strings:
 ["Rec 1", "Rec 2"]
 `;
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
+            const result = await model.generateContent(prompt);
+            const text = result.response.text();
 
-        try {
             const jsonMatch = text.match(/\[[\s\S]*\]/);
             if (!jsonMatch) throw new Error("No JSON array");
             return JSON.parse(jsonMatch[0]);
-        } catch {
-            return ["Review inventory", "Check pending orders"];
+        } catch (error) {
+            console.error("Recommendations Generation Failed:", error);
+            return ["System Offline: Unable to generate recommendations.", "Please check API configuration."];
         }
     }, 360);
 }
@@ -299,12 +302,13 @@ export async function generateReport(period: "weekly" | "monthly" = "weekly"): P
 
     // Cache reports for 24 hours
     return getOrGenerate(cacheKey, async () => {
-        const ai = getAI();
-        const model = ai.getGenerativeModel({ model: MODEL_NAME });
-        const context = await getFullBusinessContext();
-        const optimizedData = optimizeContext(context);
+        try {
+            const ai = getAI();
+            const model = ai.getGenerativeModel({ model: MODEL_NAME });
+            const context = await getFullBusinessContext();
+            const optimizedData = optimizeContext(context);
 
-        const prompt = `${SYSTEM_PROMPT}
+            const prompt = `${SYSTEM_PROMPT}
 
 ## CURRENT BUSINESS DATA
 ${JSON.stringify(optimizedData, null, 2)}
@@ -315,7 +319,11 @@ Include: Executive Summary, Revenue Analysis, Top Products, Inventory Status, Cu
 Use tables and bold text for clarity.
 `;
 
-        const result = await model.generateContent(prompt);
-        return result.response.text();
+            const result = await model.generateContent(prompt);
+            return result.response.text();
+        } catch (error) {
+            console.error("Report Generation Failed:", error);
+            return `# Report Generation Failed\n\nUnable to generate report due to AI service error. Please check system logs.`;
+        }
     }, 1440); // 24 hours
 }

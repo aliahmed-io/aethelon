@@ -41,14 +41,23 @@ export const bannerSchema = z.object({
 });
 
 export const addressSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, "Alias (e.g. Home) is required"),
   street1: z.string().min(1, "Street address is required"),
   street2: z.string().optional(),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   postalCode: z.string().min(1, "Postal code is required"),
-  country: z.string().min(1, "Country is required"), // You might want to use specific country codes
+  country: z.string().default("US"),
   phone: z.string().optional(),
+  isDefault: z.boolean().default(false),
+});
+
+export const ProfileSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  socialTitle: z.enum(["Mr.", "Mrs."]).optional(),
+  birthdate: z.string().optional(), // YYYY-MM-DD
+  newsletter: z.boolean().default(false),
 });
 
 export const searchSchema = z.object({

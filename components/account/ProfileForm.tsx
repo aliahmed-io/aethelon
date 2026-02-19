@@ -3,7 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ProfileSchema, updateUserProfile } from "@/app/store/user-actions";
+import { ProfileSchema } from "@/lib/zodSchemas";
+import { updateUserProfile } from "@/app/store/user-actions";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";

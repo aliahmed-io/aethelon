@@ -15,9 +15,15 @@ const ArSessionLazy = dynamic(
 interface ArWrapperProps {
     modelUrl: string;
     productName: string;
+    related3DProducts?: {
+        id: string;
+        name: string;
+        modelUrl: string;
+        image: string;
+    }[];
 }
 
-export function ArWrapper({ modelUrl, productName }: ArWrapperProps) {
+export function ArWrapper({ modelUrl, productName, related3DProducts }: ArWrapperProps) {
     const { isMobile, isWebXrSupported, loading } = useCapabilities();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -54,7 +60,11 @@ export function ArWrapper({ modelUrl, productName }: ArWrapperProps) {
                     >
                         <X className="w-5 h-5" />
                     </button>
-                    <ArSessionLazy modelUrl={modelUrl} onClose={() => setIsOpen(false)} />
+                    <ArSessionLazy
+                        modelUrl={modelUrl}
+                        related3DProducts={related3DProducts}
+                        onClose={() => setIsOpen(false)}
+                    />
                 </div>
             )}
         </div>

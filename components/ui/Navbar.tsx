@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, Search, Menu, X, User } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearch } from '@/components/search/SearchContext';
@@ -103,6 +103,16 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
                     >
                         <ShoppingBag className="w-5 h-5" />
                     </Link>
+                    {isAdmin && (
+                        <Link
+                            href="/dashboard"
+                            className="text-foreground hover:text-red-500 transition-colors p-2"
+                            aria-label="Admin Dashboard"
+                            title="Admin Dashboard"
+                        >
+                            <ShieldCheck className="w-5 h-5" />
+                        </Link>
+                    )}
                     {isAuthenticated ? (
                         <Link href={isAdmin ? "/dashboard" : "/account"} className="text-foreground hover:text-accent transition-colors p-2" aria-label="Account">
                             <User className="w-5 h-5" />

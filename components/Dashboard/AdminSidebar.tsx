@@ -18,7 +18,9 @@ import {
     BarChart3,
     UserCog,
     Brain,
-    LogOut
+    LogOut,
+    ShoppingCart,
+    Receipt
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,6 +34,8 @@ const links = [
     { name: "Attributes", href: "/dashboard/attributes", icon: Tags },
     { name: "Banners", href: "/dashboard/banner", icon: Globe },
     { name: "Discounts", href: "/dashboard/discounts", icon: Gift },
+    { name: "Cart Recovery", href: "/dashboard/cart-recovery", icon: ShoppingCart },
+    { name: "Tax Rules", href: "/dashboard/tax-rules", icon: Receipt },
     { name: "Newsletter", href: "/dashboard/newsletter", icon: Mail },
     { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },
     { name: "Roles", href: "/dashboard/roles", icon: UserCog },

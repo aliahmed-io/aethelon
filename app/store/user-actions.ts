@@ -7,25 +7,10 @@ import { z } from "zod";
 
 // --- VALIDATION SCHEMAS ---
 
-export const ProfileSchema = z.object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    socialTitle: z.enum(["Mr.", "Mrs."]).optional(),
-    birthdate: z.string().optional(), // YYYY-MM-DD
-    newsletter: z.boolean().default(false),
-});
+import { ProfileSchema, addressSchema as AddressSchema } from "@/lib/zodSchemas";
 
-export const AddressSchema = z.object({
-    name: z.string().min(1, "Alias (e.g. Home) is required"),
-    street1: z.string().min(1, "Street address is required"),
-    street2: z.string().optional(),
-    city: z.string().min(1, "City is required"),
-    state: z.string().min(1, "State is required"),
-    postalCode: z.string().min(1, "Postal code is required"),
-    country: z.string().default("US"),
-    phone: z.string().optional(),
-    isDefault: z.boolean().default(false),
-});
+// Export for client usage (though they should import from lib/zodSchemas directly)
+export { ProfileSchema, AddressSchema };
 
 // --- ACTIONS ---
 

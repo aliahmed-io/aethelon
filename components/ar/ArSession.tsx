@@ -17,6 +17,12 @@ export const arStore = createXRStore({
 
 interface ArSessionProps {
     modelUrl: string;
+    related3DProducts?: {
+        id: string;
+        name: string;
+        modelUrl: string;
+        image: string;
+    }[];
     onClose?: () => void;
 }
 
@@ -35,6 +41,11 @@ function ArScene({ modelUrl }: { modelUrl: string }) {
 
     const { gl } = useThree();
     const { scene: gltfScene } = useGLTF(modelUrl);
+
+    // Reset models when URL changes
+    useEffect(() => {
+        setModels([]);
+    }, [modelUrl]);
 
     // Hit Test Loop - Runs every frame
     useFrame((state, delta, frame: any) => {
@@ -125,7 +136,9 @@ function ArScene({ modelUrl }: { modelUrl: string }) {
     );
 }
 
-export function ArSession({ modelUrl, onClose }: ArSessionProps) {
+export function ArSession({ modelUrl, related3DProducts = [], onClose }: ArSessionProps) {
+    const [activeModelUrl, setActiveModelUrl] = useState(modelUrl);
+
     return (
         <div className="fixed inset-0 z-50 bg-black">
             <div className="absolute top-6 left-1/2 -translate-x-1/2 text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium z-10 pointer-events-none">
@@ -135,9 +148,42 @@ export function ArSession({ modelUrl, onClose }: ArSessionProps) {
             <Canvas>
                 {/* @ts-ignore - XR store integration */}
                 <XR store={arStore}>
-                    <ArScene modelUrl={modelUrl} />
+                    <ArScene modelUrl={activeModelUrl} />
                 </XR>
             </Canvas>
+
+            {/* Related Products Switcher (Overlay) */}
+            {related3DProducts.length > 0 && (
+                <div className="absolute bottom-8 left-0 right-0 z-20 px-4">
+                    <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                        {/* Current Product (Reset Option) */}
+                        <button
+                            onClick={() => setActiveModelUrl(modelUrl)}
+                            className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === modelUrl ? "border-amber-500 ring-2 ring-amber-500/50" : "border-white/20 opacity-80"
+                                }`}
+                        >
+                            <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center text-[10px] text-white font-bold text-center p-1">
+                                Main
+                            </div>
+                        </button>
+
+                        {related3DProducts.map((prod) => (
+                            <button
+                                key={prod.id}
+                                onClick={() => setActiveModelUrl(prod.modelUrl)}
+                                className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === prod.modelUrl ? "border-amber-500 ring-2 ring-amber-500/50" : "border-white/20 opacity-80"
+                                    }`}
+                            >
+                                {/* We assume prod.image is valid, fallback to bg color */}
+                                <img src={prod.image} alt={prod.name} className="w-full h-full object-cover" />
+                                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] text-white truncate px-1 py-0.5">
+                                    {prod.name}
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

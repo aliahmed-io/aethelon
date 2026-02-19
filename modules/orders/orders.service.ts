@@ -20,20 +20,52 @@ export class OrderService {
             postalCode: string;
             country: string;
             phone?: string;
+        },
+        discount?: {
+            id: string;
+            type: string;
+            amount: number;
+        },
+        tax?: {
+            amount: number;
+            rate: number;
+            name: string;
         }
     ): Promise<Order> {
         if (!cart.items || cart.items.length === 0) {
             throw new ValidationError("Cannot create order from empty cart");
         }
 
-        const amountCents = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+        const subtotalCents = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+        let amountCents = subtotalCents;
+        if (discount) {
+            if (discount.type === "PERCENTAGE") {
+                amountCents = Math.round(subtotalCents * (1 - discount.amount / 100));
+            } else {
+                // FIXED: discount.amount is in cents
+                amountCents = Math.max(0, subtotalCents - discount.amount);
+            }
+        }
+
+        // Apply tax (exclusive = add on top, inclusive = already in price)
+        if (tax && tax.amount > 0) {
+            amountCents += tax.amount;
+        }
 
         const order = await prisma.order.create({
             data: {
                 userId,
-                amount: amountCents, // Amount in cents
+                amount: amountCents, // Amount in cents (after discount + tax)
                 status: "CREATED" as OrderStatus,
                 paymentStatus: "PENDING" as PaymentStatus,
+
+                // Tax Snapshot
+                ...(tax ? {
+                    taxAmount: tax.amount,
+                    taxRate: tax.rate,
+                    taxName: tax.name,
+                } : {}),
 
                 // Shipping Address Snapshot
                 shippingName: shippingAddress?.name,
@@ -43,7 +75,9 @@ export class OrderService {
                 shippingState: shippingAddress?.state,
                 shippingPostalCode: shippingAddress?.postalCode,
                 shippingCountry: shippingAddress?.country || "US",
-                // shippingPhone: shippingAddress?.phone, // Removed as it doesn't exist in Prisma schema
+
+                // Link discount if applied
+                ...(discount ? { discountId: discount.id } : {}),
 
                 orderItems: {
                     create: cart.items.map((item) => ({

@@ -41,6 +41,7 @@ export function ProductActions({ productId, price, stock, initialColor, currency
         const formData = new FormData();
         formData.append("quantity", quantity.toString());
         formData.append("color", selectedColor.name);
+        formData.append("size", ""); // Ensure size is always present for furniture items
 
         startTransition(async () => {
             try {

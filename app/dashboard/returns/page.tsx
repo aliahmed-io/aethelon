@@ -33,7 +33,7 @@ export default async function ReturnsDashboard() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Returns Management</h1>
+                <h1 className="text-3xl font-light tracking-tight uppercase text-foreground">Returns Management</h1>
             </div>
 
             <div className="rounded-md border">

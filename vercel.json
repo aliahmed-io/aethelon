@@ -3,6 +3,10 @@
         {
             "path": "/api/cron/reservations",
             "schedule": "*/10 * * * *"
+        },
+        {
+            "path": "/api/cron/abandoned-carts",
+            "schedule": "0 * * * *"
         }
     ]
 }

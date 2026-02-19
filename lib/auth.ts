@@ -34,6 +34,12 @@ export async function requireAdmin() {
         redirect("/api/auth/login");
     }
 
+    // Check environment variable for hardcoded admins
+    const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim());
+    if (kindeUser.email && adminEmails.includes(kindeUser.email)) {
+        return kindeUser;
+    }
+
     // Check database role
     const dbUser = await prisma.user.findUnique({
         where: { id: kindeUser.id },
@@ -57,6 +63,12 @@ export async function isAdminUser() {
     const kindeUser = await getUser();
 
     if (!kindeUser) return false;
+
+    // Check environment variable for hardcoded admins
+    const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim());
+    if (kindeUser.email && adminEmails.includes(kindeUser.email)) {
+        return true;
+    }
 
     // Check database role
     const dbUser = await prisma.user.findUnique({

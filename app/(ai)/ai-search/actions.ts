@@ -14,14 +14,18 @@ interface AiSearchResponse {
     debug?: string;
 }
 
+import { searchProductsHybrid } from "@/lib/search/hybrid";
+
+// ...
+
 export async function performAiSearch(query: string, imageBase64?: string): Promise<AiSearchResponse> {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.0-pro" });
         let imageAnalysis = "";
 
         // 1. Analyze Image if provided
         if (imageBase64) {
-            const visionModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const visionModel = genAI.getGenerativeModel({ model: "gemini-3.0-pro" });
             // Extract base64 data (remove prefix if present)
             const cleanBase64 = imageBase64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
 
@@ -30,7 +34,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
                 {
                     inlineData: {
                         data: cleanBase64,
-                        mimeType: "image/jpeg", // Assuming JPEG/PNG; Gemini is flexible usually, but matching actual mime is better. For simplicity we assume standard image.
+                        mimeType: "image/jpeg",
                     },
                 },
             ]);
@@ -38,64 +42,39 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
             imageAnalysis = response.text();
         }
 
-        // 2. Search Database (Smart Retrieval)
-        // A. Strict Match (User Query) - High Priority
-        let candidates: PrismaProduct[] = await prisma.product.findMany({
-            where: {
-                status: "published",
-                OR: [
-                    { name: { contains: query, mode: "insensitive" } },
-                    { description: { contains: query, mode: "insensitive" } },
-                ],
-            },
-            take: 6,
-        });
-
-        // B. Loose Match (Keywords) - Fallback/Augmentation if strict match yields few results
-        if (candidates.length < 4) {
-            const tokens = query.split(/\s+/).filter(t => t.length > 3); // Only significant words
-            if (imageAnalysis) {
-                // Add top 3 keywords from image analysis
-                const imageKeywords = (imageAnalysis || "").split(',').slice(0, 3).map(k => k.trim());
-                tokens.push(...imageKeywords);
-            }
-
-            if (tokens.length > 0) {
-                const tokenConditions: Prisma.ProductWhereInput[] = tokens.map(token => ({
-                    OR: [
-                        { name: { contains: token, mode: "insensitive" as Prisma.QueryMode } },
-                        { description: { contains: token, mode: "insensitive" as Prisma.QueryMode } }
-                    ]
-                }));
-
-                const looseMatches = await prisma.product.findMany({
-                    where: {
-                        status: "published",
-                        OR: tokenConditions
-                    },
-                    take: 10
-                });
-
-                // Merge and deduplicate by ID
-                const existingIds = new Set(candidates.map(p => p.id));
-                for (const match of looseMatches) {
-                    if (!existingIds.has(match.id)) {
-                        candidates.push(match);
-                        existingIds.add(match.id);
-                    }
-                }
-            }
+        // 2. Search Database (Advanced Hybrid Retrieval)
+        // Combine User Query + Image Keywords for a rich semantic search
+        let detailedQuery = query;
+        if (imageAnalysis) {
+            const imageKeywords = (imageAnalysis || "").split(',').slice(0, 3).map(k => k.trim()).join(" ");
+            detailedQuery = `${query} ${imageKeywords}`;
         }
 
-        // C. Final Fallback (Featured) - If still absolutely nothing
-        if (candidates.length === 0) {
-            candidates = await prisma.product.findMany({
+        // Use the Vector Engine
+        const hybridResults = await searchProductsHybrid({
+            query: detailedQuery,
+            limit: 8,
+            inStock: true // Prefer in-stock items for AI recommendations
+        });
+
+        // Map HybridSearchResult back to basic Product type for AI context
+        const finalProducts = hybridResults.map(p => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            price: p.price,
+            images: p.images,
+            category: p.categoryName || "Furniture", // Defensive mapping
+        })) as unknown as Product[];
+
+        // Fallback (Featured) - If still absolute zero
+        if (finalProducts.length === 0) {
+            const featured = await prisma.product.findMany({
                 where: { isFeatured: true },
                 take: 4
             });
+            finalProducts.push(...featured as unknown as Product[]);
         }
-
-        const finalProducts = candidates.slice(0, 8); // Cap at 8 for LLM Context
 
         // 3. Generate Insight & Rerank/Explain
         const productContext = finalProducts.map((p) => `- ${p.name}: ${p.description} (Price: $${p.price})`).join("\n");
@@ -135,7 +114,7 @@ export async function performAiSearch(query: string, imageBase64?: string): Prom
         }
 
         return {
-            products: finalProducts as unknown as Product[],
+            products: finalProducts,
             insight: parsed.insight,
             relatedPrompts: parsed.relatedPrompts || [],
             debug: imageAnalysis

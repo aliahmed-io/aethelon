@@ -9,7 +9,7 @@ export class PaymentService {
     /**
      * Creates a Stripe Checkout Session for an order.
      */
-    static async createCheckoutSession(order: Order, items: CartItem[], customerEmail?: string): Promise<Stripe.Checkout.Session> {
+    static async createCheckoutSession(order: Order, items: CartItem[], customerEmail?: string, recoveryToken?: string): Promise<Stripe.Checkout.Session> {
         try {
             if (!process.env.NEXT_PUBLIC_URL) {
                 throw new PaymentError("NEXT_PUBLIC_URL is not configured");
@@ -38,6 +38,7 @@ export class PaymentService {
                 metadata: {
                     userId: order.userId || "",
                     orderId: order.id,
+                    recoveryToken: recoveryToken || null,
                 },
             });
 

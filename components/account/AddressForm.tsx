@@ -3,7 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { AddressSchema, addAddress, updateAddress } from "@/app/store/user-actions";
+import { addressSchema as AddressSchema } from "@/lib/zodSchemas";
+import { addAddress, updateAddress } from "@/app/store/user-actions";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2, X } from "lucide-react";

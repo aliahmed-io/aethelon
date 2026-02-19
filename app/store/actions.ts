@@ -20,6 +20,8 @@ import { OrderService } from "@/modules/orders/orders.service";
 import { PaymentService } from "@/modules/payments/payments.service";
 import logger from "@/lib/logger";
 import { rateLimit } from "@/lib/rate-limit";
+import { markCartRecovered } from "@/app/store/cart-recovery";
+import { TaxService } from "@/modules/tax/tax.service";
 
 const geminiBreaker = new CircuitBreaker("Gemini-AI", { failureThreshold: 3, recoveryTimeout: 30000 });
 const meshyBreaker = new CircuitBreaker("Meshy-3D", { failureThreshold: 3, recoveryTimeout: 60000 });
@@ -164,8 +166,63 @@ export async function checkOut(formData: FormData) {
     }
 
     if (cart && cart.items && cart.items.length > 0) {
-        // 1. Create Order with Address
-        const order = await OrderService.createFromCart(user.id, cart, shippingAddress);
+        // Read discount from cookie
+        let discountData: { id: string; type: string; amount: number } | undefined;
+        const cookieStore = await cookies();
+        const discountCookie = cookieStore.get("discountCode");
+
+        if (discountCookie?.value) {
+            const discount = await prisma.discount.findUnique({
+                where: { code: discountCookie.value },
+            });
+
+            if (discount && discount.active) {
+                const isExpired = discount.expiresAt && new Date(discount.expiresAt) < new Date();
+                if (!isExpired) {
+                    discountData = {
+                        id: discount.id,
+                        type: discount.type,
+                        amount: discount.amount,
+                    };
+                }
+            }
+        }
+
+        // Calculate tax based on shipping address
+        let taxData: { amount: number; rate: number; name: string } | undefined;
+        const taxRule = await TaxService.getTaxForAddress(country, state);
+        if (taxRule) {
+            const subtotalCents = cart.items.reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0
+            );
+            const { taxCents } = TaxService.calculateTax(
+                subtotalCents,
+                taxRule.rate,
+                taxRule.inclusive
+            );
+            taxData = {
+                amount: taxCents,
+                rate: taxRule.rate,
+                name: taxRule.name,
+            };
+        }
+
+        // 1. Create Order with Address (discount + tax if applied)
+        const order = await OrderService.createFromCart(user.id, cart, shippingAddress, discountData, taxData);
+
+        // Clear discount cookie after use
+        if (discountCookie) {
+            cookieStore.delete({
+                name: "discountCode",
+                path: "/",
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+            });
+        }
+
+        // Mark abandoned carts as recovered
+        await markCartRecovered(user.id);
 
         // 2. Reserve Stock
         try {
@@ -184,7 +241,8 @@ export async function checkOut(formData: FormData) {
         }
 
         // 3. Create Stripe Session
-        const session = await PaymentService.createCheckoutSession(order, cart.items, user.email ?? undefined);
+        const recoveryToken = cookieStore.get("commerce_recovery_token")?.value;
+        const session = await PaymentService.createCheckoutSession(order, cart.items, user.email ?? undefined, recoveryToken);
 
         return redirect(session.url as string);
     }
@@ -678,9 +736,9 @@ export async function applyDiscount(formData: FormData) {
             return { error: "Invalid or inactive discount code" };
         }
 
-        // if (discount.expiresAt && discount.expiresAt < new Date()) {
-        //     return { error: "Discount code has expired" };
-        // }
+        if (discount.expiresAt && discount.expiresAt < new Date()) {
+            return { error: "Discount code has expired" };
+        }
 
         const cookieStore = await cookies();
         cookieStore.set("discountCode", code, {

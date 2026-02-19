@@ -26,6 +26,7 @@ model User {
   returnRequests         ReturnRequest[]
   addresses              Address[]
   wishlistItems          WishlistItem[]
+  abandonedCarts         AbandonedCart[]
   role                   UserRole              @default(USER)
 
   // AI Governance
@@ -103,6 +104,10 @@ model Product {
   reservedStock     Int   @default(0)
   weight            Float @default(1.0)
   lowStockThreshold Int   @default(5)
+
+  // Backorder Fields
+  allowBackorder Boolean @default(false)
+  backorderLimit Int     @default(0)
 
   // Vector Search
   embedding Unsupported("vector(768)")?
@@ -253,6 +258,11 @@ model Order {
   orderItems     OrderItem[]
   shippingLabel  String?
   trackingNumber String?
+
+  // Tax Fields
+  taxAmount Int?
+  taxRate   Float?
+  taxName   String?
 
   // Shipping Address Fields
   shippingName       String?
@@ -554,4 +564,45 @@ model Contact {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model StoreConfig {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model AbandonedCart {
+  id                 String    @id @default(uuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cartData           Json
+  email              String
+  totalCents         Int
+  itemCount          Int       @default(0)
+  emailsSent         Int       @default(0)
+  lastEmailAt        DateTime?
+  recoveredAt        DateTime?
+  manualIntervention Boolean   @default(false)
+  recoveryToken      String?   @unique
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([emailsSent, recoveredAt, lastEmailAt])
+}
+
+model TaxRule {
+  id        String   @id @default(uuid())
+  country   String
+  region    String?
+  name      String
+  rate      Float
+  inclusive Boolean  @default(false)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([country, region])
+  @@index([country])
 }

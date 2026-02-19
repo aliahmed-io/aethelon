@@ -153,7 +153,22 @@ export async function POST(req: Request) {
                 });
             }
 
-            // 4. Send Confirmation Email (Shared for Normal + Recovery)
+            // 3.5 Attribution: Mark Abandoned Cart as Recovered
+            const recoveryToken = session?.metadata?.recoveryToken;
+            if (recoveryToken) {
+                try {
+                    await prisma.abandonedCart.update({
+                        where: { recoveryToken },
+                        data: { recoveredAt: new Date() }
+                    });
+                    logger.info({ recoveryToken, orderId }, "Abandoned Cart Recovered");
+                } catch (err) {
+                    logger.warn({ err, recoveryToken }, "Failed to mark cart as recovered");
+                    // specific error handling if needed, but don't block order processing
+                }
+            }
+
+            // 4. Send Confirmation Email (Robust)
             // 4. Send Confirmation Email (Robust)
             if (existingOrder.User?.email) {
                 await sendEmailSafe({
