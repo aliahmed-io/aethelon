@@ -1,11 +1,14 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import Navbar from "@/components/ui/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowDown } from "lucide-react";
+import { FurnitureFilterBar } from "@/components/shop/FurnitureFilterBar";
+import { ProductGrid } from "@/components/storefront/ProductGrid";
+import { useSearchParams } from "next/navigation";
 
 interface Banner {
     id: string;
@@ -30,10 +33,29 @@ interface CampaignClientProps {
 export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isMounted, setIsMounted] = useState(false);
+    const searchParams = useSearchParams();
+    const currentSort = searchParams.get("sort") || "newest";
 
     useEffect(() => {
         setIsMounted(true);
     }, []);
+
+    // Apply client-side sorting based on search param
+    const sortedProducts = [...featuredProducts].sort((a, b) => {
+        switch (currentSort) {
+            case "price-asc":
+                return a.price - b.price;
+            case "price-desc":
+                return b.price - a.price;
+            case "name-asc":
+                return a.name.localeCompare(b.name);
+            case "name-desc":
+                return b.name.localeCompare(a.name);
+            default:
+                // Keep original featured order (newest/relevance)
+                return 0;
+        }
+    });
 
     return (
         <div className="bg-background text-foreground min-h-screen" ref={containerRef}>
@@ -94,33 +116,28 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                 )}
             </section>
 
-            {/* FEATURED PRODUCTS - STACKING SCROLL */}
+            {/* FEATURED PRODUCTS - GRID & FILTERS */}
             {featuredProducts.length > 0 && (
-                <section className="relative">
-                    <div className="py-20 px-8 text-center border-b border-border">
+                <section className="relative container mx-auto px-6 py-20 pb-32">
+                    <div className="text-center mb-16">
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8 }}
                             className="text-3xl md:text-5xl font-black uppercase tracking-tighter"
                         >
-                            Featured Timepieces
+                            Featured Collection
                         </motion.h2>
-                        <p className="text-muted-foreground mt-4 max-w-md mx-auto">Scroll to discover our curated selection</p>
+                        <p className="text-muted-foreground mt-4 max-w-md mx-auto">Discover the curated pieces for this campaign</p>
                     </div>
 
-                    {/* Stacking Cards Container */}
-                    <div className="relative">
-                        {featuredProducts.map((product, index) => (
-                            <StackingCard
-                                key={product.id}
-                                product={product}
-                                index={index}
-                                total={featuredProducts.length}
-                                isMounted={isMounted}
-                            />
-                        ))}
-                    </div>
+                    <FurnitureFilterBar
+                        totalCount={sortedProducts.length}
+                        categories={[]}
+                        sizes={[]}
+                    />
+
+                    <ProductGrid products={sortedProducts} />
                 </section>
             )}
 
@@ -133,109 +150,6 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                     </Link>
                 </div>
             </footer>
-        </div>
-    );
-}
-
-// ============================================================
-// STACKING CARD COMPONENT
-// ============================================================
-
-function StackingCard({
-    product,
-    index,
-    total,
-    isMounted,
-}: {
-    product: Product;
-    index: number;
-    total: number;
-    isMounted: boolean;
-}) {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: cardRef,
-        offset: ["start end", "end start"],
-    });
-
-    // Each card sticks at a slightly different position
-    const stickyTop = 100 + index * 40;
-    const zIndex = total - index;
-
-    // Parallax for the image
-    const imageY = useTransform(scrollYProgress, [0, 1], [50, -50]);
-    const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.3, 1, 1, 0.3]);
-    const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.98]);
-
-    return (
-        <div
-            ref={cardRef}
-            className="h-[120vh] relative"
-            style={{ zIndex }}
-        >
-            <motion.div
-                className="sticky w-full min-h-[80vh] mx-auto px-4 md:px-8"
-                style={{
-                    top: stickyTop,
-                    opacity: isMounted ? opacity : 1,
-                    scale: isMounted ? scale : 1,
-                }}
-            >
-                <Link href={`/product/${product.id}`}>
-                    <div className="relative bg-gradient-to-br from-muted to-secondary border border-border rounded-sm overflow-hidden shadow-2xl shadow-foreground/5 h-[70vh] md:h-[75vh]">
-                        <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-                            {/* Image Side */}
-                            <div className="relative overflow-hidden">
-                                <motion.div
-                                    className="absolute inset-0"
-                                    style={{ y: isMounted ? imageY : 0 }}
-                                >
-                                    {product.images[0] ? (
-                                        <Image
-                                            src={product.images[0]}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-accent/10 to-transparent flex items-center justify-center">
-                                            <span className="text-muted-foreground/20 text-6xl font-black">0{index + 1}</span>
-                                        </div>
-                                    )}
-                                </motion.div>
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-muted/80 md:block hidden" />
-                            </div>
-
-                            {/* Content Side */}
-                            <div className="relative flex flex-col justify-center p-8 md:p-16">
-                                <span className="text-xs uppercase tracking-[0.3em] text-accent mb-4">
-                                    Featured 0{index + 1}
-                                </span>
-                                <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-                                    {product.name}
-                                </h3>
-                                <p className="text-muted-foreground mb-8 line-clamp-3 max-w-md">
-                                    {product.description || "Discover the essence of luxury timekeeping."}
-                                </p>
-                                <div className="flex items-end gap-8">
-                                    <div>
-                                        <span className="text-xs text-muted-foreground uppercase tracking-widest block mb-1">Price</span>
-                                        <span className="text-3xl font-light">${product.price.toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-accent text-xs uppercase tracking-widest group-hover:gap-4 transition-all">
-                                        View Details <ArrowRight className="w-4 h-4" />
-                                    </div>
-                                </div>
-
-                                {/* Decorative number */}
-                                <span className="absolute bottom-8 right-8 text-[12rem] font-black text-foreground/[0.03] leading-none select-none hidden md:block">
-                                    0{index + 1}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </Link>
-            </motion.div>
         </div>
     );
 }

@@ -133,6 +133,18 @@ export async function getSmartCollection({ slugs, searchParams }: CollectionPara
             case 'relevance':
                 orderBy = { staticScore: 'desc' };
                 break;
+            case 'best-sellers':
+                orderBy = { reviewCount: 'desc' };
+                break;
+            case 'top-rated':
+                orderBy = { averageRating: 'desc' };
+                break;
+            case 'name-asc':
+                orderBy = { name: 'asc' };
+                break;
+            case 'name-desc':
+                orderBy = { name: 'desc' };
+                break;
         }
     }
 

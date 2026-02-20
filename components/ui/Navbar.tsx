@@ -21,6 +21,11 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
     const { openSearch } = useSearch();
     const { isAuthenticated } = useKindeBrowserClient();
 
+    // Hide Navbar completely on Room Visualizer
+    if (pathname === '/ai-vision') {
+        return null;
+    }
+
     // ... (rest of hook logic) ...
 
     // (skip to return)
@@ -45,6 +50,7 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
         { href: '/ai-search', label: 'Advanced Search' },
         { href: '/ai-vision', label: 'Room Visualizer' },
         { href: '/about', label: 'Story' },
+        { href: '/blog', label: 'Journal' },
     ];
 
     return (

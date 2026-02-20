@@ -41,9 +41,17 @@ export default function AboutPage() {
                             every grain pattern is intentional — selected to bring warmth, beauty, and permanence
                             to the spaces you call home.
                         </p>
-                        <p className="text-muted-foreground leading-relaxed">
+                        <p className="text-muted-foreground leading-relaxed mb-6">
                             Our artisans work with responsibly sourced hardwoods, premium leathers, and hand-finished
-                            metals, ensuring that every piece is built to last generations — not seasons.
+                            metals, ensuring that every piece is built to last generations — not seasons. The process
+                            often starts years before a piece enters your home; our white oak and walnut are air-dried
+                            for seasons to ensure absolute stability and structural integrity before entering the kiln.
+                        </p>
+                        <p className="text-muted-foreground leading-relaxed">
+                            Every master craftsman in our atelier brings decades of specialized experience. By merging
+                            traditional joinery techniques — like hand-cut dovetails and mortise-and-tenon connections
+                            — with state-of-the-art precision tools, we guarantee that the final product represents
+                            the pinnacle of modern manufacturing and historical artistry.
                         </p>
                     </div>
                 </div>
@@ -56,7 +64,19 @@ export default function AboutPage() {
                         <p className="text-muted-foreground leading-relaxed mb-6">
                             We believe luxury and responsibility can coexist. That&apos;s why Aethelon pioneers
                             the use of reclaimed timbers, water-based finishes, and carbon-neutral logistics.
-                            Our Geneva atelier operates on 100% renewable energy.
+                            Our Geneva atelier operates on 100% renewable energy, setting a new standard for
+                            the furniture industry at large.
+                        </p>
+                        <p className="text-muted-foreground leading-relaxed mb-6">
+                            Every tree we harvest is replaced tenfold through our global reforestation initiative.
+                            Our fabrics are woven from recycled fibers where possible, and our leather is strictly
+                            sourced from by-products of the agricultural industry, tanned using eco-friendly, vegetable-based
+                            processes that eliminate harmful runoffs.
+                        </p>
+                        <p className="text-muted-foreground leading-relaxed">
+                            When you purchase an Aethelon piece, you are not just investing in your space, you are
+                            investing in the preservation of old-growth forests and ethical labor practices worldwide.
+                            We trace our supply chain to the very root, ensuring profound transparency every step of the way.
                         </p>
                     </div>
                     <div className="relative aspect-square order-1 lg:order-2">

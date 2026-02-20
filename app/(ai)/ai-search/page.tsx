@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, Suspense, useCallback } from 'react';
-import { Search, Camera, ArrowRight, Sparkles, X, Loader2 } from 'lucide-react';
+import { Search, Camera, ArrowRight, Sparkles, X, Loader2, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { performAiSearch } from './actions';
 import { Product } from '../../../lib/assistantTypes';
@@ -99,10 +99,7 @@ function AISearchContent() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
                     >
-                        <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-1 rounded-full mb-6">
-                            <Sparkles className="w-4 h-4" />
-                            <span className="text-sm font-medium">Aethelon Intelligence</span>
-                        </div>
+
                         <h1 className="font-display text-4xl md:text-5xl mb-4 font-light tracking-tight">
                             Design with context.
                         </h1>
@@ -164,6 +161,14 @@ function AISearchContent() {
                                     title="Upload Image Context"
                                 >
                                     <Camera className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => { alert('Voice search activated.'); }}
+                                    className="p-2 rounded-full transition-colors text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                                    title="Voice Search"
+                                    type="button"
+                                >
+                                    <Mic className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => handleSearch()}

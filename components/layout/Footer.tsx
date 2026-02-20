@@ -57,6 +57,8 @@ export default async function Footer() {
                         <span className="text-foreground font-bold uppercase tracking-widest text-xs mb-2">Explore</span>
                         <Link href="/shop" className="hover:text-foreground transition-colors">Collection</Link>
                         <Link href="/about" className="hover:text-foreground transition-colors">Our Story</Link>
+                        <Link href="/blog" className="hover:text-foreground transition-colors">Journal</Link>
+                        <Link href="/faq" className="hover:text-foreground transition-colors">FAQ</Link>
                         <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
                         <Link href="/wholesale" className="hover:text-foreground transition-colors">Wholesale</Link>
                     </div>
@@ -65,6 +67,7 @@ export default async function Footer() {
                         <span className="text-foreground font-bold uppercase tracking-widest text-xs mb-2">Legal</span>
                         <Link href="/legal/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
                         <Link href="/legal/terms" className="hover:text-foreground transition-colors">Terms</Link>
+                        <Link href="/legal/cookies" className="hover:text-foreground transition-colors">Cookies</Link>
                         <Link href="/legal/shipping" className="hover:text-foreground transition-colors">Shipping</Link>
                         <Link href="/legal/returns" className="hover:text-foreground transition-colors">Returns</Link>
                     </div>

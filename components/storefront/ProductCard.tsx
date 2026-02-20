@@ -4,6 +4,7 @@ import { WishlistButton } from "./WishlistButton";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface iAppProps {
   item: {
@@ -19,9 +20,41 @@ interface iAppProps {
 }
 
 export function ProductCard({ item, priority = false }: iAppProps) {
-  const discountedPrice = item.discountPercentage > 0
+  const [currency, setCurrency] = useState("USD");
+  const [rate, setRate] = useState(1);
+  const [locale, setLocale] = useState("en-US");
+
+  useEffect(() => {
+    const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
+    const curr = match ? match[2] : "USD";
+    setCurrency(curr);
+
+    const rates: Record<string, { rate: number, locale: string }> = {
+      USD: { rate: 1, locale: "en-US" },
+      EUR: { rate: 0.92, locale: "de-DE" },
+      GBP: { rate: 0.79, locale: "en-GB" },
+      JPY: { rate: 150.5, locale: "ja-JP" },
+      CAD: { rate: 1.35, locale: "en-CA" },
+    };
+
+    if (rates[curr]) {
+      setRate(rates[curr].rate);
+      setLocale(rates[curr].locale);
+    }
+  }, []);
+
+  const discountedPriceCents = item.discountPercentage > 0
     ? Math.round(item.price * (1 - item.discountPercentage / 100))
     : item.price;
+
+  const formatPrice = (cents: number) => {
+    const value = (cents * rate) / 100;
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency,
+      minimumFractionDigits: currency === "JPY" ? 0 : 2
+    }).format(value);
+  };
 
   return (
     <Link
@@ -70,11 +103,11 @@ export function ProductCard({ item, priority = false }: iAppProps) {
           </h3>
           <div className="flex items-center gap-2 pt-1">
             <span className="text-sm font-semibold text-foreground">
-              ${discountedPrice.toLocaleString()}
+              {formatPrice(discountedPriceCents)}
             </span>
             {item.discountPercentage > 0 && (
               <span className="text-xs text-muted-foreground line-through">
-                ${item.price.toLocaleString()}
+                {formatPrice(item.price)}
               </span>
             )}
           </div>

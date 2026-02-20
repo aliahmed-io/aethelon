@@ -5,6 +5,9 @@ export const dynamic = "force-dynamic";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Truck } from "lucide-react";
+import Link from "next/link";
 
 async function getUserOrders(userId: string) {
     const orders = await Prisma.order.findMany({
@@ -28,7 +31,15 @@ export default async function AccountPage() {
 
     return (
         <div className="space-y-8">
-            <h1 className="text-2xl font-light tracking-tight uppercase border-b border-border pb-4">Order History</h1>
+            <div className="flex items-center justify-between border-b border-border pb-4">
+                <h1 className="text-2xl font-light tracking-tight uppercase">Order History</h1>
+                <Button asChild variant="outline" size="sm" className="bg-background text-xs uppercase tracking-widest border-border">
+                    <Link href="/tracking">
+                        <Truck className="w-4 h-4 mr-2" />
+                        Track Order
+                    </Link>
+                </Button>
+            </div>
 
             {orders.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center border mr-auto ml-auto border-dashed border-border rounded-sm">

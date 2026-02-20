@@ -607,3 +607,21 @@ model TaxRule {
   @@unique([country, region])
   @@index([country])
 }
+
+model BlogPost {
+  id              String    @id @default(uuid())
+  title           String
+  slug            String    @unique
+  content         String    @db.Text
+  excerpt         String?   @db.Text
+  metaDescription String?   @db.Text
+  published       Boolean   @default(false)
+  image           String?
+  author          String    @default("Aethelon Team")
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([publishedAt])
+}

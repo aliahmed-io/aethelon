@@ -16,10 +16,14 @@ interface CollectionFilterBarProps {
 }
 
 const SORT_OPTIONS = [
+    { label: "Relevance", value: "relevance" },
     { label: "Newest Arrivals", value: "newest" },
+    { label: "Best Sellers", value: "best-sellers" },
+    { label: "Top Rated", value: "top-rated" },
     { label: "Price: Low to High", value: "price-asc" },
     { label: "Price: High to Low", value: "price-desc" },
-    { label: "Best Selling", value: "relevance" }, // mapped to staticScore
+    { label: "Name: A-Z", value: "name-asc" },
+    { label: "Name: Z-A", value: "name-desc" },
 ];
 
 export function CollectionFilterBar({ totalCount }: CollectionFilterBarProps) {

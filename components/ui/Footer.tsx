@@ -1,8 +1,10 @@
-'use client';
-
 import Link from 'next/link';
+import { CurrencySwitcher } from "@/components/store/CurrencySwitcher";
+import { CurrencyService } from "@/modules/currency/currency.service";
 
-export default function Footer() {
+export default async function Footer() {
+    const currentCurrency = await CurrencyService.getCurrency();
+
     return (
         <footer className="bg-primary text-primary-foreground pt-24 pb-12">
             <div className="container mx-auto px-6">
@@ -21,6 +23,7 @@ export default function Footer() {
                         <ul className="space-y-4 text-sm text-primary-foreground/70">
                             <li><Link href="/shop" className="hover:text-accent transition-colors">Collection</Link></li>
                             <li><Link href="/about" className="hover:text-accent transition-colors">Our Story</Link></li>
+                            <li><Link href="/blog" className="hover:text-accent transition-colors">Journal</Link></li>
                             <li><Link href="/ai-search" className="hover:text-accent transition-colors">AI Search</Link></li>
                             <li><Link href="/ai-vision" className="hover:text-accent transition-colors">Room Visualizer</Link></li>
                         </ul>
@@ -30,6 +33,7 @@ export default function Footer() {
                     <div>
                         <h3 className="font-bold mb-6 text-sm tracking-wider uppercase text-accent">Support</h3>
                         <ul className="space-y-4 text-sm text-primary-foreground/70">
+                            <li><Link href="/faq" className="hover:text-accent transition-colors">FAQ</Link></li>
                             <li><Link href="/contact" className="hover:text-accent transition-colors">Contact Us</Link></li>
                             <li><Link href="/legal/shipping" className="hover:text-accent transition-colors">Shipping & Returns</Link></li>
                             <li><Link href="/wholesale" className="hover:text-accent transition-colors">Wholesale</Link></li>
@@ -58,9 +62,13 @@ export default function Footer() {
 
                 <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-primary-foreground/40">
                     <p>© 2026 Aethelon Design. All rights reserved.</p>
-                    <div className="flex gap-6">
+                    <div className="flex gap-6 items-center">
+                        <div className="mr-4">
+                            <CurrencySwitcher currentCurrency={currentCurrency} />
+                        </div>
                         <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                         <Link href="/legal/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                        <Link href="/legal/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
                     </div>
                 </div>
             </div>
