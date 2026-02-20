@@ -114,7 +114,7 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
                         </Link>
                     )}
                     {isAuthenticated ? (
-                        <Link href={isAdmin ? "/dashboard" : "/account"} className="text-foreground hover:text-accent transition-colors p-2" aria-label="Account">
+                        <Link href="/account" className="text-foreground hover:text-accent transition-colors p-2" aria-label="Account">
                             <User className="w-5 h-5" />
                         </Link>
                     ) : (

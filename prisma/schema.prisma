@@ -88,6 +88,7 @@ model Product {
   tags               String[]      @default([])
   features           String[]      @default([])
   sizes              String[]      @default([])
+  brand              String?       @default("Generic")
   modelUrl           String?
   usdzUrl            String? // For iOS AR Quick Look
   imageDescription   String?

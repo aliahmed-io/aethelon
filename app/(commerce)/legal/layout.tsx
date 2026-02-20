@@ -5,11 +5,13 @@ const legalLinks = [
     { name: "Privacy Policy", href: "/legal/privacy" },
     { name: "Terms of Service", href: "/legal/terms" },
     { name: "Cookie Policy", href: "/legal/cookies" },
+    { name: "Shipping Policy", href: "/legal/shipping" },
+    { name: "Returns Policy", href: "/legal/returns" },
 ];
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="container py-12">
+        <div className="container pt-32 pb-12">
             <div className="grid lg:grid-cols-4 gap-8">
                 <div className="lg:col-span-1 space-y-4">
                     <h3 className="font-semibold text-lg mb-4">Legal</h3>

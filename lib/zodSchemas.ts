@@ -21,6 +21,9 @@ export const productSchema = z.object({
   stockQuantity: z.number().int().min(0).default(0),
   weight: z.number().min(0).default(1.0),
   lowStockThreshold: z.number().int().min(0).default(5),
+  brand: z.string().min(1, "Brand is required").default("Generic"),
+  modelUrl: z.string().optional(),
+  usdzUrl: z.string().optional(),
 });
 
 export const categorySchema = z.object({

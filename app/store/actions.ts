@@ -313,6 +313,9 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
             status,
             isFeatured,
             costPrice: Number(formData.get("costPrice") || 0),
+            brand: formData.get("brand") as string || "Generic",
+            modelUrl: formData.get("modelUrl") as string || null,
+            usdzUrl: formData.get("usdzUrl") as string || null,
         },
     });
 
@@ -355,6 +358,9 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
             status,
             isFeatured,
             costPrice: Number(formData.get("costPrice") || 0),
+            brand: formData.get("brand") as string || "Generic",
+            modelUrl: formData.get("modelUrl") as string || null,
+            usdzUrl: formData.get("usdzUrl") as string || null,
         },
     });
 

@@ -1,4 +1,3 @@
-
 import { FurnitureFilterBar } from "@/components/shop/FurnitureFilterBar";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
@@ -11,13 +10,14 @@ interface ShopPageProps {
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
-    const { category } = await searchParams;
+    const { category, sort, price, color, size } = await searchParams;
 
+    // Build Where Clause
     const where: Prisma.ProductWhereInput = {
         status: 'published' as ProductStatus,
     };
 
-    // Filter by Category slug (furniture categories: living, dining, bedroom, office)
+    // Category Filter
     if (category && category !== "all") {
         where.categories = {
             some: {
@@ -26,13 +26,82 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         };
     }
 
-    const [products, recommendations] = await Promise.all([
+    // Price Filter (Cents)
+    if (price && price !== "all") {
+        if (price === "under-500") {
+            where.price = { lte: 50000 };
+        } else if (price === "500-1000") {
+            where.price = { gte: 50000, lte: 100000 };
+        } else if (price === "1000-2500") {
+            where.price = { gte: 100000, lte: 250000 };
+        } else if (price === "over-2500") {
+            where.price = { gte: 250000 };
+        }
+    }
+
+    // Color Filter (insensitive contains)
+    if (color && color !== "all") {
+        where.color = {
+            contains: color as string,
+            mode: "insensitive",
+        };
+    }
+
+    // Size Filter
+    if (size && size !== "all") {
+        where.sizes = {
+            has: size as string,
+        };
+    }
+
+    // Build OrderBy Clause
+    let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" };
+
+    switch (sort) {
+        case "price-asc":
+        case "price_asc":
+            orderBy = { price: "asc" };
+            break;
+        case "price-desc":
+        case "price_desc":
+            orderBy = { price: "desc" };
+            break;
+        case "best-sellers":
+        case "popularity":
+            orderBy = { reviewCount: "desc" }; // Using review count as proxy for legacy best-sellers
+            break;
+        case "top-rated":
+            orderBy = { averageRating: "desc" };
+            break;
+        case "name-asc":
+            orderBy = { name: "asc" };
+            break;
+        case "name-desc":
+            orderBy = { name: "desc" };
+            break;
+        case "newest":
+        default:
+            orderBy = { createdAt: "desc" };
+    }
+
+    // Fetch Data
+    const [products, recommendations, categories] = await Promise.all([
         prisma.product.findMany({
             where,
-            orderBy: { createdAt: "desc" },
+            orderBy,
         }),
-        getRecommendedProducts()
+        getRecommendedProducts(),
+        prisma.category.findMany({
+            where: {
+                parentId: null,
+                slug: { notIn: ['best-sellers', 'new-arrivals', 'comfort', 'sustainable', 'decor'] } // Exclude non-furniture pseudo-categories
+            },
+            orderBy: { name: 'asc' },
+            select: { id: true, name: true, slug: true }
+        })
     ]);
+
+    const sizes = ["Small", "Standard", "Large", "Oversized", "King", "Queen"];
 
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
@@ -40,18 +109,22 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 {/* Header */}
                 <div className="mb-10 text-center">
                     <h1 className="text-3xl lg:text-4xl font-light uppercase tracking-[0.15em] text-foreground mb-2">
-                        Furniture
+                        Shop
                     </h1>
                     <p className="text-muted-foreground text-sm tracking-wide">
-                        Discover our categories
+                        Explore our curated collection
                     </p>
                 </div>
 
                 {/* Filter Bar */}
-                <FurnitureFilterBar totalCount={products.length} />
+                <FurnitureFilterBar
+                    totalCount={products.length}
+                    categories={categories}
+                    sizes={sizes}
+                />
 
-                {/* Recommended Section */}
-                {recommendations.length > 0 && !category && (
+                {/* Recommended Section (Only on main view) */}
+                {recommendations.length > 0 && !category && !price && !color && !size && (
                     <div className="mb-12">
                         <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground mb-6 flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-foreground" />

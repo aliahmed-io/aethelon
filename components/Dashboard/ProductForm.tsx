@@ -35,6 +35,9 @@ interface ProductFormProps {
         stockQuantity?: number;
         weight?: number;
         costPrice?: number;
+        brand?: string | null;
+        modelUrl?: string | null;
+        usdzUrl?: string | null;
     } | null;
 }
 
@@ -341,6 +344,23 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                             <div className="space-y-2">
                                 <Label className="uppercase text-xs tracking-widest text-muted-foreground">Weight (g)</Label>
                                 <Input name="weight" type="number" placeholder="0" defaultValue={initialData?.weight} className="h-10 border-border" />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Brand</Label>
+                            <Input name="brand" placeholder="Brand Name" defaultValue={initialData?.brand || "Generic"} className="h-10 border-border" />
+                        </div>
+
+                        <div className="space-y-2 pt-4 border-t border-border">
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">3D Models</h4>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">GLB Model URL</Label>
+                                <Input name="modelUrl" placeholder="https://..." defaultValue={initialData?.modelUrl || ""} className="h-10 border-border font-mono text-[10px]" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">USDZ Model URL (iOS AR)</Label>
+                                <Input name="usdzUrl" placeholder="https://..." defaultValue={initialData?.usdzUrl || ""} className="h-10 border-border font-mono text-[10px]" />
                             </div>
                         </div>
                     </div>

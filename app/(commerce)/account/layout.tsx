@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Package, Heart, LogOut, User, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 interface AccountNavItem {
     href: string;
@@ -47,13 +48,13 @@ function AccountNav({ variant = "desktop" }: { variant?: "mobile" | "desktop" })
 
                 <div className="my-4 border-t border-border" />
 
-                <Link
-                    href="/api/auth/logout"
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-sm transition-colors"
+                <LogoutLink
+                    postLogoutRedirectURL="/"
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-sm transition-colors w-full"
                 >
                     <LogOut className="w-4 h-4" />
                     Sign Out
-                </Link>
+                </LogoutLink>
             </nav>
         );
     }
