@@ -614,6 +614,8 @@ model BlogPost {
   slug            String    @unique
   content         String    @db.Text
   excerpt         String?   @db.Text
+  category        String    @default("General")
+  readTime        String?
   metaDescription String?   @db.Text
   published       Boolean   @default(false)
   image           String?

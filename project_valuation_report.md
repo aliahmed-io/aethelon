@@ -143,10 +143,8 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 31. **Responsive Navigation**: Adaptive header (Hamburger on mobile, Mega-menu on desktop).
 32. **Toast Notifications**: `sonner` integration for non-blocking success/error states.
 33. **Global Search Modal**: `Ctrl+K` command palette style search.
-*   **Cinematic Product Cards** (Phase 11): High-fidelity, levitating cards with "AR Ready" badging.
-*   **Staggered Grid Entrance** (Phase 11): CSS-optimized entry animations.
-*   **Glassmorphism System** (Phase 11): Unified glass UI for all interactive elements.
 *   **Cinematic PDP Redesign** (Phase 12): 40/60 Split-Hero layout, typography-first details, and immersive background integration specifically for luxury furniture.
+*   **Dynamic Journal (CMS)** (Phase 5.6): High-fidelity editorial section with markdown rendering, semantic typography, and deep-link SEO.
 *   **Integrated Action Pills** (Phase 12): Floating 3D/AR/AI triggers within the product gallery.
 *   **Enhanced Variant Logic** (Phase 12): Visual color swatches and synchronized stock/cart tracking for complex product attributes.
 
@@ -162,6 +160,7 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 42. **CSV Data Export**: One-click download of financial data with explicit admin authorization on export actions.
 44. **Bulk Product Operations**: Admin tools for bulk updating products and deleting products with server-side allowlisting to prevent accidental unsafe field changes.
 43. **System Health**: Uptime monitoring widget.
+44. **Journal CMS**: Full editorial suite for writing, editing, and publishing articles with markdown support and cover image management.
 
 ---
 
@@ -278,9 +277,9 @@ To reach full operational status:
 
 ---
 
-**Report Updated**: 2026-02-19
-**Status**: PRODUCTION HARDENED (Security + Correctness + Admin Controls + Commerce Engine)
-**Version**: 3.4.0-Commerce-Release
+**Report Updated**: 2026-02-20
+**Status**: PRODUCTION READY (Journal CMS + AI-Vision + AR + Hardened Commerce Engine)
+**Version**: 3.5.0-Journal-Release
 
 ---
 
@@ -374,3 +373,9 @@ To reach full operational status:
 * **Database Sorting**: Sort dropdown logic integrated fully with Prisma (New Arrivals mapping to `createdAt`, Best Sellers mapping to `reviewCount`).
 * **Category Clean-up**: Pseudo-categories removed from standard category lists to maintain rigid domain bounds.
 * **Brand Taxonomy**: `brand` added to database, admin forms, and dynamic filter routes.
+### Dynamic Journal CMS (Phase 5.5 & 5.6)
+*   **Data Model**: New `BlogPost` model — slug-based dynamic routing, markdown text, SEO metadata, and publication toggles.
+*   **Admin Dashboard**: Full CRUD suite at `/dashboard/blog` with automated slug generation and content previews.
+*   **Frontend**: Re-platformed from static arrays to a Prisma-driven SSR architecture with `react-markdown` and high-performance image optimization.
+*   **SEO Integration**: Automated `sitemap.xml` updates for all published journal entries.
+*   **Stability**: Optimized Prisma Client v6 initialization with `accelerateUrl` support for serverless build-time stability.

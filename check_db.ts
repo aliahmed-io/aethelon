@@ -3,32 +3,35 @@ import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 import path from "path";
 
-const envPath = path.resolve(process.cwd(), ".env.local");
+const envPath = path.resolve(process.cwd(), ".env");
 const result = dotenv.config({ path: envPath });
 
-console.log(`[Debug] Loading .env.local from: ${envPath}`);
+console.log(`[Debug] Loading .env from: ${envPath}`);
 if (result.error) {
     console.error(`[Debug] dotenv error:`, result.error);
-} else {
-    console.log(`[Debug] dotenv parsed keys:`, Object.keys(result.parsed || {}));
 }
 
-console.log(`[Debug] DATABASE_URL in process.env: ${process.env.DATABASE_URL ? "Defined (Starts with " + process.env.DATABASE_URL.substring(0, 10) + ")" : "UNDEFINED"}`);
+console.log(`[Debug] DATABASE_URL defined: ${!!process.env.DATABASE_URL}`);
 
-if (!process.env.DATABASE_URL) {
-    console.error("[Debug] DATABASE_URL is missing. Exiting.");
-    process.exit(1);
-}
-
-// Using 'accelerateUrl' to satisfy runtime requirement
-const prisma = new PrismaClient({
-    accelerateUrl: process.env.DATABASE_URL
-} as any);
+const prisma = new PrismaClient();
 
 async function main() {
     try {
-        const count = await prisma.product.count();
-        console.log(`[Success] Product Count: ${count}`);
+        const productCount = await prisma.product.count();
+        console.log(`[Success] Product Count: ${productCount}`);
+
+        const blogCount = await prisma.blogPost.count();
+        console.log(`[Success] Blog Post Count: ${blogCount}`);
+
+        const posts = await prisma.blogPost.findMany({ select: { slug: true } });
+        console.log(`[Success] Blog Slugs:`, posts.map(p => p.slug));
+
+        if (posts.length > 0) {
+            const firstPost = await prisma.blogPost.findUnique({
+                where: { slug: posts[0].slug }
+            });
+            console.log(`[Success] Found Blog: ${firstPost?.title}`);
+        }
     } catch (e) {
         console.error(e);
     } finally {

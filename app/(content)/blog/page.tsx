@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { getBlogPosts } from "@/app/actions/blog";
 
 export const metadata: Metadata = {
     title: "Journal — Aethelon",
@@ -9,61 +10,14 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600;
 
-/** Static blog data — replace with CMS integration when ready */
-const BLOG_POSTS = [
-    {
-        slug: "art-of-solid-oak",
-        title: "The Art of Solid Oak",
-        excerpt: "How we source, season, and shape FSC-certified American white oak into heirloom furniture that lasts generations.",
-        category: "Craft",
-        date: "2026-01-15",
-        displayDateLong: "January 15, 2026",
-        displayDateShort: "Jan 15",
-        image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=1200", // woodcraft, workshop
-        readTime: "6 min",
-    },
-    {
-        slug: "designing-with-light",
-        title: "Designing with Light",
-        excerpt: "Our design team shares how natural light influences every silhouette, finish, and placement we recommend.",
-        category: "Design",
-        date: "2026-01-28",
-        displayDateLong: "January 28, 2026",
-        displayDateShort: "Jan 28",
-        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1200", // interior design, light
-        readTime: "4 min",
-    },
-    {
-        slug: "minimalism-meets-comfort",
-        title: "When Minimalism Meets Comfort",
-        excerpt: "Why the most restrained designs often deliver the deepest comfort — and how we achieve both.",
-        category: "Philosophy",
-        date: "2026-02-05",
-        displayDateLong: "February 5, 2026",
-        displayDateShort: "Feb 5",
-        image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1200", // minimalist living room
-        readTime: "5 min",
-    },
-    {
-        slug: "sustainable-supply-chain",
-        title: "Our Sustainable Supply Chain",
-        excerpt: "From forest to showroom, a transparent look at every step in our FSC-certified sourcing process.",
-        category: "Sustainability",
-        date: "2026-02-10",
-        displayDateLong: "February 10, 2026",
-        displayDateShort: "Feb 10",
-        image: "https://images.unsplash.com/photo-1581428982868-e410dd047a90?auto=format&fit=crop&q=80&w=1200", // sustainable materials, forest
-        readTime: "7 min",
-    },
-] as const;
+export default async function BlogPage() {
+    // Fetch dynamic, published posts from database
+    const blogPosts = await getBlogPosts(false);
 
-const CATEGORIES = ["All", ...Array.from(new Set(BLOG_POSTS.map((p) => p.category)))] as const;
+    // Extract categories from blogPosts
+    const dynamicCategories = Array.from(new Set(blogPosts.map(post => post.category)));
+    const CATEGORIES = ["All", ...dynamicCategories];
 
-export function generateStaticParams() {
-    return BLOG_POSTS.map((p) => ({ slug: p.slug }));
-}
-
-export default function BlogPage() {
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
             <div className="container mx-auto max-w-6xl px-6 lg:px-12">
@@ -91,68 +45,86 @@ export default function BlogPage() {
                     ))}
                 </div>
 
-                {/* Featured post */}
-                <Link href={`/blog/${BLOG_POSTS[0].slug}`} className="group block mb-16">
-                    <article className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div className="aspect-[4/3] relative overflow-hidden rounded-sm bg-muted">
-                            <Image
-                                src={BLOG_POSTS[0].image}
-                                alt={BLOG_POSTS[0].title}
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                priority
-                            />
-                        </div>
-                        <div className="flex flex-col justify-center">
-                            <span className="text-xs uppercase tracking-widest text-accent mb-3">{BLOG_POSTS[0].category}</span>
-                            <h2 className="text-3xl font-bold tracking-tight mb-4 group-hover:text-accent transition-colors">
-                                {BLOG_POSTS[0].title}
-                            </h2>
-                            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-                                {BLOG_POSTS[0].excerpt}
-                            </p>
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
-                                <time dateTime={BLOG_POSTS[0].date}>
-                                    {BLOG_POSTS[0].displayDateLong}
-                                </time>
-                                <span>·</span>
-                                <span>{BLOG_POSTS[0].readTime} read</span>
-                            </div>
-                        </div>
-                    </article>
-                </Link>
-
-                {/* Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {BLOG_POSTS.slice(1).map((post) => (
-                        <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
-                            <article>
-                                <div className="aspect-[4/3] relative overflow-hidden rounded-sm bg-muted mb-4">
+                {blogPosts.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-32 border border-dashed border-border rounded-sm">
+                        <p className="text-muted-foreground uppercase tracking-widest text-sm">No articles published yet. Check back soon.</p>
+                    </div>
+                ) : (
+                    <div>
+                        {/* Featured post (First array item) */}
+                        <Link href={`/blog/${blogPosts[0].slug}`} className="group block mb-16">
+                            <article className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="aspect-[4/3] relative overflow-hidden rounded-sm bg-muted">
                                     <Image
-                                        src={post.image}
-                                        alt={post.title}
+                                        src={blogPosts[0].image || "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=1200"}
+                                        alt={blogPosts[0].title}
                                         fill
                                         className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                        priority
                                     />
                                 </div>
-                                <span className="text-xs uppercase tracking-widest text-accent mb-2 block">{post.category}</span>
-                                <h3 className="text-lg font-bold tracking-tight mb-2 group-hover:text-accent transition-colors">
-                                    {post.title}
-                                </h3>
-                                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{post.excerpt}</p>
-                                <div className="flex items-center gap-3 text-xs text-muted-foreground font-mono">
-                                    <time dateTime={post.date}>
-                                        {post.displayDateShort}
-                                    </time>
-                                    <span>·</span>
-                                    <span>{post.readTime}</span>
+                                <div className="flex flex-col justify-center">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <span className="text-xs uppercase tracking-widest text-accent">{blogPosts[0].category || "Featured Article"}</span>
+                                        {blogPosts[0].readTime && (
+                                            <>
+                                                <span className="text-muted-foreground/30">•</span>
+                                                <span className="text-[10px] uppercase tracking-tighter text-muted-foreground font-mono">{blogPosts[0].readTime}</span>
+                                            </>
+                                        )}
+                                    </div>
+                                    <h2 className="text-3xl font-bold tracking-tight mb-4 group-hover:text-accent transition-colors">
+                                        {blogPosts[0].title}
+                                    </h2>
+                                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                                        {blogPosts[0].excerpt}
+                                    </p>
+                                    <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
+                                        <time dateTime={blogPosts[0].publishedAt ? new Date(blogPosts[0].publishedAt).toISOString() : new Date().toISOString()}>
+                                            {blogPosts[0].publishedAt ? new Date(blogPosts[0].publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "Recently"}
+                                        </time>
+                                    </div>
                                 </div>
                             </article>
                         </Link>
-                    ))}
-                </div>
+
+                        {blogPosts.length > 1 && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {blogPosts.slice(1).map((post: any) => (
+                                    <Link key={post.slug} href={`/blog/${post.slug}`} className="group relative bg-muted/30 border border-border backdrop-blur-sm rounded-sm overflow-hidden flex flex-col hover:border-accent transition-colors">
+                                        <article className="flex-1 flex flex-col">
+                                            <div className="aspect-[4/3] relative overflow-hidden bg-muted mb-4">
+                                                <Image
+                                                    src={post.image || "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1200"}
+                                                    alt={post.title}
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                                />
+                                            </div>
+                                            <div className="flex flex-col flex-1 p-4 pt-0">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-xs uppercase tracking-widest text-accent block line-clamp-1">{post.category}</span>
+                                                    {post.readTime && <span className="text-[10px] font-mono text-muted-foreground">{post.readTime}</span>}
+                                                </div>
+                                                <h3 className="text-lg font-bold tracking-tight mb-2 group-hover:text-accent transition-colors line-clamp-2">
+                                                    {post.title}
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground line-clamp-2 mb-3 flex-1">{post.excerpt}</p>
+                                                <div className="flex items-center gap-3 text-xs text-muted-foreground font-mono mt-auto">
+                                                    <time dateTime={post.publishedAt ? new Date(post.publishedAt).toISOString() : new Date().toISOString()}>
+                                                        {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : "Recently"}
+                                                    </time>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </main>
     );

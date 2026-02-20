@@ -38,6 +38,7 @@ const links = [
     { name: "Tax Rules", href: "/dashboard/tax-rules", icon: Receipt },
     { name: "Newsletter", href: "/dashboard/newsletter", icon: Mail },
     { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },
+    { name: "Journal", href: "/dashboard/blog", icon: FileText },
     { name: "Roles", href: "/dashboard/roles", icon: UserCog },
 ];
 
