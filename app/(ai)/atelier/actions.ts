@@ -76,7 +76,7 @@ export async function generateTryOn(formData: FormData) {
             success: true,
             // We return a specialized 'processed' image URL (using a placeholder for now that looks premium)
             // In a real app, this would be the output of Imagen 3.
-            imageUrl: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop",
+            imageUrl: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=1000",
             remainingGenerations: remaining
         };
 

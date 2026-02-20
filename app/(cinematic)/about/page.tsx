@@ -25,9 +25,11 @@ export default function AboutPage() {
                 <div className="grid lg:grid-cols-2 gap-16 mb-32 items-center">
                     <div className="relative aspect-square">
                         <div className="absolute inset-0 bg-muted rounded-sm overflow-hidden border border-border">
-                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40 font-mono text-xs uppercase tracking-widest">
-                                [Workshop Image]
-                            </div>
+                            <img
+                                src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=1200"
+                                alt="Aethelon Workshop"
+                                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                            />
                         </div>
                     </div>
                     <div>
@@ -59,9 +61,11 @@ export default function AboutPage() {
                     </div>
                     <div className="relative aspect-square order-1 lg:order-2">
                         <div className="absolute inset-0 bg-muted rounded-sm overflow-hidden border border-border">
-                            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40 font-mono text-xs uppercase tracking-widest">
-                                [Atelier Image]
-                            </div>
+                            <img
+                                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200"
+                                alt="Aethelon Atelier"
+                                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                            />
                         </div>
                     </div>
                 </div>

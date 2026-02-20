@@ -10,7 +10,7 @@ async function getWholesaleProducts() {
             id: "1",
             name: "Aethelon Executive Desk",
             price: 4500,
-            images: ["https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?q=80&w=2000&auto=format&fit=crop"],
+            images: ["https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=2000"], // lounge chair
             stockQuantity: 150,
             mainCategory: "Office"
         },
@@ -18,7 +18,7 @@ async function getWholesaleProducts() {
             id: "2",
             name: "Aethelon Lounge Chair",
             price: 2800,
-            images: ["https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=2000&auto=format&fit=crop"],
+            images: ["https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80&w=2000"], // sofa
             stockQuantity: 45,
             mainCategory: "Living"
         },
@@ -26,7 +26,7 @@ async function getWholesaleProducts() {
             id: "3",
             name: "Minimalist Dining Table",
             price: 3200,
-            images: ["https://images.unsplash.com/photo-1577140917170-285929fb55b7?q=80&w=2000&auto=format&fit=crop"],
+            images: ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=2000"], // desk/office
             stockQuantity: 80,
             mainCategory: "Dining"
         },
@@ -34,7 +34,7 @@ async function getWholesaleProducts() {
             id: "4",
             name: "Nordic Bed Frame",
             price: 3500,
-            images: ["https://images.unsplash.com/photo-1505693416388-b0346ef3e498?q=80&w=2000&auto=format&fit=crop"],
+            images: ["https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=2000"], // bedroom
             stockQuantity: 60,
             mainCategory: "Bedroom"
         }

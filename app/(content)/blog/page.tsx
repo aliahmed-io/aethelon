@@ -19,7 +19,7 @@ const BLOG_POSTS = [
         date: "2026-01-15",
         displayDateLong: "January 15, 2026",
         displayDateShort: "Jan 15",
-        image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=1200", // woodcraft, workshop
         readTime: "6 min",
     },
     {
@@ -30,7 +30,7 @@ const BLOG_POSTS = [
         date: "2026-01-28",
         displayDateLong: "January 28, 2026",
         displayDateShort: "Jan 28",
-        image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1200", // interior design, light
         readTime: "4 min",
     },
     {
@@ -41,7 +41,7 @@ const BLOG_POSTS = [
         date: "2026-02-05",
         displayDateLong: "February 5, 2026",
         displayDateShort: "Feb 5",
-        image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1200", // minimalist living room
         readTime: "5 min",
     },
     {
@@ -52,7 +52,7 @@ const BLOG_POSTS = [
         date: "2026-02-10",
         displayDateLong: "February 10, 2026",
         displayDateShort: "Feb 10",
-        image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1581428982868-e410dd047a90?auto=format&fit=crop&q=80&w=1200", // sustainable materials, forest
         readTime: "7 min",
     },
 ] as const;

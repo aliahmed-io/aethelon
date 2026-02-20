@@ -16,55 +16,60 @@ const TAXONOMY = [
     {
         name: 'Living Room',
         slug: 'living-room',
+        image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&q=80&w=1000',
         children: [
-            { name: 'Sofas & Sectionals', slug: 'sofas' },
-            { name: 'Coffee Tables', slug: 'coffee-tables' },
-            { name: 'Accent Chairs', slug: 'accent-chairs' }
+            { name: 'Sofas & Sectionals', slug: 'sofas', image: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Coffee Tables', slug: 'coffee-tables', image: 'https://images.unsplash.com/photo-1533090481728-4660ebbc48f1?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Accent Chairs', slug: 'accent-chairs', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000' }
         ]
     },
     {
         name: 'Dining',
         slug: 'dining',
+        image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&q=80&w=1000',
         children: [
-            { name: 'Dining Tables', slug: 'dining-tables' },
-            { name: 'Dining Chairs', slug: 'dining-chairs' },
-            { name: 'Bar Stools', slug: 'bar-stools' }
+            { name: 'Dining Tables', slug: 'dining-tables', image: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Dining Chairs', slug: 'dining-chairs', image: 'https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Bar Stools', slug: 'bar-stools', image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=1000' }
         ]
     },
     {
         name: 'Bedroom',
         slug: 'bedroom',
+        image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&q=80&w=1000',
         children: [
-            { name: 'Beds', slug: 'beds' },
-            { name: 'Nightstands', slug: 'nightstands' },
-            { name: 'Dressers', slug: 'dressers' }
+            { name: 'Beds', slug: 'beds', image: 'https://images.unsplash.com/photo-1505693416388-334340d269a9?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Nightstands', slug: 'nightstands', image: 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Dressers', slug: 'dressers', image: 'https://images.unsplash.com/photo-1595514536733-1579717dfb11?auto=format&fit=crop&q=80&w=1000' }
         ]
     },
     {
         name: 'Office',
         slug: 'office',
+        image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=1000',
         children: [
-            { name: 'Desks', slug: 'desks' },
-            { name: 'Office Chairs', slug: 'office-chairs' }
+            { name: 'Desks', slug: 'desks', image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Office Chairs', slug: 'office-chairs', image: 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&q=80&w=1000' }
         ]
     },
     {
         name: 'Decor',
         slug: 'decor',
+        image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1000',
         children: [
-            { name: 'Rugs', slug: 'rugs' },
-            { name: 'Lighting', slug: 'lighting' },
-            { name: 'Vases', slug: 'vases' }
+            { name: 'Rugs', slug: 'rugs', image: 'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Lighting', slug: 'lighting', image: 'https://images.unsplash.com/photo-1507643179773-3e975d7ac515?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Vases', slug: 'vases', image: 'https://images.unsplash.com/photo-1581539250439-c923cd226718?auto=format&fit=crop&q=80&w=1000' }
         ]
     }
 ];
 
 // Flat list for "Function" categories
 const FUNCTIONAL_COLLECTIONS = [
-    { name: 'New Arrivals', slug: 'new-arrivals', mode: RankingMode.TRENDING },
-    { name: 'Best Sellers', slug: 'best-sellers', mode: RankingMode.TRENDING },
-    { name: 'Sustainable', slug: 'sustainable', mode: RankingMode.SEMANTIC },
-    { name: 'Comfort', slug: 'comfort', mode: RankingMode.SEMANTIC }
+    { name: 'New Arrivals', slug: 'new-arrivals', mode: RankingMode.TRENDING, image: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1000' },
+    { name: 'Best Sellers', slug: 'best-sellers', mode: RankingMode.TRENDING, image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000' },
+    { name: 'Sustainable', slug: 'sustainable', mode: RankingMode.SEMANTIC, image: 'https://images.unsplash.com/photo-1581428982868-e410dd047a90?auto=format&fit=crop&q=80&w=1000' },
+    { name: 'Comfort', slug: 'comfort', mode: RankingMode.SEMANTIC, image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&q=80&w=1000' }
 ];
 
 const PRODUCTS = [
@@ -236,7 +241,8 @@ async function main() {
                 data: {
                     name: f.name,
                     slug: f.slug,
-                    rankingMode: f.mode
+                    rankingMode: f.mode,
+                    image: f.image
                 }
             });
             catMap.set(f.slug, cat.id);
@@ -248,6 +254,7 @@ async function main() {
                 data: {
                     name: parent.name,
                     slug: parent.slug,
+                    image: parent.image
                 }
             });
             catMap.set(parent.slug, pCat.id);
@@ -257,7 +264,8 @@ async function main() {
                     data: {
                         name: child.name,
                         slug: child.slug,
-                        parentId: pCat.id
+                        parentId: pCat.id,
+                        image: child.image
                     }
                 });
                 catMap.set(child.slug, cCat.id);

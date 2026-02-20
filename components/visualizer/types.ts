@@ -20,19 +20,19 @@ export const ROOM_PRESETS: RoomPreset[] = [
     {
         id: "modern-living",
         label: "Modern Living Room",
-        src: "https://images.unsplash.com/photo-1595246140625-573b715d11fc?q=80&w=2612&auto=format&fit=crop",
+        src: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=2612",
         alt: "Bright modern living room with neutral tones and large windows",
     },
     {
         id: "minimalist-bedroom",
         label: "Minimalist Bedroom",
-        src: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=2560&auto=format&fit=crop",
+        src: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=2560",
         alt: "Clean minimalist bedroom with white walls and wooden floor",
     },
     {
         id: "open-office",
         label: "Open Office",
-        src: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2569&auto=format&fit=crop",
+        src: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=2569",
         alt: "Contemporary open office space with natural lighting",
     },
 ];

@@ -12,18 +12,18 @@
 This project should be valued using two separate models, depending on whether you’re describing **engineering replacement cost** or **what someone might pay to acquire the asset today**.
 
 ### 1) Replacement Cost Estimate (Agency Equivalent)
-**$90,000 – $140,000 USD**
+**$120,000 – $170,000 USD**
 
 This reflects what a serious agency would likely charge to rebuild the current platform from scratch (not including brand/marketing retainers), factoring in:
-- Commerce engine (orders/payments/inventory ledger)
+- Commerce engine (orders/payments/inventory ledger, tax, cart recovery)
 - Admin RBAC and operational tooling
 - External integrations (Stripe, Shippo, UploadThing, Resend, Redis rate limiting)
-- AI features (Concierge, AI COO, AI search/vision workflows)
-- 3D/AR workflows (model generation + viewer + mobile AR session)
-- Production hardening (webhooks/cron security, correctness fixes, observability)
+- Next-Gen AI features (Gemini 3.0 Pro integration, AI COO, AI Semantic/Visual search, Room Composition)
+- Advanced 3D/AR workflows (WebXR native AR, iOS Quick Look, Android Scene Viewer, model auto-generation)
+- Production hardening (circuit breakers, webhooks/cron security, correctness fixes, observability)
 
 ### 2) Market Asset Valuation (Pre-Revenue)
-**$55,000 – $85,000 USD**
+**$75,000 – $110,000 USD**
 
 This is a realistic “what someone might pay” range today, assuming a clean repo, working demo deployment, and stable builds. It discounts for:
 - No proven revenue / traction stated
@@ -358,3 +358,19 @@ To reach full operational status:
 * **Low Stock Alerts**: `confirmSale` now checks remaining stock against `lowStockThreshold` post-deduction. Sends branded HTML admin email with product table (name, remaining, threshold) when triggered.
 * **Storefront Badge**: New `StockBadge` component — renders "Low Stock" (amber), "Backorder" (blue), or "Out of Stock" (red) badges based on inventory levels.
 * **Admin Sidebar**: Added "Cart Recovery" and "Tax Rules" navigation links.
+
+### AI Visualizer & Room Composition (Phase 5)
+* **3D Architecture**: Switched to `<model-viewer>` for robust WebXR, Android Scene Viewer, and iOS Quick Look support natively from `.glb` files.
+* **Gemini Vision**: Server action accepts room photo uploads, analyzes lighting/style using Gemini 1.5 Flash Vision, and provides interior design placement advice dynamically.
+* **Mobile AR Mode**: Implemented a "Scan Room (AI)" hybrid AR view supporting horizontal surface detection, haptics, and snapshot capture.
+
+### AI Search & Model Upgrade (Phase 7 & 8)
+* **Model Upgrade**: Upgraded core AI logic (`ai-search`, `visualizer-ai`) to `gemini-3.0-pro` for superior reasoning and spatial understanding.
+* **Semantic Filters**: Search combines `pgvector` embedding similarities with standard relational filters to return highly relevant lifestyle matches.
+* **UI Polish**: Updated to a "Tech-Industrial Glass" aesthetic across AI tools.
+
+### Commerce UX & Filter Refinements (Phase 9)
+* **Filter Consolidation**: Advanced filters (Price, Color, Size, Brand) tucked behind a generic "Filter By" toggle array for visual clarity.
+* **Database Sorting**: Sort dropdown logic integrated fully with Prisma (New Arrivals mapping to `createdAt`, Best Sellers mapping to `reviewCount`).
+* **Category Clean-up**: Pseudo-categories removed from standard category lists to maintain rigid domain bounds.
+* **Brand Taxonomy**: `brand` added to database, admin forms, and dynamic filter routes.

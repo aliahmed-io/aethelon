@@ -23,7 +23,7 @@ const BLOG_POSTS: Record<string, {
         category: "Craft",
         date: "2026-01-15",
         displayDateLong: "January 15, 2026",
-        image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=1200", // woodcraft, workshop
         readTime: "6 min",
         content: [
             "Every Aethelon piece begins its journey in the forests of Appalachia, where our FSC-certified partners practice selective harvesting that ensures the health of old-growth ecosystems.",
@@ -39,7 +39,7 @@ const BLOG_POSTS: Record<string, {
         category: "Design",
         date: "2026-01-28",
         displayDateLong: "January 28, 2026",
-        image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1200", // interior design, light
         readTime: "4 min",
         content: [
             "Light is the invisible material in every room. A piece of furniture that looks stunning in a north-facing studio may feel entirely different in a sun-drenched conservatory. Our design process accounts for this from the earliest sketch.",
@@ -53,7 +53,7 @@ const BLOG_POSTS: Record<string, {
         category: "Philosophy",
         date: "2026-02-05",
         displayDateLong: "February 5, 2026",
-        image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1200", // minimalist living room
         readTime: "5 min",
         content: [
             "There is a persistent myth that minimalist furniture sacrifices comfort for aesthetics. Our philosophy is the opposite: by removing the unnecessary, we create more space for the essential — which is, almost always, how the piece feels against your body.",
@@ -67,7 +67,7 @@ const BLOG_POSTS: Record<string, {
         category: "Sustainability",
         date: "2026-02-10",
         displayDateLong: "February 10, 2026",
-        image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=1200&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1581428982868-e410dd047a90?auto=format&fit=crop&q=80&w=1200", // sustainable materials, forest
         readTime: "7 min",
         content: [
             "Sustainability at Aethelon is not a marketing program — it is an engineering constraint that shapes every decision from material selection to logistics routing.",
