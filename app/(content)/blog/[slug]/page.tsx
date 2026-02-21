@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { getBlogPostBySlug, getBlogPosts } from '@/app/actions/blog';
+import { getBlogPostBySlug } from '@/app/actions/blog';
 import ReactMarkdown from 'react-markdown';
 
 

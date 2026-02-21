@@ -10,12 +10,8 @@
     "lint": "eslint .",
     "test": "vitest run tests/unit"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@conform-to/react": "^1.15.1",
-    "@conform-to/zod": "^1.15.1",
     "@google/generative-ai": "^0.24.1",
     "@google/model-viewer": "^4.1.0",
     "@gsap/react": "^2.1.2",
