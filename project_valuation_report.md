@@ -67,6 +67,8 @@ Aethelon is built on a **Server-First** architecture using Next.js (App Router),
 *   **Checkout & Orders Currency Integrity**: Order totals and line items are now stored and processed consistently in cents (prevents over/under-charging and reporting drift).
 *   **Customer Order Journeys**: Success → orders flow and cancel flow are aligned to real routes.
 *   **Order Status Normalization**: UI filters/badges and analytics now align with enum casing and real status transitions.
+*   **Vercel Deployment (Cron Migration)**: Migrated native Vercel crons to GitHub Actions for reliable execution frequencies (e.g., 10m intervals for reservations) on Hobby-tier deployments.
+*   **Path Case-Normalization**: Unified directory casing (`components/dashboard`) across Git and imports to resolve environment-specific build failures.
 
 ### 🗄️ Data Layer
 *   **Database**: PostgreSQL (hosted on Neon/Vercel Postgres) for relational data.
@@ -104,15 +106,15 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 2.  **Smart Ranking System**: Dynamic sorting algorithm (Vector Score + Popularity + Stock + Recency) boosts high-converting products.
 3.  **Visual Search ("Scan-to-Find")**: Capability to upload an image and find visually similar products via Gemini Vision.
 4.  **AI Concierge**: Floating chatbot on the dashboard/storefront trained on catalog data.
-5.  **Generative Marketing**: Admin tool that auto-generates high-converting email copy.
+5.  **Generative36. **Order Fulfillment**: Admin interface to generate and print Shippo shipping labels instantly.
 6.  **Voice Commerce**: Web Speech API integration allows users to dictate queries.
 7.  **Search Analytics**: Dedicated tracking of user queries and zero-result fallbacks to inform inventory strategy.
 8.  **Wishlist Price Agents**: Background listeners tracking price drops.
 9.  **Predictive Forecasting**: Linear regression revenue prediction.
-10. **Sentiment Analysis**: Review sentiment scoring.
-11. **AI COO Agent**: Admin ops health summarization.
-12. **Meshy 3D Generation**: 2D-to-3D pipeline.
-13. **Virtual Atelier (AR)**: Room analysis and placement.
+11. **AI COO Agent**: Admin ops health summarization and strategic briefings.
+12. **Meshy 3D Generation**: End-to-end 2D-to-3D pipeline for asset creation.
+13. **The Vault (Premium AI Portal)**: A unified high-security gateway for next-gen interactive tools, including Room Composition and Generative 3D.
+14. **Virtual Atelier (AR)**: Advanced room analysis and surface-native object placement.
 
 ### B. The "Engine" (Commerce)
 13. **Persistent Cart**: Synced across tabs, survives refreshes, validates stock on load.
@@ -124,7 +126,7 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 19. **Discount Code Persistence**: Discount application/removal is implemented via server actions and a hardened cookie strategy (HttpOnly + SameSite Lax + Secure in production).
 116. **Legal Framework**: Dedicated GDPR/CCPA compliant pages for Privacy, Terms, and Cookies.
 117. **Subscription Logic**: Automated unsubscribe flow with status tracking.
-118. **Cart Recovery**: Dedicated cancellation retention page to capture abandoned checkouts.
+118. **Abandoned Cart Recovery**: A complete automated system featuring 2-stage email drips (1h reminder, 24h urgency), logic-driven recovery links, and real-time conversion tracking.
 119. **Global Currency**: Multi-currency support (USD/EUR/GBP/JPY) with persistent user preference.
 120. **Semantic Search**: AI-driven query expansion to understand user intent beyond keywords.
 20. **Variant Attributes**: Robust handling of Size/Color combinations with independent stock tracking.
@@ -141,7 +143,8 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 29. **Skeleton Screens**: Custom shimmer loaders replacing generic spinners.
 30. **Drag-to-Scroll Galleries**: Touch-native feel for horizontal product lists.
 31. **Responsive Navigation**: Adaptive header (Hamburger on mobile, Mega-menu on desktop).
-32. **Toast Notifications**: `sonner` integration for non-blocking success/error states.
+32. **Route Discoverability**: 100% route coverage via Unified Footer and Admin Sidebar (added links to Contacts, Integrations, and AI Try-On).
+33. **Toast Notifications**: `sonner` integration for non-blocking success/error states.
 33. **Global Search Modal**: `Ctrl+K` command palette style search.
 *   **Cinematic PDP Redesign** (Phase 12): 40/60 Split-Hero layout, typography-first details, and immersive background integration specifically for luxury furniture.
 *   **Dynamic Journal (CMS)** (Phase 5.6): High-fidelity editorial section with markdown rendering, semantic typography, and deep-link SEO.
@@ -151,11 +154,12 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 ### D. The "Tower" (Admin)
 34. **Exec Dashboard**: Real-time sales velocity, AOV, and visitor counts.
 35. **Inventory Valuation**: Real-time COGS vs. Retail Value analysis.
-36. **Product CRUD**: Rich text editing, image upload, and variant management.
-133. **Order Fulfillment**: Admin interface to generate and print Shippo shipping labels instantly.
-38. **Campaign Broadcasts**: Create and track email blasts.
-39. **Customer CRM**: View order history, LTV, and contact details.
-40. **RBAC Controls**: Middleware protecting admin routes.
+37. **Email Campaign System**: Full-featured broadcaster for creating, scheduling, and tracking high-converting marketing blasts with AI-powered copy generation.
+38. **Contact & Inquiry Management**: Centralized hub for handling customer requests, support tickets, and direct inquiries.
+39. **Integrations Center**: Health monitoring and configuration for 3rd-party services (Stripe, Shippo, Gemini, etc.).
+40. **Tax & VAT Rule Engine**: Regional tax configuration with inclusive/exclusive calculation support.
+41. **Customer CRM**: View order history, LTV, and contact details.
+42. **RBAC Controls**: Middleware protecting admin routes.
 41. **Audit Logging**: Immutable history of all admin actions (Who changed price X?).
 42. **CSV Data Export**: One-click download of financial data with explicit admin authorization on export actions.
 44. **Bulk Product Operations**: Admin tools for bulk updating products and deleting products with server-side allowlisting to prevent accidental unsafe field changes.
@@ -191,6 +195,7 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
     *   **Email**: Exponential backoff (1s, 2s, 4s) for transactional emails (`sendEmailSafe`).
     *   **Webhooks**: Stripe webhook idempotency handling ensures 100% data integrity.
     *   **Cron Hardening**: Cron routes enforce shared secret checks and fail-closed behavior.
+    *   **External Triggers**: GitHub Actions implementation for cron endpoints to bypass Vercel Hobby limits.
     *   **Webhook Hardening**: Reduced sensitive logging in Shippo webhook verification paths.
 3.  **Chaos Engineering**:
     *   `CHAOS_MODE` flag allows developers to simulate random API failures in testing.
@@ -378,4 +383,14 @@ To reach full operational status:
 *   **Admin Dashboard**: Full CRUD suite at `/dashboard/blog` with automated slug generation and content previews.
 *   **Frontend**: Re-platformed from static arrays to a Prisma-driven SSR architecture with `react-markdown` and high-performance image optimization.
 *   **SEO Integration**: Automated `sitemap.xml` updates for all published journal entries.
+### Navigation & Branding Refinements
+*   **Navigation Unification**: Removed redundant "Story" link, renamed "Journal" to "Blog", and "Room Visualizer" to "Try-On" for improved clarity.
+*   **Footer Consolidation**: Merged multiple footer versions into a single luxury-tier [layout/Footer.tsx](file:///d:/aethelon/components/layout/Footer.tsx).
+*   **Discoverability Fixes**: Added direct links to `/atelier` (Generative AI Try-On) and internal Dashboard modules (Contact, Integrations).
+*   **Admin Branding**: Unified "Premium" labeling to "Vault" and "Journal" to "Blog" in the Admin Sidebar.
+
+### Infrastructure & Deployment
+*   **Cron Migration**: Implemented `.github/workflows/cron.yml` to trigger reservation/cleanup logic at high frequencies without Vercel plan constraints.
+*   **Casing Resolution**: Normalized Git index for `components/dashboard` to resolve case-sensitivity errors on Linux build agents.
+*   **Build Hardening**: Explicit `prisma generate` step added to the production build pipeline to ensure type-safe client generation on every deploy.
 *   **Stability**: Optimized Prisma Client v6 initialization with `accelerateUrl` support for serverless build-time stability.
