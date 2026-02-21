@@ -6,20 +6,7 @@ import { notFound } from 'next/navigation';
 import { getBlogPostBySlug, getBlogPosts } from '@/app/actions/blog';
 import ReactMarkdown from 'react-markdown';
 
-export async function generateStaticParams() {
-    if (!process.env.DATABASE_URL) {
-        return [];
-    }
 
-    try {
-        const posts = await getBlogPosts(false);
-        return posts.map((post) => ({
-            slug: post.slug,
-        }));
-    } catch (error) {
-        return [];
-    }
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;

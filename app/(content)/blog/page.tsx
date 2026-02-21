@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description: "Design stories, craft process journals, and living inspiration from the Aethelon editorial team.",
 };
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export default async function BlogPage() {
     // Fetch dynamic, published posts from database

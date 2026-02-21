@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description: "Explore our comprehensive collection of premium furniture categories.",
 };
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export default async function CategoriesIndexPage() {
     // Fetch top-level categories
