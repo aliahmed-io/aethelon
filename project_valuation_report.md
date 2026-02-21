@@ -106,65 +106,68 @@ The design philosophy is **"Cinematic Commerce"**—moving away from static grid
 2.  **Smart Ranking System**: Dynamic sorting algorithm (Vector Score + Popularity + Stock + Recency) boosts high-converting products.
 3.  **Visual Search ("Scan-to-Find")**: Capability to upload an image and find visually similar products via Gemini Vision.
 4.  **AI Concierge**: Floating chatbot on the dashboard/storefront trained on catalog data.
-5.  **Generative36. **Order Fulfillment**: Admin interface to generate and print Shippo shipping labels instantly.
+5.  **Generative Marketing**: Admin tool that auto-generates high-converting marketing/email copy.
 6.  **Voice Commerce**: Web Speech API integration allows users to dictate queries.
 7.  **Search Analytics**: Dedicated tracking of user queries and zero-result fallbacks to inform inventory strategy.
 8.  **Wishlist Price Agents**: Background listeners tracking price drops.
 9.  **Predictive Forecasting**: Linear regression revenue prediction.
+10. **Sentiment Analysis**: Review sentiment scoring.
 11. **AI COO Agent**: Admin ops health summarization and strategic briefings.
 12. **Meshy 3D Generation**: End-to-end 2D-to-3D pipeline for asset creation.
 13. **The Vault (Premium AI Portal)**: A unified high-security gateway for next-gen interactive tools, including Room Composition and Generative 3D.
 14. **Virtual Atelier (AR)**: Advanced room analysis and surface-native object placement.
 
 ### B. The "Engine" (Commerce)
-13. **Persistent Cart**: Synced across tabs, survives refreshes, validates stock on load.
-14. **Inventory Reservation System**: 15-minute "soft hold" on stock when entering checkout prevents overselling.
-15. **Double-Entry Ledger**: `InventoryTransaction` table tracks every +1/-1 movement for auditability.
-16. **Stripe Payments**: Checkout session flow + webhook reconciliation, email capture, and correctness fixes on amount handling.
-106. **Dynamic Tax/Shipping**: Live carrier rates via Shippo API integration.
-18. **Discount Engine**: Support for fixed amount off, percentage off, and specific product targeting.
-19. **Discount Code Persistence**: Discount application/removal is implemented via server actions and a hardened cookie strategy (HttpOnly + SameSite Lax + Secure in production).
-116. **Legal Framework**: Dedicated GDPR/CCPA compliant pages for Privacy, Terms, and Cookies.
-117. **Subscription Logic**: Automated unsubscribe flow with status tracking.
-118. **Abandoned Cart Recovery**: A complete automated system featuring 2-stage email drips (1h reminder, 24h urgency), logic-driven recovery links, and real-time conversion tracking.
-119. **Global Currency**: Multi-currency support (USD/EUR/GBP/JPY) with persistent user preference.
-120. **Semantic Search**: AI-driven query expansion to understand user intent beyond keywords.
-20. **Variant Attributes**: Robust handling of Size/Color combinations with independent stock tracking.
-21. **Interactive Size Guide**: Modal-based chart customizable per category.
-22. **Low Stock Scarcity**: UI alerts ("Only 2 left") triggered by configurable thresholds.
-23. **Cross-Sell Recommendations**: Algorithms suggesting related products on PDPs.
-24. **Verified Reviews**: Logic ensuring only confirmed purchasers can leave feedback.
+15. **Persistent Cart**: Synced across tabs, survives refreshes, validates stock on load.
+16. **Inventory Reservation System**: 15-minute "soft hold" on stock when entering checkout prevents overselling.
+17. **Double-Entry Ledger**: `InventoryTransaction` table tracks every +1/-1 movement for auditability.
+18. **Stripe Payments**: Checkout session flow + webhook reconciliation, email capture, and correctness fixes on amount handling.
+19. **Dynamic Tax/Shipping**: Live carrier rates via Shippo API integration.
+20. **Discount Engine**: Support for fixed amount off, percentage off, and specific product targeting.
+21. **Discount Code Persistence**: Discount application/removal is implemented via server actions and hardened cookie strategy.
+22. **Legal Framework**: Dedicated GDPR/CCPA compliant pages for Privacy, Terms, and Cookies.
+23. **Subscription Logic**: Automated unsubscribe flow with status tracking.
+24. **Abandoned Cart Recovery**: Automated 2-stage email drips (1h reminder, 24h urgency) with recovery tracking.
+25. **Global Currency**: Multi-currency support (USD/EUR/GBP/JPY) with persistent user preference.
+26. **AI-Driven Query Expansion**: Advanced semantic layer understanding user intent beyond keywords.
+27. **Variant Attributes**: Robust handling of Size/Color combinations with independent stock tracking.
+28. **Interactive Size Guide**: Modal-based chart customizable per category.
+29. **Low Stock Scarcity**: UI alerts ("Only 2 left") triggered by configurable thresholds.
+30. **Cross-Sell Recommendations**: Algorithms suggesting related products on PDPs.
+31. **Verified Reviews**: Logic ensuring only confirmed purchasers can leave feedback.
 
 ### C. The "Experience" (UI/UX)
-25. **WebGL 3D Viewer**: Interactive 3D model viewer with orbit controls + robust fallback/error handling.
-26. **Audio Controller**: Global ambient sound toggle with fade logic.
-27. **Lenis Scroll**: Smooth, inertial scrolling implementation.
-28. **Parallax Loading**: Elements move at different speeds during scroll for depth.
-29. **Skeleton Screens**: Custom shimmer loaders replacing generic spinners.
-30. **Drag-to-Scroll Galleries**: Touch-native feel for horizontal product lists.
-31. **Responsive Navigation**: Adaptive header (Hamburger on mobile, Mega-menu on desktop).
-32. **Route Discoverability**: 100% route coverage via Unified Footer and Admin Sidebar (added links to Contacts, Integrations, and AI Try-On).
-33. **Toast Notifications**: `sonner` integration for non-blocking success/error states.
-33. **Global Search Modal**: `Ctrl+K` command palette style search.
-*   **Cinematic PDP Redesign** (Phase 12): 40/60 Split-Hero layout, typography-first details, and immersive background integration specifically for luxury furniture.
-*   **Dynamic Journal (CMS)** (Phase 5.6): High-fidelity editorial section with markdown rendering, semantic typography, and deep-link SEO.
-*   **Integrated Action Pills** (Phase 12): Floating 3D/AR/AI triggers within the product gallery.
-*   **Enhanced Variant Logic** (Phase 12): Visual color swatches and synchronized stock/cart tracking for complex product attributes.
+32. **WebGL 3D Viewer**: Interactive 3D model viewer with orbit controls + robust fallback logic.
+33. **Audio Controller**: Global ambient sound toggle with fade logic.
+34. **Lenis Scroll**: Smooth, inertial scrolling implementation.
+35. **Parallax Loading**: Multi-speed scroll depth for immersive storytelling.
+36. **Skeleton Screens**: Custom shimmer loaders replacing generic spinners.
+37. **Drag-to-Scroll Galleries**: Touch-native feel for horizontal product lists.
+38. **Responsive Navigation**: Adaptive header (Hamburger on mobile, Mega-menu on desktop).
+39. **Route Discoverability**: 100% route coverage via Unified Footer and Admin Sidebar.
+40. **Toast Notifications**: `sonner` integration for non-blocking success/error states.
+41. **Global Search Modal**: `Ctrl+K` command palette style search.
+42. **Cinematic PDP**: 40/60 Split-Hero layout with immersive background integration.
+43. **Dynamic Journal (CMS)**: High-fidelity editorial section with markdown rendering and deep-link SEO.
+44. **Integrated Action Pills**: Floating 3D/AR/AI triggers within product galleries.
+45. **Enhanced Variant UX**: Visual color swatches and synchronized stock tracking.
 
 ### D. The "Tower" (Admin)
-34. **Exec Dashboard**: Real-time sales velocity, AOV, and visitor counts.
-35. **Inventory Valuation**: Real-time COGS vs. Retail Value analysis.
-37. **Email Campaign System**: Full-featured broadcaster for creating, scheduling, and tracking high-converting marketing blasts with AI-powered copy generation.
-38. **Contact & Inquiry Management**: Centralized hub for handling customer requests, support tickets, and direct inquiries.
-39. **Integrations Center**: Health monitoring and configuration for 3rd-party services (Stripe, Shippo, Gemini, etc.).
-40. **Tax & VAT Rule Engine**: Regional tax configuration with inclusive/exclusive calculation support.
-41. **Customer CRM**: View order history, LTV, and contact details.
-42. **RBAC Controls**: Middleware protecting admin routes.
-41. **Audit Logging**: Immutable history of all admin actions (Who changed price X?).
-42. **CSV Data Export**: One-click download of financial data with explicit admin authorization on export actions.
-44. **Bulk Product Operations**: Admin tools for bulk updating products and deleting products with server-side allowlisting to prevent accidental unsafe field changes.
-43. **System Health**: Uptime monitoring widget.
-44. **Journal CMS**: Full editorial suite for writing, editing, and publishing articles with markdown support and cover image management.
+46. **Exec Dashboard**: Real-time sales velocity, AOV, and visitor counts.
+47. **Inventory Valuation**: Real-time COGS vs. Retail Value analysis.
+48. **Product CRUD**: Rich text editing, image upload, and variant management.
+49. **Order Fulfillment**: Admin interface to generate and print Shippo shipping labels instantly.
+50. **Email Campaign System**: Full-featured broadcaster for creating and tracking marketing blasts.
+51. **Contact & Inquiry Hub**: Centralized management for handled customer requests and tickets.
+52. **Integrations Center**: Health monitoring and config for 3rd-party services (Stripe, Shippo, Gemini, etc.).
+53. **Tax & VAT Rule Engine**: Regional tax configuration with inclusive/exclusive math support.
+54. **Customer CRM**: View order history, LTV, and contact details.
+55. **RBAC Controls**: Middleware-level protection for sensitive admin routes.
+56. **Audit Logging**: Immutable history of all admin actions for operational accountability.
+57. **CSV Data Export**: Secure, admin-authorized download of financial data.
+58. **Bulk Operations**: Mass update/deletion of products with server-side safety guards.
+59. **System Health**: Dynamic uptime and API status monitoring widget.
+60. **Journal CMS**: Full editorial suite for writing, editing, and publishing markdown articles.
 
 ---
 
