@@ -92,7 +92,7 @@ export default async function BlogPage() {
 
                         {blogPosts.length > 1 && (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {blogPosts.slice(1).map((post: any) => (
+                                {blogPosts.slice(1).map((post: BlogPost) => (
                                     <Link key={post.slug} href={`/blog/${post.slug}`} className="group relative bg-muted/30 border border-border backdrop-blur-sm rounded-sm overflow-hidden flex flex-col hover:border-accent transition-colors">
                                         <article className="flex-1 flex flex-col">
                                             <div className="aspect-[4/3] relative overflow-hidden bg-muted mb-4">
