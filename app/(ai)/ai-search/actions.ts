@@ -5,7 +5,7 @@ import { GoogleGenerativeAI, GenerateContentResult } from "@google/generative-ai
 import prisma from "../../../lib/db";
 import { Product } from "../../../lib/assistantTypes";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "mock");
 
 interface AiSearchResponse {
     products: Product[];

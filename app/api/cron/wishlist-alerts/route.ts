@@ -6,7 +6,7 @@ import logger from "@/lib/logger";
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || "re_mock");
 
 export async function GET(req: Request) {
     const authHeader = req.headers.get("authorization");

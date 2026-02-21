@@ -8,7 +8,7 @@ import { PaymentService } from "@/modules/payments/payments.service";
 import { InventoryService } from "@/modules/inventory/inventory.service";
 import { sendEmailSafe } from "@/lib/resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || "re_mock");
 
 export async function fulfillOrder(prevState: any, formData: FormData) {
     const user = await requireAdmin();
