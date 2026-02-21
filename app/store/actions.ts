@@ -12,6 +12,7 @@ import Stripe from "stripe";
 import { parseWithZod } from "@conform-to/zod";
 import { reviewSchema } from "@/lib/zodSchemas";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { generateEmbedding } from "@/lib/ai/embeddings";
 import { requireAdmin, requireUser } from "@/lib/auth";
 import { CircuitBreaker } from "@/modules/observability/circuit-breaker";
 
@@ -282,6 +283,36 @@ export async function delItem(formData: FormData) {
     revalidateTag("products");
 }
 
+function parseImageArray(images: string | null): string[] {
+    if (!images || typeof images !== "string") return [];
+    const trimmed = images.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith("[")) {
+        try {
+            const parsed = JSON.parse(trimmed) as unknown;
+            return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
+        } catch {
+            return trimmed.split(",").map((s) => s.trim()).filter(Boolean);
+        }
+    }
+    return trimmed.split(",").map((s) => s.trim()).filter(Boolean);
+}
+
+function parseStringArray(value: string | null): string[] {
+    if (!value || typeof value !== "string") return [];
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith("[")) {
+        try {
+            const parsed = JSON.parse(trimmed) as unknown;
+            return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
+        } catch {
+            return [];
+        }
+    }
+    return trimmed.split(",").map((s) => s.trim()).filter(Boolean);
+}
+
 export async function createProduct(_prevState: unknown, formData: FormData) {
     const user = await requireAdmin();
 
@@ -289,13 +320,13 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
     const description = formData.get("description") as string;
     const price = Number(formData.get("price"));
     const images = formData.get("images") as string;
-    const imageArray = images ? images.split(",") : [];
+    const imageArray = parseImageArray(images);
 
     const categoryId = formData.get("category") as string;
     const status = formData.get("status") as "draft" | "published" | "archived";
-
-
     const isFeatured = formData.get("isFeatured") === "on";
+    const mainCategory = (formData.get("mainCategory") as string) || "MEN";
+    const allowBackorder = formData.get("allowBackorder") === "on";
 
     // Rate Limit: 20 creations per min (Admin)
     const { success } = await rateLimit(`create-product-${user.id}`, 20, "60 s");
@@ -303,7 +334,7 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
         return redirect("/dashboard/products?error=Rate limit exceeded");
     }
 
-    await prisma.product.create({
+    const product = await prisma.product.create({
         data: {
             name,
             description,
@@ -312,15 +343,34 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
             categories: categoryId ? { connect: { id: categoryId } } : undefined,
             status,
             isFeatured,
-            costPrice: Number(formData.get("costPrice") || 0),
-            brand: formData.get("brand") as string || "Generic",
-            modelUrl: formData.get("modelUrl") as string || null,
-            usdzUrl: formData.get("usdzUrl") as string || null,
+            mainCategory: mainCategory === "WOMEN" || mainCategory === "KIDS" ? mainCategory : "MEN",
+            costPrice: Number(formData.get("costPrice") ?? 0),
+            brand: (formData.get("brand") as string) || "Generic",
+            modelUrl: (formData.get("modelUrl") as string) || null,
+            usdzUrl: (formData.get("usdzUrl") as string) || null,
+            stockQuantity: Number(formData.get("stockQuantity") ?? 0),
+            weight: Number(formData.get("weight") ?? 1),
+            color: (formData.get("color") as string) || null,
+            style: (formData.get("style") as string) || null,
+            height: (formData.get("height") as string) || null,
+            pattern: (formData.get("pattern") as string) || null,
+            tags: parseStringArray(formData.get("tags") as string),
+            features: parseStringArray(formData.get("features") as string),
+            sizes: parseStringArray(formData.get("sizes") as string),
+            imageDescription: (formData.get("imageDescription") as string) || null,
+            discountPercentage: Number(formData.get("discountPercentage") ?? 0),
+            lowStockThreshold: Number(formData.get("lowStockThreshold") ?? 5),
+            allowBackorder,
+            backorderLimit: Number(formData.get("backorderLimit") ?? 0),
         },
     });
 
     // @ts-ignore
     revalidateTag("products");
+
+    // Background: Update embedding for new product
+    updateProductEmbedding(product.id).catch(err => logger.error(err, "Product Indexing Error"));
+
     return redirect("/dashboard/products");
 }
 
@@ -332,12 +382,12 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
     const description = formData.get("description") as string;
     const price = Number(formData.get("price"));
     const images = formData.get("images") as string;
-    const imageArray = images ? images.split(",") : [];
+    const imageArray = parseImageArray(images);
     const categoryId = formData.get("category") as string;
     const status = formData.get("status") as "draft" | "published" | "archived";
-
-
     const isFeatured = formData.get("isFeatured") === "on";
+    const mainCategory = (formData.get("mainCategory") as string) || "MEN";
+    const allowBackorder = formData.get("allowBackorder") === "on";
 
     // Rate Limit: 20 edits per min (Admin)
     const { success } = await rateLimit(`edit-product-${user.id}`, 20, "60 s");
@@ -357,28 +407,68 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
             categories: categoryId ? { set: [{ id: categoryId }] } : { set: [] },
             status,
             isFeatured,
-            costPrice: Number(formData.get("costPrice") || 0),
-            brand: formData.get("brand") as string || "Generic",
-            modelUrl: formData.get("modelUrl") as string || null,
-            usdzUrl: formData.get("usdzUrl") as string || null,
+            mainCategory: mainCategory === "WOMEN" || mainCategory === "KIDS" ? mainCategory : "MEN",
+            costPrice: Number(formData.get("costPrice") ?? 0),
+            brand: (formData.get("brand") as string) || "Generic",
+            modelUrl: (formData.get("modelUrl") as string) || null,
+            usdzUrl: (formData.get("usdzUrl") as string) || null,
+            stockQuantity: Number(formData.get("stockQuantity") ?? 0),
+            weight: Number(formData.get("weight") ?? 1),
+            color: (formData.get("color") as string) || null,
+            style: (formData.get("style") as string) || null,
+            height: (formData.get("height") as string) || null,
+            pattern: (formData.get("pattern") as string) || null,
+            tags: parseStringArray(formData.get("tags") as string),
+            features: parseStringArray(formData.get("features") as string),
+            sizes: parseStringArray(formData.get("sizes") as string),
+            imageDescription: (formData.get("imageDescription") as string) || null,
+            discountPercentage: Number(formData.get("discountPercentage") ?? 0),
+            lowStockThreshold: Number(formData.get("lowStockThreshold") ?? 5),
+            allowBackorder,
+            backorderLimit: Number(formData.get("backorderLimit") ?? 0),
         },
     });
+
+    // Background: Refresh embedding
+    updateProductEmbedding(productId).catch(err => logger.error(err, "Product Update Indexing Error"));
 
     return redirect("/dashboard/products");
 }
 
 export async function createCategory(_prevState: unknown, formData: FormData) {
-    const user = await requireAdmin();
+    await requireAdmin();
+
+    const name = formData.get("name") as string;
+    const slug = (formData.get("slug") as string)?.trim() || name.toLowerCase().replace(/ /g, "-").replace(/[^a-z0-9-]/g, "-");
+    const description = formData.get("description") as string;
+    const image = (formData.get("image") as string)?.trim() || null;
+    const parentId = (formData.get("parentId") as string)?.trim() || null;
+    const rankingModeRaw = formData.get("rankingMode") as string;
+    const rankingMode = rankingModeRaw === "SEMANTIC" || rankingModeRaw === "TRENDING" ? rankingModeRaw : "DEFAULT";
 
     await prisma.category.create({
         data: {
-            name: formData.get("name") as string,
-            slug: (formData.get("name") as string).toLowerCase().replace(/ /g, "-"),
-            description: formData.get("description") as string,
+            name,
+            slug,
+            description: description || undefined,
+            image,
+            parentId,
+            rankingMode,
         },
     });
 
     return redirect("/dashboard/categories");
+}
+
+function parseOptionalJson<T>(value: string | null): T | null {
+    if (!value || typeof value !== "string") return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    try {
+        return JSON.parse(trimmed) as T;
+    } catch {
+        return null;
+    }
 }
 
 export async function createCampaign(_prevState: unknown, formData: FormData) {
@@ -387,23 +477,56 @@ export async function createCampaign(_prevState: unknown, formData: FormData) {
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const imageString = formData.get("imageString") as string;
-    // Handle multi-select for products if passed as comma-separated or multiple fields?
-    // Usually formData.getAll("products") if checkboxes.
-    // Assuming we might pass a JSON string or handle it differently in the form.
-    // For simplicity, let's assume "selectedProducts" is a JSON string of IDs
-    const selectedProducts = formData.get("selectedProducts") as string;
-    const productIds = selectedProducts ? JSON.parse(selectedProducts) : [];
+    const selectedProductsRaw = formData.get("selectedProducts") as string;
+    const selectedProductDetailsRaw = formData.get("selectedProductDetails") as string;
+
+    type ProductDetail = { id: string; order?: number; badge?: string | null; highlightText?: string | null };
+    const productDetails: Record<string, ProductDetail> = selectedProductDetailsRaw
+        ? parseOptionalJson<ProductDetail[]>(selectedProductDetailsRaw)?.reduce(
+            (acc, item) => {
+                if (item?.id) acc[item.id] = item;
+                return acc;
+            },
+            {} as Record<string, ProductDetail>
+        ) ?? {}
+        : {};
+
+    const productIds: string[] = selectedProductsRaw ? JSON.parse(selectedProductsRaw) : [];
+
+    const statusRaw = formData.get("status") as string;
+    const status = statusRaw === "ACTIVE" || statusRaw === "ARCHIVED" ? statusRaw : "DRAFT";
+    const startDateRaw = formData.get("startDate") as string;
+    const endDateRaw = formData.get("endDate") as string;
+    const startDate = startDateRaw ? new Date(startDateRaw) : null;
+    const endDate = endDateRaw ? new Date(endDateRaw) : null;
+    const mobileHeroImage = (formData.get("mobileHeroImage") as string) || null;
+    const theme = parseOptionalJson<Record<string, unknown>>(formData.get("theme") as string);
+    const metadata = parseOptionalJson<Record<string, unknown>>(formData.get("metadata") as string);
 
     await prisma.campaign.create({
         data: {
             title,
-            slug: title.toLowerCase().replace(/ /g, "-"),
+            slug: title.toLowerCase().replace(/ /g, "-").replace(/[^a-z0-9-]/g, "-"),
             description,
-            heroImage: imageString,
+            status,
+            startDate,
+            endDate,
+            heroImage: imageString || null,
+            mobileHeroImage,
+            theme: theme ?? undefined,
+            metadata: metadata ?? undefined,
             products: {
-                connect: productIds.map((id: string) => ({ id }))
-            }
-        }
+                create: productIds.map((id, index) => {
+                    const detail = productDetails[id];
+                    return {
+                        product: { connect: { id } },
+                        order: detail?.order ?? index,
+                        badge: detail?.badge ?? null,
+                        highlightText: detail?.highlightText ?? null,
+                    };
+                }),
+            },
+        },
     });
 
     return redirect("/dashboard/campaigns");
@@ -602,6 +725,7 @@ export async function loadMoreProducts({
     price,
     color,
     size,
+    style,
 }: {
     offset?: number;
     limit?: number;
@@ -610,6 +734,7 @@ export async function loadMoreProducts({
     price?: string;
     color?: string;
     size?: string;
+    style?: string;
 }) {
     const where: any = {
         status: "published",
@@ -625,6 +750,10 @@ export async function loadMoreProducts({
 
     if (size) {
         where.sizes = { has: size };
+    }
+
+    if (style) {
+        where.style = style;
     }
 
     if (price) {
@@ -779,6 +908,50 @@ export async function removeDiscount() {
     } catch (error) {
         console.error("Remove Discount Error:", error);
         return { error: "Failed to remove discount" };
+    }
+}
+
+/**
+ * Updates the vector embedding for a product based on its full metadata.
+ * This is called automatically after product creation/edit.
+ */
+export async function updateProductEmbedding(productId: string) {
+    try {
+        const product = await prisma.product.findUnique({
+            where: { id: productId },
+            include: { categories: true }
+        });
+
+        if (!product) return;
+
+        const categoryNames = product.categories.map(c => c.name).join(', ');
+
+        // Enrich context with newly identified furniture-specific fields
+        const textToEmbed = `
+            Name: ${product.name}
+            Brand: ${product.brand || 'Generic'}
+            Categories: ${categoryNames || product.mainCategory}
+            Description: ${product.description}
+            Style: ${product.style || 'Unspecified'}
+            Features: ${product.features.join(', ') || 'None'}
+            Tags: ${product.tags.join(', ') || 'None'}
+            Pattern: ${product.pattern || 'None'}
+            Dimensions: ${product.height || 'Standard'}
+        `.trim();
+
+        const embedding = await generateEmbedding(textToEmbed);
+
+        if (embedding) {
+            const vectorString = `[${embedding.join(',')}]`;
+            await prisma.$executeRawUnsafe(
+                `UPDATE "Product" SET embedding = $1::vector WHERE id = $2`,
+                vectorString,
+                productId
+            );
+            logger.info({ productId }, "Product embedding updated successfully");
+        }
+    } catch (error) {
+        logger.error({ err: error, productId }, "Failed to update product embedding");
     }
 }
 

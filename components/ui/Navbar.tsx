@@ -46,11 +46,12 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
     const navLinks = [
         { href: '/', label: 'Home' },
         { href: '/shop', label: 'Shop' },
+        { href: '/campaigns', label: 'Campaigns' },
         { href: '/categories', label: 'Categories' },
         { href: '/ai-search', label: 'Advanced Search' },
-        { href: '/ai-vision', label: 'Room Visualizer' },
-        { href: '/about', label: 'Story' },
-        { href: '/blog', label: 'Journal' },
+        { href: '/ai-vision', label: 'Try-On' },
+        { href: '/vault', label: 'Vault' },
+        { href: '/blog', label: 'Blog' },
     ];
 
     return (

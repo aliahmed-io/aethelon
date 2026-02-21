@@ -10,7 +10,7 @@ interface ShopPageProps {
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
-    const { category, sort, price, color, size } = await searchParams;
+    const { category, sort, price, color, size, style } = await searchParams;
 
     // Build Where Clause
     const where: Prisma.ProductWhereInput = {
@@ -51,6 +51,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     if (size && size !== "all") {
         where.sizes = {
             has: size as string,
+        };
+    }
+
+    // Style Filter
+    if (style && style !== "all") {
+        where.style = {
+            contains: style as string,
+            mode: "insensitive",
         };
     }
 
@@ -123,25 +131,10 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                     sizes={sizes}
                 />
 
-                {/* Recommended Section (Only on main view) */}
-                {recommendations.length > 0 && !category && !price && !color && !size && (
-                    <div className="mb-12">
-                        <h2 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground mb-6 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
-                            Recommended for you
-                        </h2>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                            {recommendations.map((product: Product) => (
-                                <ProductCard key={product.id} item={product} />
-                            ))}
-                        </div>
-                        <div className="my-10 border-t border-border/50" />
-                    </div>
-                )}
-
                 {/* Product Grid */}
                 <ProductGrid products={products} />
             </div>
         </main>
     );
 }
+

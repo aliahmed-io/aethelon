@@ -24,7 +24,9 @@ export default function CreateBlogPostPage() {
         excerpt: "",
         metaDescription: "",
         author: "Aethelon Team",
-        published: false
+        published: false,
+        category: "General",
+        readTime: ""
     });
 
     const generateSlug = (title: string) => {
@@ -199,6 +201,28 @@ export default function CreateBlogPostPage() {
                                         value={formData.author}
                                         onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
                                         className="bg-background border-border text-sm"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="category" className="text-xs uppercase tracking-widest text-muted-foreground">Category</Label>
+                                    <Input
+                                        id="category"
+                                        value={formData.category}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                                        className="bg-background border-border text-sm"
+                                        placeholder="General"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="readTime" className="text-xs uppercase tracking-widest text-muted-foreground">Read Time</Label>
+                                    <Input
+                                        id="readTime"
+                                        value={formData.readTime}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, readTime: e.target.value }))}
+                                        className="bg-background border-border text-sm"
+                                        placeholder="e.g. 3 min read"
                                     />
                                 </div>
 

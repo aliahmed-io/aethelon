@@ -44,6 +44,16 @@ const COLORS = [
     { label: "Green", value: "green" },
 ];
 
+const STYLES = [
+    { label: "Minimalist", value: "minimalist" },
+    { label: "Modern", value: "modern" },
+    { label: "Contemporary", value: "contemporary" },
+    { label: "Industrial", value: "industrial" },
+    { label: "Scandinavian", value: "scandinavian" },
+    { label: "Bohemian", value: "bohemian" },
+    { label: "Mid-century", value: "mid-century" },
+];
+
 export function FurnitureFilterBar({ totalCount, categories, sizes }: FurnitureFilterBarProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -55,6 +65,7 @@ export function FurnitureFilterBar({ totalCount, categories, sizes }: FurnitureF
     const currentPrice = searchParams.get("price") || "all";
     const currentColor = searchParams.get("color") || "all";
     const currentSize = searchParams.get("size") || "all";
+    const currentStyle = searchParams.get("style") || "all";
 
     const updateFilter = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -70,7 +81,7 @@ export function FurnitureFilterBar({ totalCount, categories, sizes }: FurnitureF
         router.push("/shop");
     };
 
-    const hasActiveFilters = currentPrice !== "all" || currentColor !== "all" || currentSize !== "all" || currentCategory !== "all" || currentSort !== "newest";
+    const hasActiveFilters = currentPrice !== "all" || currentColor !== "all" || currentSize !== "all" || currentCategory !== "all" || currentSort !== "newest" || currentStyle !== "all";
 
     return (
         <div className="border-b border-border pb-6 mb-8 space-y-6">
@@ -204,6 +215,19 @@ export function FurnitureFilterBar({ totalCount, categories, sizes }: FurnitureF
                             <SelectItem value="all">All Sizes</SelectItem>
                             {sizes.map((size) => (
                                 <SelectItem key={size} value={size}>{size}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    {/* Style */}
+                    <Select value={currentStyle} onValueChange={(val) => updateFilter("style", val)}>
+                        <SelectTrigger className="w-[140px] h-9 text-xs uppercase tracking-wider bg-background border-border">
+                            <SelectValue placeholder="Style" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Styles</SelectItem>
+                            {STYLES.map((style) => (
+                                <SelectItem key={style.value} value={style.value}>{style.label}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>

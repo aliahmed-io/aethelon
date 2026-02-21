@@ -1,0 +1,23 @@
+name: App Cron Jobs
+
+on:
+  schedule:
+    - cron: '*/10 * * * *' # Every 10 minutes (for reservations)
+    - cron: '0 * * * *'     # Every hour (for abandoned carts)
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  run-crons:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Reservations Cleanup
+        if: github.event.schedule == '*/10 * * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -X GET "https://${{ secrets.APP_URL }}/api/cron/reservations" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+
+      - name: Trigger Abandoned Carts
+        if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -X GET "https://${{ secrets.APP_URL }}/api/cron/abandoned-carts" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

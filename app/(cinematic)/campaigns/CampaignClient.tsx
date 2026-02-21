@@ -83,7 +83,7 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                                 className="max-w-2xl"
                             >
                                 <span className="text-xs uppercase tracking-[0.3em] text-accent mb-4 block">Current Campaign</span>
-                                <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6 text-white drop-shadow-lg">
+                                <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6 text-background drop-shadow-lg">
                                     {heroBanner.title}
                                 </h1>
                                 {heroBanner.link && (
@@ -103,7 +103,7 @@ export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientP
                             animate={{ y: [0, 10, 0] }}
                             transition={{ repeat: Infinity, duration: 2 }}
                         >
-                            <ArrowDown className="w-6 h-6 text-white/50" />
+                            <ArrowDown className="w-6 h-6 text-background/60" />
                         </motion.div>
                     </>
                 ) : (

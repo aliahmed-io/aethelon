@@ -38,6 +38,19 @@ interface ProductFormProps {
         brand?: string | null;
         modelUrl?: string | null;
         usdzUrl?: string | null;
+        color?: string | null;
+        style?: string | null;
+        height?: string | null;
+        pattern?: string | null;
+        tags?: string[];
+        features?: string[];
+        sizes?: string[];
+        imageDescription?: string | null;
+        discountPercentage?: number;
+        lowStockThreshold?: number;
+        allowBackorder?: boolean;
+        backorderLimit?: number;
+        mainCategory?: string;
     } | null;
 }
 
@@ -58,6 +71,7 @@ function SubmitButton({ isEdit }: { isEdit: boolean }) {
 export function ProductForm({ categories, initialData }: ProductFormProps) {
     const [images, setImages] = useState<string[]>(initialData?.images || []);
     const [isFeatured, setIsFeatured] = useState<boolean>(initialData?.isFeatured || false);
+    const [allowBackorder, setAllowBackorder] = useState<boolean>(initialData?.allowBackorder ?? false);
 
     // Use useActionState to handle the server action response and signature
     const [, dispatch] = useActionState(initialData ? editProduct : createProduct, null);
@@ -210,6 +224,16 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
                         <input type="hidden" name="images" value={JSON.stringify(images)} />
 
+                        <div className="space-y-2">
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Image Description (ALT)</Label>
+                            <Textarea
+                                name="imageDescription"
+                                placeholder="Accessibility description for product images"
+                                defaultValue={initialData?.imageDescription ?? ""}
+                                className="min-h-[60px] border-border resize-none text-sm"
+                            />
+                        </div>
+
                         {images.length > 0 && (
                             <div className="grid grid-cols-4 gap-4">
                                 {images.map((img, i) => (
@@ -282,11 +306,25 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                                 <Label className="uppercase text-xs tracking-widest text-foreground/80">Featured</Label>
                                 <p className="text-[10px] text-muted-foreground">Highlight in store</p>
                             </div>
+                            <input type="hidden" name="isFeatured" value={isFeatured ? "on" : "off"} />
                             <Switch
-                                name="isFeatured"
                                 checked={isFeatured}
                                 onCheckedChange={setIsFeatured}
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Main Category</Label>
+                            <Select name="mainCategory" defaultValue={initialData?.mainCategory || "MEN"}>
+                                <SelectTrigger className="h-10 border-border">
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-popover text-popover-foreground border-border">
+                                    <SelectItem value="MEN">Men</SelectItem>
+                                    <SelectItem value="WOMEN">Women</SelectItem>
+                                    <SelectItem value="KIDS">Kids</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
@@ -324,6 +362,19 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                         </div>
 
                         <div className="space-y-2">
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Discount %</Label>
+                            <Input
+                                name="discountPercentage"
+                                type="number"
+                                min={0}
+                                max={100}
+                                defaultValue={initialData?.discountPercentage ?? 0}
+                                className="font-mono h-10 border-border"
+                                placeholder="0"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
                             <Label className="uppercase text-xs tracking-widest text-muted-foreground">Cost Price (Cents)</Label>
                             <Input
                                 name="costPrice"
@@ -348,8 +399,61 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                         </div>
 
                         <div className="space-y-2">
+                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Low Stock Threshold</Label>
+                            <Input name="lowStockThreshold" type="number" min={0} defaultValue={initialData?.lowStockThreshold ?? 5} className="h-10 border-border" placeholder="5" />
+                        </div>
+
+                        <div className="flex items-center justify-between bg-muted/30 p-4 rounded-sm border border-border">
+                            <div className="space-y-0.5">
+                                <Label className="uppercase text-xs tracking-widest text-foreground/80">Allow Backorder</Label>
+                                <p className="text-[10px] text-muted-foreground">Sell when out of stock</p>
+                            </div>
+                            <input type="hidden" name="allowBackorder" value={allowBackorder ? "on" : "off"} />
+                            <Switch checked={allowBackorder} onCheckedChange={setAllowBackorder} />
+                        </div>
+
+                        {allowBackorder && (
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Backorder Limit</Label>
+                                <Input name="backorderLimit" type="number" min={0} defaultValue={initialData?.backorderLimit ?? 0} className="h-10 border-border" placeholder="0" />
+                            </div>
+                        )}
+
+                        <div className="space-y-2">
                             <Label className="uppercase text-xs tracking-widest text-muted-foreground">Brand</Label>
                             <Input name="brand" placeholder="Brand Name" defaultValue={initialData?.brand || "Generic"} className="h-10 border-border" />
+                        </div>
+
+                        <div className="pt-4 border-t border-border space-y-3">
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70">Filterable / discovery</h4>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Color</Label>
+                                <Input name="color" placeholder="e.g. Navy" defaultValue={initialData?.color ?? ""} className="h-10 border-border" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Style</Label>
+                                <Input name="style" placeholder="e.g. Modern" defaultValue={initialData?.style ?? ""} className="h-10 border-border" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Height</Label>
+                                <Input name="height" placeholder="e.g. 32 in" defaultValue={initialData?.height ?? ""} className="h-10 border-border" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Pattern</Label>
+                                <Input name="pattern" placeholder="e.g. Solid" defaultValue={initialData?.pattern ?? ""} className="h-10 border-border" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Tags (comma-separated)</Label>
+                                <Input name="tags" placeholder="outdoor, sale, new" defaultValue={initialData?.tags?.join(", ") ?? ""} className="h-10 border-border" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Features (comma-separated)</Label>
+                                <Input name="features" placeholder="Eco-friendly, Handcrafted" defaultValue={initialData?.features?.join(", ") ?? ""} className="h-10 border-border" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="uppercase text-xs tracking-widest text-muted-foreground">Sizes (comma-separated)</Label>
+                                <Input name="sizes" placeholder="S, M, L, XL" defaultValue={initialData?.sizes?.join(", ") ?? ""} className="h-10 border-border" />
+                            </div>
                         </div>
 
                         <div className="space-y-2 pt-4 border-t border-border">

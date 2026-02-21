@@ -1,5 +1,5 @@
 import Navbar from '@/components/ui/Navbar';
-import Footer from '@/components/ui/Footer';
+import Footer from '@/components/layout/Footer';
 import LazyParticleCanvas from '@/components/landing/LazyParticleCanvas';
 import ScrollManager from '@/components/landing/ScrollManager';
 import NarrativeSections from '@/components/landing/NarrativeSections';

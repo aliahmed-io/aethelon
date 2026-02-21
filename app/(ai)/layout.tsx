@@ -5,7 +5,7 @@ import { AIChatbotProvider } from "@/components/providers/AIChatbotProvider";
 
 /**
  * AI Tools layout — Navbar + Chatbot.
- * Used by AI Search, AI Vision, Atelier, Vault.
+ * Used by AI Search, AI Vision, Atelier, Premium Collection.
  * No cursor/scroll/audio enhancements.
  */
 export default function AILayout({ children }: { children: ReactNode }) {

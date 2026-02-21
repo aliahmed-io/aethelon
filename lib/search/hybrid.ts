@@ -103,7 +103,7 @@ export async function searchProductsHybrid(options: SearchOptions): Promise<Hybr
                 p."reviewCount",
                 c.name as "categoryName",
                 1 - (p.embedding <=> $1::vector) as vector_score,
-                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description), plainto_tsquery('english', $2)) as text_score
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), plainto_tsquery('english', $2)) as text_score
             FROM "Product" p
             LEFT JOIN "Category" c ON p."categoryId" = c.id
             WHERE 
@@ -111,11 +111,11 @@ export async function searchProductsHybrid(options: SearchOptions): Promise<Hybr
                 AND (
                     (1 - (p.embedding <=> $1::vector)) > 0.5 -- Semantic Threshold
                     OR
-                    to_tsvector('english', p.name || ' ' || p.description) @@ plainto_tsquery('english', $2)
+                    to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')) @@ plainto_tsquery('english', $2)
                 )
             ORDER BY (
                 (1 - (p.embedding <=> $1::vector)) * ${VECTOR_WEIGHT} + 
-                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description), plainto_tsquery('english', $2)) * ${TEXT_WEIGHT} +
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), plainto_tsquery('english', $2)) * ${TEXT_WEIGHT} +
                 (log(p."reviewCount" + 1) * 0.05) + 
                 (CASE WHEN p."stockQuantity" > 0 THEN 0.1 ELSE 0 END) 
             ) DESC

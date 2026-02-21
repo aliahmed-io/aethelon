@@ -10,7 +10,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
 
     // Fetch product and categories in parallel
     const [product, categories] = await Promise.all([
-        Prisma.product.findUnique({ where: { id } }),
+        Prisma.product.findUnique({ where: { id }, include: { categories: true } }),
         Prisma.category.findMany({ orderBy: { name: "asc" } }),
     ]);
 
@@ -18,5 +18,6 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         return notFound();
     }
 
-    return <ProductForm categories={categories} initialData={product} />;
+    const initialData = { ...product, categoryId: product.categories?.[0]?.id };
+    return <ProductForm categories={categories} initialData={initialData} />;
 }
