@@ -20,7 +20,8 @@ import {
     Brain,
     LogOut,
     ShoppingCart,
-    Receipt
+    Receipt,
+    Sparkles
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,6 +31,7 @@ const links = [
     { name: "AI COO", href: "/dashboard/ai-coo", icon: Brain },
     { name: "Orders", href: "/dashboard/orders", icon: ShoppingBag },
     { name: "Products", href: "/dashboard/products", icon: Package },
+    { name: "Premium", href: "/dashboard/premium", icon: Sparkles },
     { name: "Categories", href: "/dashboard/categories", icon: ListOrdered },
     { name: "Attributes", href: "/dashboard/attributes", icon: Tags },
     { name: "Banners", href: "/dashboard/banner", icon: Globe },

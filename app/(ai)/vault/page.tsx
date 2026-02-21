@@ -1,15 +1,38 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import prisma from "@/lib/db";
 import { PremiumProductCard } from "@/components/storefront/PremiumProductCard";
+import { PremiumSort } from "./PremiumSort";
 
 export const metadata = {
   title: "Premium Collection | Aethelon",
   description: "Rare and exceptional pieces. Curated premium furniture.",
 };
 
-export default async function PremiumProductsPage() {
-  // Premium: featured or tagged premium/rare, published, ordered by price desc
+function getOrderBy(sort: string | string[] | undefined) {
+  const s = (Array.isArray(sort) ? sort[0] : sort) || "price-desc";
+  switch (s) {
+    case "price-asc":
+      return { price: "asc" as const };
+    case "newest":
+      return { createdAt: "desc" as const };
+    case "name-asc":
+      return { name: "asc" as const };
+    case "price-desc":
+    default:
+      return { price: "desc" as const };
+  }
+}
+
+export default async function PremiumProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string | string[] }>;
+}) {
+  const params = await searchParams;
+  const orderBy = getOrderBy(params.sort);
+
   const premiumProducts = await prisma.product.findMany({
     where: {
       status: "published",
@@ -19,7 +42,7 @@ export default async function PremiumProductsPage() {
         { tags: { has: "rare" } },
       ],
     },
-    orderBy: { price: "desc" },
+    orderBy,
     select: {
       id: true,
       name: true,
@@ -53,7 +76,7 @@ export default async function PremiumProductsPage() {
             </div>
 
             {premiumProducts.length > 0 && (
-              <div className="flex gap-12 text-right opacity-0 animate-[fadeIn_1s_ease-out_0.4s_forwards]">
+              <div className="flex flex-wrap items-center gap-8 text-right opacity-0 animate-[fadeIn_1s_ease-out_0.4s_forwards]">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
                     Pieces
@@ -62,12 +85,15 @@ export default async function PremiumProductsPage() {
                     {premiumProducts.length.toString().padStart(2, "0")}
                   </p>
                 </div>
+                <Suspense fallback={null}>
+                  <PremiumSort />
+                </Suspense>
               </div>
             )}
           </div>
         </div>
 
-        {/* Product Grid */}
+        {/* Product Grid — sort only, no filters */}
         {premiumProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10">
             {premiumProducts.map((item, idx) => (
