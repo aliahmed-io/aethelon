@@ -1,23 +1,23 @@
 import { Resend } from "resend";
+import logger from "@/lib/logger";
 
 const apiKey = process.env.RESEND_API_KEY;
+
+if (!apiKey) {
+    logger.warn("⚠️ RESEND_API_KEY is missing. Email sending will fail.");
+}
 
 export function getResendFromEmail() {
     const from = process.env.RESEND_FROM;
     if (from) return from;
+
+    // In production build or missing env, we use a fallback to prevent crash
     if (process.env.NODE_ENV !== "production") {
         return "Aethelona <onboarding@resend.dev>";
     }
-    throw new Error("Missing RESEND_FROM in environment variables.");
-}
 
-import logger from "@/lib/logger";
-
-if (!apiKey) {
-    if (process.env.NODE_ENV === "production") {
-        throw new Error("FATAL: RESEND_API_KEY is missing in production environment.");
-    }
-    logger.warn("⚠️ RESEND_API_KEY is missing. Email sending will fail.");
+    logger.warn("Missing RESEND_FROM in environment variables. Using fallback.");
+    return "Aethelon <no-reply@aethelon.com>";
 }
 
 export const resend = new Resend(apiKey || "re_test_mock_key");

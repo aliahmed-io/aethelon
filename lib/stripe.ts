@@ -4,9 +4,6 @@ import logger from "@/lib/logger";
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 
 if (!stripeKey) {
-    if (process.env.NODE_ENV === "production") {
-        throw new Error("FATAL: STRIPE_SECRET_KEY is missing in production environment.");
-    }
     logger.warn("⚠️ STRIPE_SECRET_KEY is missing. Stripe calls will fail.");
 }
 
