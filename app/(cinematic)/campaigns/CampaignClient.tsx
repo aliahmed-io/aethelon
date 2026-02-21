@@ -32,13 +32,8 @@ interface CampaignClientProps {
 
 export function CampaignClient({ heroBanner, featuredProducts }: CampaignClientProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [isMounted, setIsMounted] = useState(false);
     const searchParams = useSearchParams();
     const currentSort = searchParams.get("sort") || "newest";
-
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
 
     // Apply client-side sorting based on search param
     const sortedProducts = [...featuredProducts].sort((a, b) => {

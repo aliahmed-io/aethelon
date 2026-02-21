@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getBlogPosts } from "@/app/actions/blog";
+import { BlogPost } from "@prisma/client";
 
 export const metadata: Metadata = {
     title: "Journal — Aethelon",

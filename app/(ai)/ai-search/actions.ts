@@ -1,6 +1,5 @@
 "use server";
 
-import { Product as PrismaProduct, Prisma } from "@prisma/client";
 import { GoogleGenerativeAI, GenerateContentResult } from "@google/generative-ai";
 import prisma from "../../../lib/db";
 import { Product } from "../../../lib/assistantTypes";

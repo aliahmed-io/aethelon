@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { createBlogPost } from "@/app/actions/blog";
 import { ArrowLeft, Loader2, Save, Send } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { UploadDropzone } from "@/lib/uploadthing";
 
 export default function CreateBlogPostPage() {
@@ -169,7 +170,7 @@ export default function CreateBlogPostPage() {
                                     <Label className="text-xs uppercase tracking-widest text-muted-foreground">Cover Image</Label>
                                     {imageUrl ? (
                                         <div className="relative border border-border rounded-sm overflow-hidden aspect-video">
-                                            <img src={imageUrl} alt="Cover" className="w-full h-full object-cover" />
+                                            <Image src={imageUrl} alt="Cover" fill unoptimized className="object-cover" />
                                             <Button
                                                 variant="destructive"
                                                 size="sm"

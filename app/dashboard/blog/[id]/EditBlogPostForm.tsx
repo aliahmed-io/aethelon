@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { updateBlogPost } from "@/app/actions/blog";
 import { ArrowLeft, Loader2, Save, Send } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { BlogPost } from "@prisma/client";
 
@@ -159,7 +160,7 @@ export function EditBlogPostForm({ initialData }: { initialData: BlogPost }) {
                                 <Label className="text-xs uppercase tracking-widest text-muted-foreground">Cover Image</Label>
                                 {imageUrl ? (
                                     <div className="relative border border-border rounded-sm overflow-hidden aspect-video">
-                                        <img src={imageUrl} alt="Cover" className="w-full h-full object-cover" />
+                                        <Image src={imageUrl} alt="Cover" fill unoptimized className="object-cover" />
                                         <Button
                                             variant="destructive"
                                             size="sm"

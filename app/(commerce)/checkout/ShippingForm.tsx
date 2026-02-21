@@ -18,7 +18,7 @@ type ShippingFormProps = {
     discountPercentage?: number;
 };
 
-export function ShippingForm({ initialAddress, savedAddresses, cartItems }: ShippingFormProps) {
+export function ShippingForm({ initialAddress, savedAddresses, cartItems: _cartItems }: ShippingFormProps) {
     const [selectedAddressId, setSelectedAddressId] = useState<string>(initialAddress?.id || "new");
     const [formValues, setFormValues] = useState({
         firstName: "",

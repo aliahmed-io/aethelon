@@ -6,6 +6,7 @@ import { useGLTF } from "@react-three/drei";
 import { useState, useRef, useEffect, useCallback } from "react";
 import * as THREE from "three";
 import { Camera } from "lucide-react";
+import Image from "next/image";
 
 // Store configuration for WebXR session
 export const arStore = createXRStore({
@@ -194,7 +195,7 @@ export function ArSession({ modelUrl, related3DProducts = [], onClose }: ArSessi
                                 className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === prod.modelUrl ? "border-amber-500 ring-2 ring-amber-500/50" : "border-white/20 opacity-80"
                                     }`}
                             >
-                                <img src={prod.image} alt={prod.name} className="w-full h-full object-cover" />
+                                <Image src={prod.image} alt={prod.name} fill unoptimized className="object-cover" />
                                 <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] text-white truncate px-1 py-0.5">
                                     {prod.name}
                                 </div>

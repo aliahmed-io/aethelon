@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     },
 };
 
-import { Product, Category } from "@prisma/client";
+import { Product } from "@prisma/client";
 
 // ...
 

@@ -1,9 +1,7 @@
 import { FurnitureFilterBar } from "@/components/shop/FurnitureFilterBar";
-import { ProductCard } from "@/components/storefront/ProductCard";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import prisma from "@/lib/db";
-import { getRecommendedProducts } from "@/app/actions/personalization";
-import { ProductStatus, Product, Prisma } from "@prisma/client";
+import { ProductStatus, Prisma } from "@prisma/client";
 
 interface ShopPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -93,12 +91,11 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
 
     // Fetch Data
-    const [products, recommendations, categories] = await Promise.all([
+    const [products, categories] = await Promise.all([
         prisma.product.findMany({
             where,
             orderBy,
         }),
-        getRecommendedProducts(),
         prisma.category.findMany({
             where: {
                 parentId: null,

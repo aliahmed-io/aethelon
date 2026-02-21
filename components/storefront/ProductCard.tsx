@@ -82,7 +82,6 @@ export function ProductCard({ item, priority = false }: iAppProps) {
           )}
 
           {/* Wishlist */}
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
           <div
             className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}

@@ -22,9 +22,6 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
     const { isAuthenticated } = useKindeBrowserClient();
 
     // Hide Navbar completely on Room Visualizer
-    if (pathname === '/ai-vision') {
-        return null;
-    }
 
     // ... (rest of hook logic) ...
 
@@ -53,6 +50,10 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
         { href: '/vault', label: 'Vault' },
         { href: '/blog', label: 'Blog' },
     ];
+
+    if (pathname === '/ai-vision') {
+        return null;
+    }
 
     return (
         <header

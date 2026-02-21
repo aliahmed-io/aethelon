@@ -2,6 +2,7 @@ import { getBlogPosts, deleteBlogPost } from "@/app/actions/blog";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
 export default async function AdminBlogPage() {
@@ -29,7 +30,7 @@ export default async function AdminBlogPage() {
                         <div key={post.id} className="group relative bg-muted/30 border border-border backdrop-blur-sm rounded-sm overflow-hidden flex flex-col">
                             {post.image && (
                                 <div className="h-40 relative">
-                                    <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                                    <Image src={post.image} alt={post.title} fill unoptimized className="object-cover" />
                                 </div>
                             )}
                             <div className="p-6 flex-1 flex flex-col">

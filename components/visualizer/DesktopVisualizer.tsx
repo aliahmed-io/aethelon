@@ -199,7 +199,6 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
                                     width: "100%",
                                     height: "100%",
                                     backgroundColor: "transparent",
-                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     ["--poster-color" as string]: "transparent",
                                 }}
                             >
