@@ -21,7 +21,9 @@ import {
     LogOut,
     ShoppingCart,
     Receipt,
-    Sparkles
+    Sparkles,
+    MessageSquare,
+    Puzzle
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,7 +33,7 @@ const links = [
     { name: "AI COO", href: "/dashboard/ai-coo", icon: Brain },
     { name: "Orders", href: "/dashboard/orders", icon: ShoppingBag },
     { name: "Products", href: "/dashboard/products", icon: Package },
-    { name: "Premium", href: "/dashboard/premium", icon: Sparkles },
+    { name: "Vault", href: "/dashboard/premium", icon: Sparkles },
     { name: "Categories", href: "/dashboard/categories", icon: ListOrdered },
     { name: "Attributes", href: "/dashboard/attributes", icon: Tags },
     { name: "Banners", href: "/dashboard/banner", icon: Globe },
@@ -39,8 +41,10 @@ const links = [
     { name: "Cart Recovery", href: "/dashboard/cart-recovery", icon: ShoppingCart },
     { name: "Tax Rules", href: "/dashboard/tax-rules", icon: Receipt },
     { name: "Newsletter", href: "/dashboard/newsletter", icon: Mail },
+    { name: "Contacts", href: "/dashboard/contact", icon: MessageSquare },
+    { name: "Integrations", href: "/dashboard/integrations", icon: Puzzle },
     { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },
-    { name: "Journal", href: "/dashboard/blog", icon: FileText },
+    { name: "Blog", href: "/dashboard/blog", icon: FileText },
     { name: "Roles", href: "/dashboard/roles", icon: UserCog },
 ];
 
