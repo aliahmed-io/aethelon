@@ -13,15 +13,15 @@ export const options = {
 };
 
 export default function smokeTest() {
-    const BASE_URL = 'https://aethelona-ten.vercel.app';
+    const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 
     // 1. Visit Home
     const homeRes = http.get(`${BASE_URL}/`, { tags: { name: 'Home' } });
     check(homeRes, { 'status is 200': (r) => r.status === 200 });
     sleep(1);
 
-    // 2. Visit All Products
-    const productsRes = http.get(`${BASE_URL}/store/products/all`, { tags: { name: 'AllProducts' } });
+    // 2. Visit Shop
+    const productsRes = http.get(`${BASE_URL}/categories`, { tags: { name: 'Shop' } });
     check(productsRes, { 'status is 200': (r) => r.status === 200 });
     sleep(1);
 }

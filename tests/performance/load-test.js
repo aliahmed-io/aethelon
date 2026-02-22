@@ -5,11 +5,7 @@ import { check, sleep } from 'k6';
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 
 // Traffic Mix Definition
-// Total VUs = 100 (scaled down for local testing)
-// Browsing (70%) = 70 VUs
-// Filtering (20%) = 20 VUs  
-// Checkout (10%) = 10 VUs
-
+// Total VUs = 100 
 export const options = {
     scenarios: {
         browsing: {
@@ -62,7 +58,7 @@ export function browsingFlow() {
     sleep(Math.random() * 2 + 1);
 
     // Shop page
-    check(http.get(`${BASE_URL}/shop`), { 'Shop 200': (r) => r.status === 200 });
+    check(http.get(`${BASE_URL}/categories`), { 'Shop 200': (r) => r.status === 200 });
     sleep(Math.random() * 2 + 1);
 
     // About page
@@ -73,15 +69,15 @@ export function browsingFlow() {
 // 2. Filtering Flow (20%) - Search, Dynamic Filters
 export function filteringFlow() {
     // Shop with query params
-    const res = http.get(`${BASE_URL}/shop?category=watches`);
+    const res = http.get(`${BASE_URL}/categories?sort=price-asc`);
     check(res, { 'Filter 200': (r) => r.status === 200 });
     sleep(Math.random() * 3 + 2);
 }
 
 // 3. Checkout Flow (10%) - Product Detail -> Cart
 export function checkoutFlow() {
-    // View product (simulated - first product)
-    check(http.get(`${BASE_URL}/shop`), { 'Shop 200': (r) => r.status === 200 });
+    // View product list first
+    check(http.get(`${BASE_URL}/categories`), { 'Shop 200': (r) => r.status === 200 });
     sleep(Math.random() * 2 + 1);
 
     // View bag

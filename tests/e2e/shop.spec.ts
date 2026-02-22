@@ -10,17 +10,17 @@ test.describe('Storefront Smoke Tests', () => {
     });
 
     test('shop page loads products', async ({ page }) => {
-        await page.goto('/store/shop');
+        await page.goto('/shop');
         // Expect at least one product card to be visible
         // Adjust selector based on actual product card implementation if needed. 
         // Assuming generic "Shop Now" links or similar structure.
-        await expect(page.getByText('All Products')).toBeVisible();
+        await expect(page.getByText('Shop', { exact: true }).first()).toBeVisible();
     });
 
     test('navigation menu works', async ({ page }) => {
         await page.goto('/');
         await page.getByRole('link', { name: 'Shop' }).first().click();
-        await expect(page).toHaveURL(/.*\/store\/shop/);
+        await expect(page).toHaveURL(/.*\/shop/);
     });
 
 });

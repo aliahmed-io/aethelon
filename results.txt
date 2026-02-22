@@ -1,0 +1,286 @@
+
+Running 8 tests using 8 workers
+
+  ✘  1 [chromium] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products (2ms)
+  ✘  2 [chromium] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly (3ms)
+  ✘  3 [firefox] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products (3ms)
+  ✘  5 [chromium] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details (2ms)
+  ✘  4 [firefox] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input (3ms)
+  ✘  7 [firefox] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details (2ms)
+  ✘  6 [chromium] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input (3ms)
+  ✘  8 [firefox] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly (3ms)
+  ✘  9 [chromium] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly (retry #1) (3ms)
+  ✘  10 [chromium] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products (retry #1) (3ms)
+  ✘  11 [firefox] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products (retry #1) (2ms)
+  ✘  12 [chromium] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details (retry #1) (2ms)
+  ✘  13 [chromium] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input (retry #1) (1ms)
+  ✘  14 [firefox] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly (retry #1) (2ms)
+  ✘  16 [firefox] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details (retry #1) (2ms)
+  ✘  15 [firefox] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input (retry #1) (2ms)
+
+
+  1) [chromium] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products ──────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Shop-Flow-can-browse-and-view-products-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Shop-Flow-can-browse-and-view-products-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details ───────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Shop-Flow-product-page-shows-product-details-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Shop-Flow-product-page-shows-product-details-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly ─────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Error-Pages-404-page-renders-correctly-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Error-Pages-404-page-renders-correctly-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input ──────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Search-search-overlay-opens-and-accepts-input-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Search-search-overlay-opens-and-accepts-input-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [firefox] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products ───────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Shop-Flow-can-browse-and-view-products-firefox-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Shop-Flow-can-browse-and-view-products-firefox-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [firefox] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details ────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Shop-Flow-product-page-shows-product-details-firefox-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Shop-Flow-product-page-shows-product-details-firefox-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [firefox] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly ──────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Error-Pages-404-page-renders-correctly-firefox-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Error-Pages-404-page-renders-correctly-firefox-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [firefox] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input ───────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\aliha\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\shop-Search-search-overlay-opens-and-accepts-input-firefox-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\shop-Search-search-overlay-opens-and-accepts-input-firefox-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8 failed
+    [chromium] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products ───────────────────
+    [chromium] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details ────────────
+    [chromium] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly ──────────────────
+    [chromium] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input ───────────
+    [firefox] › e2e\shop.spec.ts:4:9 › Shop Flow › can browse and view products ────────────────────
+    [firefox] › e2e\shop.spec.ts:24:9 › Shop Flow › product page shows product details ─────────────
+    [firefox] › e2e\shop.spec.ts:49:9 › Error Pages › 404 page renders correctly ───────────────────
+    [firefox] › e2e\shop.spec.ts:65:9 › Search › search overlay opens and accepts input ────────────

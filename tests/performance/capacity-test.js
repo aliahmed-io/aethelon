@@ -23,9 +23,9 @@ const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 export default function () {
     const pages = [
         '/',
-        '/shop',
+        '/categories',
         '/about',
-        '/shop?category=furniture', // Common filter
+        '/categories?sort=newest',
     ];
 
     const randomPage = pages[Math.floor(Math.random() * pages.length)];

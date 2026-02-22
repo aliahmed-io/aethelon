@@ -271,32 +271,23 @@ export function PropertiesPanel({
 
             {/* Actions */}
             {selectedProduct && (
-                <div className="p-6 border-t border-border bg-muted/30 space-y-3">
+                <div className="p-6 border-t border-border bg-black/5 space-y-4">
                     <div className="flex justify-between items-end">
                         <span className="text-xs text-muted-foreground uppercase tracking-widest">
-                            Total
+                            Exclusive Piece
                         </span>
                         <span className="font-display text-2xl text-accent">
                             {formatPrice(selectedProduct.price / 100)}
                         </span>
                     </div>
 
-                    <Link
-                        href={`/shop/${selectedProduct.id}`}
-                        className="w-full flex items-center justify-center gap-2 bg-accent text-accent-foreground font-bold py-3 rounded-sm hover:bg-accent/90 transition-colors uppercase tracking-widest text-sm"
+                    <a
+                        href={`mailto:concierge@aethelon.com?subject=Inquiry regarding ${selectedProduct.name}`}
+                        className="w-full flex items-center justify-center gap-2 bg-foreground text-background font-bold py-3.5 rounded-sm hover:bg-foreground/90 transition-colors uppercase tracking-widest text-sm"
                     >
-                        <ShoppingCart className="w-4 h-4" />
-                        View Product
-                    </Link>
-
-                    <Link
-                        href={`/shop/${selectedProduct.id}`}
-                        target="_blank"
-                        className="w-full flex items-center justify-center gap-2 border border-border py-2.5 rounded-sm text-xs text-muted-foreground hover:text-foreground hover:border-accent transition-colors uppercase tracking-widest"
-                    >
-                        <ExternalLink className="w-3 h-3" />
-                        Full Details
-                    </Link>
+                        <Sparkles className="w-4 h-4 text-amber-500" />
+                        Inquire About Piece
+                    </a>
                 </div>
             )}
         </div>

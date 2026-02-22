@@ -1,5 +1,5 @@
 
-import { PrismaClient, ProductStatus, OrderStatus, PaymentStatus, UserRole, FulfillmentStatus, InventoryTransactionType, RankingMode, MainCategory } from '@prisma/client';
+import { PrismaClient, ProductStatus, OrderStatus, PaymentStatus, UserRole, FulfillmentStatus, InventoryTransactionType, RankingMode, MainCategory, CampaignStatus } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate';
 
 // Initialize Prisma Client
@@ -7,11 +7,8 @@ const prisma = new PrismaClient().$extends(withAccelerate());
 
 // --- CONSTANTS ---
 const ADMIN_EMAIL = 'admin@aethelon.com';
-const MOCK_USER_COUNT = 25;
-const ORDER_HISTORY_DAYS = 90;
 
 // --- HIERARCHY DEFINITION ---
-// structure: [Slug, Name, Image, [ChildSlug, ChildName, ChildImage]]
 const TAXONOMY = [
     {
         name: 'Living Room',
@@ -64,7 +61,6 @@ const TAXONOMY = [
     }
 ];
 
-// Flat list for "Function" categories
 const FUNCTIONAL_COLLECTIONS = [
     { name: 'New Arrivals', slug: 'new-arrivals', mode: RankingMode.TRENDING, image: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1000' },
     { name: 'Best Sellers', slug: 'best-sellers', mode: RankingMode.TRENDING, image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000' },
@@ -73,131 +69,191 @@ const FUNCTIONAL_COLLECTIONS = [
 ];
 
 const PRODUCTS = [
-    // Living Room -> Sofas
+    // --- LIVING ROOM ---
     {
         name: 'Cloud Modular Sofa',
         description: 'Experience the ultimate potential of relaxation with our Cloud Modular Sofa. Upholstered in premium, stain-resistant fabric.',
-        price: 329900,
-        mainCat: 'living-room',
-        subCat: 'sofas',
-        extraCats: ['comfort', 'best-sellers'],
+        price: 329900, mainCat: 'living-room', subCat: 'sofas', extraCats: ['comfort', 'best-sellers'],
         images: ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000'],
         features: ['Modular configuration', 'Stain-resistant', 'Feather-blend'],
-        stock: 12,
-        rating: 4.8,
-        reviews: 42
+        stock: 12, rating: 4.8, reviews: 42,
+        modelUrl: null // No model
     },
     {
         name: 'Velvet Tuxedo Sofa',
         description: 'A statement piece for any modern living room. Deep button tufting and tuxedo arms.',
-        price: 219900,
-        mainCat: 'living-room',
-        subCat: 'sofas',
-        extraCats: ['new-arrivals'],
+        price: 219900, mainCat: 'living-room', subCat: 'sofas', extraCats: ['new-arrivals'],
         images: ['https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1000'],
         features: ['Velvet upholstery', 'Button tufting', 'Solid wood legs'],
-        stock: 8,
-        rating: 4.5,
-        reviews: 15
+        stock: 8, rating: 4.5, reviews: 15,
+        modelUrl: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb', // Vault item!
+        isVaultExclusive: true
     },
-    // Living Room -> Chairs
     {
         name: 'Mid-Century Accent Chair',
         description: 'Timeless vintage charm with modern durability.',
-        price: 59900,
-        mainCat: 'living-room',
-        subCat: 'accent-chairs',
-        extraCats: ['sustainable'],
+        price: 59900, mainCat: 'living-room', subCat: 'accent-chairs', extraCats: ['sustainable'],
         images: ['https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000'],
         features: ['Solid walnut frame', 'High-density foam'],
-        stock: 45,
-        rating: 4.6,
-        reviews: 28
+        stock: 45, rating: 4.6, reviews: 28,
+        modelUrl: null
     },
-    // Dining -> Tables
+    {
+        name: 'Oasis Lounge Chair',
+        description: 'Sink into unparalleled comfort with this oversized lounge chair.',
+        price: 84900, mainCat: 'living-room', subCat: 'accent-chairs', extraCats: ['comfort'],
+        images: ['https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Ergonomic backrest', 'Linen blend'],
+        stock: 20, rating: 4.9, reviews: 102,
+        modelUrl: null
+    },
+    {
+        name: 'Marble Block Coffee Table',
+        description: 'Solid Carrara marble carved into a minimalist geometric block.',
+        price: 125000, mainCat: 'living-room', subCat: 'coffee-tables', extraCats: ['best-sellers'],
+        images: ['https://images.unsplash.com/photo-1533090481728-4660ebbc48f1?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Real Carrara marble', 'Weight: 200lbs', 'Hand-polished'],
+        stock: 5, rating: 4.7, reviews: 12,
+        modelUrl: null,
+        isVaultExclusive: true
+    },
+
+    // --- DINING ---
     {
         name: 'Reclaimed Oak Dining Table',
         description: 'Rustic elegance for family gatherings.',
-        price: 189900,
-        mainCat: 'dining',
-        subCat: 'dining-tables',
-        extraCats: ['sustainable'],
+        price: 189900, mainCat: 'dining', subCat: 'dining-tables', extraCats: ['sustainable'],
         images: ['https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&q=80&w=1000'],
         features: ['Reclaimed oak', 'Seals 8-10', 'Hand-finished'],
-        stock: 5,
-        rating: 4.8,
-        reviews: 31
+        stock: 5, rating: 4.8, reviews: 31,
+        modelUrl: null
     },
-    // Bedroom -> Beds
+    {
+        name: 'Scandi Dining Chair Set (Set of 2)',
+        description: 'Minimalist curved wood dining chairs.',
+        price: 45000, mainCat: 'dining', subCat: 'dining-chairs', extraCats: ['best-sellers'],
+        images: ['https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Bentwood construction', 'Matte finish'],
+        stock: 40, rating: 4.4, reviews: 88,
+        modelUrl: null
+    },
+    {
+        name: 'Industrial Counter Stool',
+        description: 'Raw steel frame with a thick oak seat, perfect for modern kitchens.',
+        price: 22000, mainCat: 'dining', subCat: 'bar-stools', extraCats: [],
+        images: ['https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Adjustable height', 'Powder-coated steel'],
+        stock: 60, rating: 4.2, reviews: 19,
+        modelUrl: null
+    },
+
+    // --- BEDROOM ---
     {
         name: 'Haven Platform Bed',
         description: 'Minimalist sanctuary.',
-        price: 149900,
-        mainCat: 'bedroom',
-        subCat: 'beds',
-        extraCats: ['comfort'],
+        price: 149900, mainCat: 'bedroom', subCat: 'beds', extraCats: ['comfort'],
         images: ['https://images.unsplash.com/photo-1505693416388-334340d269a9?auto=format&fit=crop&q=80&w=1000'],
         features: ['Solid oak', 'Low profile'],
-        stock: 8,
-        rating: 4.7,
-        reviews: 56
+        stock: 8, rating: 4.7, reviews: 56,
+        modelUrl: null
     },
-    // Office -> Chairs
+    {
+        name: 'Walnut 6-Drawer Dresser',
+        description: 'Mid-century storage solution with brass hardware.',
+        price: 110000, mainCat: 'bedroom', subCat: 'dressers', extraCats: ['new-arrivals'],
+        images: ['https://images.unsplash.com/photo-1595514536733-1579717dfb11?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Soft-close drawers', 'Solid American Walnut'],
+        stock: 14, rating: 4.8, reviews: 11,
+        modelUrl: null
+    },
+    {
+        name: 'Platform Nightstand',
+        description: 'Matching nightstand for the Haven Platform bed.',
+        price: 35000, mainCat: 'bedroom', subCat: 'nightstands', extraCats: [],
+        images: ['https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Open cubby', 'Cable management'],
+        stock: 25, rating: 4.5, reviews: 34,
+        modelUrl: null
+    },
+
+    // --- OFFICE ---
     {
         name: 'ErgoPro Office Chair',
         description: 'High performance ergonomic chair.',
-        price: 129900,
-        mainCat: 'office',
-        subCat: 'office-chairs',
-        extraCats: ['comfort', 'best-sellers'],
+        price: 129900, mainCat: 'office', subCat: 'office-chairs', extraCats: ['comfort', 'best-sellers'],
         images: ['https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&q=80&w=1000'],
         features: ['4D Armrests', 'Mesh back'],
-        stock: 100,
-        rating: 4.9,
-        reviews: 89
+        stock: 100, rating: 4.9, reviews: 89,
+        modelUrl: null
     },
-    // Decor -> Vases
+    {
+        name: 'Executive Standing Desk',
+        description: 'Motorized dual-leg standing desk with a matte anti-fingerprint surface.',
+        price: 89900, mainCat: 'office', subCat: 'desks', extraCats: ['new-arrivals'],
+        images: ['https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Memory presets', 'Cable tray included'],
+        stock: 30, rating: 4.6, reviews: 55,
+        modelUrl: null,
+        isVaultExclusive: true
+    },
+
+    // --- DECOR ---
     {
         name: 'Ceramic Vase Set',
-        description: 'Artised Earth tones.',
-        price: 12900,
-        mainCat: 'decor',
-        subCat: 'vases',
-        extraCats: ['new-arrivals'],
+        description: 'Artisan Earth tones.',
+        price: 12900, mainCat: 'decor', subCat: 'vases', extraCats: ['new-arrivals'],
         images: ['https://images.unsplash.com/photo-1581539250439-c923cd226718?auto=format&fit=crop&q=80&w=1000'],
         features: ['Hand-thrown', 'Watertight'],
-        stock: 150,
-        rating: 4.8,
-        reviews: 45
+        stock: 150, rating: 4.8, reviews: 45,
+        modelUrl: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb', // Vault item!
+        isVaultExclusive: true
+    },
+    {
+        name: 'Brass Floor Lamp',
+        description: 'Slender architectural lighting casting a warm ambient glow.',
+        price: 24500, mainCat: 'decor', subCat: 'lighting', extraCats: ['best-sellers'],
+        images: ['https://images.unsplash.com/photo-1507643179773-3e975d7ac515?auto=format&fit=crop&q=80&w=1000'],
+        features: ['Dimmable LED', 'Solid brass base'],
+        stock: 60, rating: 4.9, reviews: 112,
+        modelUrl: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Lantern/glTF-Binary/Lantern.glb', // Vault item!
+        isVaultExclusive: true
+    },
+    {
+        name: 'Hand-woven Wool Rug (8x10)',
+        description: 'Plush texture. ethically sourced.',
+        price: 54900, mainCat: 'decor', subCat: 'rugs', extraCats: ['sustainable'],
+        images: ['https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=1000'],
+        features: ['100% Wool', 'Hand-tufted'],
+        stock: 22, rating: 4.7, reviews: 67,
+        modelUrl: null
     }
 ];
 
 // --- SCORING ---
 function calculateStaticScore(rating: number, reviewCount: number, createdAt: Date): number {
-    // 1. Popularity (0-0.4)
-    // Max log based on ~100 reviews = 4.6
     const logReviews = Math.log(reviewCount + 1);
     const popularityScore = Math.min(1, logReviews / 5) * 0.4;
-
-    // 2. Rating (0-0.3)
-    // Normalized 3.0 to 5.0 -> 0 to 1
     const normalizedRating = Math.max(0, Math.min(1, (rating - 3) / 2));
     const ratingScore = normalizedRating * 0.3;
-
-    // 3. Recency (0-0.3)
     const daysOld = (new Date().getTime() - createdAt.getTime()) / (1000 * 3600 * 24);
     const recencyScore = (1 / (1 + daysOld / 30)) * 0.3;
-
     return Number((popularityScore + ratingScore + recencyScore).toFixed(2));
 }
 
 // --- MAIN ---
 async function main() {
-    console.log("🌱 Starting Hierarchical Seed...");
+    console.log("🌱 Starting Full Aethelon Seed...");
 
     try {
-        // CLEANUP
+        // 1. CLEANUP
         console.log("🧹 Cleanup...");
+        await prisma.banner.deleteMany();
+        await prisma.campaignProduct.deleteMany();
+        await prisma.campaign.deleteMany();
+
+        // Target Featured Products Arrays
+        const springProductNames = ['Cloud Modular Sofa', 'Brass Floor Lamp', 'Ceramic Vase Set', 'Platform Nightstand'];
+        const execProductNames = ['ErgoPro Office Chair', 'Executive Standing Desk', 'Mid-Century Accent Chair', 'Walnut 6-Drawer Dresser'];
         await prisma.orderItem.deleteMany();
         await prisma.inventoryTransaction.deleteMany();
         await prisma.review.deleteMany();
@@ -205,8 +261,9 @@ async function main() {
         await prisma.category.deleteMany();
         await prisma.user.deleteMany();
 
-        // USERS
-        const admin = await prisma.user.create({
+        // 2. USERS
+        console.log("👤 Creating Users...");
+        await prisma.user.create({
             data: {
                 id: crypto.randomUUID(),
                 email: ADMIN_EMAIL,
@@ -217,67 +274,27 @@ async function main() {
             }
         });
 
-        const users = [];
-        for (let i = 0; i < 5; i++) {
-            users.push(await prisma.user.create({
-                data: {
-                    id: crypto.randomUUID(),
-                    email: `user${i}@test.com`,
-                    firstName: `User${i}`,
-                    lastName: 'Test',
-                    profileImage: '',
-                    role: UserRole.USER
-                }
-            }));
-        }
-
-        // CATEGORIES
+        // 3. CATEGORIES
         console.log("📂 Creating Taxonomy...");
         const catMap = new Map<string, string>(); // slug -> id
-
-        // 1. Functional
         for (const f of FUNCTIONAL_COLLECTIONS) {
-            const cat = await prisma.category.create({
-                data: {
-                    name: f.name,
-                    slug: f.slug,
-                    rankingMode: f.mode,
-                    image: f.image
-                }
-            });
+            const cat = await prisma.category.create({ data: { name: f.name, slug: f.slug, rankingMode: f.mode, image: f.image } });
             catMap.set(f.slug, cat.id);
         }
-
-        // 2. Hierarchical
         for (const parent of TAXONOMY) {
-            const pCat = await prisma.category.create({
-                data: {
-                    name: parent.name,
-                    slug: parent.slug,
-                    image: parent.image
-                }
-            });
+            const pCat = await prisma.category.create({ data: { name: parent.name, slug: parent.slug, image: parent.image } });
             catMap.set(parent.slug, pCat.id);
-
             for (const child of parent.children) {
-                const cCat = await prisma.category.create({
-                    data: {
-                        name: child.name,
-                        slug: child.slug,
-                        parentId: pCat.id,
-                        image: child.image
-                    }
-                });
+                const cCat = await prisma.category.create({ data: { name: child.name, slug: child.slug, parentId: pCat.id, image: child.image } });
                 catMap.set(child.slug, cCat.id);
             }
         }
 
-        // PRODUCTS
+        // 4. PRODUCTS
         console.log("📦 Creating Products...");
+        const createdProducts = [];
         for (const p of PRODUCTS) {
-            // Resolve categories
             const catIds = [];
-
             if (catMap.has(p.mainCat)) catIds.push({ id: catMap.get(p.mainCat) });
             if (catMap.has(p.subCat)) catIds.push({ id: catMap.get(p.subCat) });
             if (p.extraCats) {
@@ -301,10 +318,11 @@ async function main() {
                     reviewCount: p.reviews,
                     staticScore: staticScore,
                     status: ProductStatus.published,
-                    mainCategory: MainCategory.MEN, // Legacy Fallback
-                    categories: {
-                        connect: catIds
-                    },
+                    mainCategory: MainCategory.MEN,
+                    isFeatured: springProductNames.includes(p.name) || execProductNames.includes(p.name),
+                    isVaultExclusive: (p as any).isVaultExclusive || false,
+                    modelUrl: p.modelUrl,
+                    categories: { connect: catIds },
                     inventoryTransactions: {
                         create: {
                             type: InventoryTransactionType.RESTOCK,
@@ -314,9 +332,62 @@ async function main() {
                     }
                 }
             });
-
-            console.log(`   Created ${p.name} (Score: ${staticScore})`);
+            createdProducts.push(product);
         }
+
+        // 5. CAMPAIGNS & BANNERS
+        console.log("🚀 Creating Campaigns & Banners...");
+
+        // Campaign 1: Spring Refresh
+        const c1 = await prisma.campaign.create({
+            data: {
+                title: "The Spring Refresh",
+                slug: "spring-refresh",
+                description: "Light, airy pieces to breathe new life into your home this season.",
+                status: CampaignStatus.ACTIVE,
+                heroImage: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=2000",
+                theme: { backgroundColor: "#f9fafb", accentColor: "#111827", fontColor: "#374151" }
+            }
+        });
+        await prisma.banner.create({
+            data: {
+                title: "Spring Refresh '26",
+                imageString: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=2000",
+                link: `/campaigns/${c1.slug}`,
+                campaignId: c1.id
+            }
+        });
+
+        // Campaign 2: Executive Collection
+        const c2 = await prisma.campaign.create({
+            data: {
+                title: "The Executive Suite",
+                slug: "executive-suite",
+                description: "Commanding silhouettes and deep leather tones. Designed for the modern leader.",
+                status: CampaignStatus.ACTIVE,
+                heroImage: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=2000",
+                theme: { backgroundColor: "#111827", accentColor: "#f3f4f6", fontColor: "#f9fafb" }
+            }
+        });
+        await prisma.banner.create({
+            data: {
+                title: "Executive Collection",
+                imageString: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=2000",
+                link: `/campaigns/${c2.slug}`,
+                campaignId: c2.id
+            }
+        });
+
+        // Attach products to campaigns
+        const springProducts = createdProducts.filter(p => springProductNames.includes(p.name));
+        const execProducts = createdProducts.filter(p => execProductNames.includes(p.name));
+
+        await Promise.all(springProducts.map((p, i) =>
+            prisma.campaignProduct.create({ data: { campaignId: c1.id, productId: p.id, order: i } })
+        ));
+        await Promise.all(execProducts.map((p, i) =>
+            prisma.campaignProduct.create({ data: { campaignId: c2.id, productId: p.id, order: i } })
+        ));
 
         console.log("✅ Seed Complete.");
 

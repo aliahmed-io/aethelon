@@ -80,5 +80,4 @@ const nextConfig: NextConfig = {
         ];
     },
 };
-
-export default withBundleAnalyzer(nextConfig);
+export default withBundleAnalyzer(nextConfig); // trigger hard restart

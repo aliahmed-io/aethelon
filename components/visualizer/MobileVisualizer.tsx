@@ -225,7 +225,7 @@ export function MobileVisualizer({
             {/* ── Top Bar ────────────────────────────────────────────── */}
             <header className="h-14 border-b border-border flex items-center justify-between px-4 flex-shrink-0 bg-background/95 backdrop-blur-sm z-10">
                 <Link
-                    href="/shop"
+                    href="/categories"
                     className="flex items-center gap-1.5 text-xs text-muted-foreground"
                 >
                     <ArrowLeft size={14} />
@@ -438,13 +438,13 @@ export function MobileVisualizer({
                             </button>
                         )}
 
-                        <Link
-                            href={`/shop/${selectedProduct.id}`}
+                        <a
+                            href={`mailto:concierge@aethelon.com?subject=Inquiry regarding ${selectedProduct.name}`}
                             className="flex items-center gap-1.5 bg-accent text-accent-foreground px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest"
                         >
-                            <ShoppingCart className="w-3.5 h-3.5" />
-                            Buy
-                        </Link>
+                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                            Inquire
+                        </a>
                     </div>
                 )}
 

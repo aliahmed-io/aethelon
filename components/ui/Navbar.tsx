@@ -101,6 +101,7 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
                         onClick={openSearch}
                         className="text-foreground hover:text-accent transition-colors p-2"
                         aria-label="Search"
+                        data-testid="search-button"
                     >
                         <Search className="w-5 h-5" />
                     </button>

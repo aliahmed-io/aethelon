@@ -13,6 +13,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     // Build Where Clause
     const where: Prisma.ProductWhereInput = {
         status: 'published' as ProductStatus,
+        isVaultExclusive: false,
     };
 
     // Category Filter

@@ -102,7 +102,7 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
             <header className="h-16 border-b border-border flex items-center justify-between px-6 flex-shrink-0 bg-background/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-4">
                     <Link
-                        href="/shop"
+                        href="/categories"
                         className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group"
                     >
                         <ArrowLeft

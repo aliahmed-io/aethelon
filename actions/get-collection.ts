@@ -95,6 +95,7 @@ export async function getSmartCollection({ slugs, searchParams }: CollectionPara
     // 2. Build Prisma Query
     const where: Prisma.ProductWhereInput = {
         status: 'published',
+        isVaultExclusive: false,
     };
 
     // Filter by Category Scope (Many-to-Many)

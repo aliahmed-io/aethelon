@@ -57,7 +57,7 @@ export default function ContactPage() {
                 </div>
 
                 <form ref={formRef} action={formAction} className="space-y-6 bg-muted/50 p-8 border border-border backdrop-blur-sm shadow-lg rounded-sm">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label htmlFor="name" className="text-xs uppercase tracking-widest text-muted-foreground">Name</label>
                             <input id="name" name="name" required className="w-full bg-background border border-border text-foreground p-3 text-sm focus:border-accent outline-none transition-colors rounded-sm" placeholder="ALEXANDER" />

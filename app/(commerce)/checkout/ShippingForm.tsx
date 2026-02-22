@@ -9,6 +9,8 @@ import { checkOut } from "@/app/store/actions";
 import { Address } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { formatPrice } from "@/lib/utils";
+import { ChevronDown, ChevronUp, ShoppingBag } from "lucide-react";
 
 type ShippingFormProps = {
     initialAddress?: Address | null;
@@ -18,7 +20,7 @@ type ShippingFormProps = {
     discountPercentage?: number;
 };
 
-export function ShippingForm({ initialAddress, savedAddresses, cartItems: _cartItems }: ShippingFormProps) {
+export function ShippingForm({ initialAddress, savedAddresses, cartItems: _cartItems, discountCode, discountPercentage }: ShippingFormProps) {
     const [selectedAddressId, setSelectedAddressId] = useState<string>(initialAddress?.id || "new");
     const [formValues, setFormValues] = useState({
         firstName: "",
@@ -31,6 +33,12 @@ export function ShippingForm({ initialAddress, savedAddresses, cartItems: _cartI
         country: "United States",
         phone: ""
     });
+    const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+
+    // Calculate totals for mobile summary
+    const subtotal = _cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const discountAmount = discountPercentage ? (subtotal * discountPercentage) / 100 : 0;
+    const finalTotal = subtotal - discountAmount;
 
     // Initialize logic
     useEffect(() => {
@@ -87,6 +95,60 @@ export function ShippingForm({ initialAddress, savedAddresses, cartItems: _cartI
         >
             {/* Subtle Shine Effect */}
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-foreground/[0.01] to-transparent pointer-events-none" />
+
+            {/* Mobile Order Summary Toggle */}
+            <div className="lg:hidden mb-8 -mx-8 -mt-8 px-8 py-6 bg-muted/80 border-b border-border shadow-sm">
+                <button
+                    type="button"
+                    onClick={() => setIsSummaryOpen(!isSummaryOpen)}
+                    className="flex items-center justify-between w-full text-sm font-bold uppercase tracking-widest text-foreground outline-none"
+                >
+                    <span className="flex items-center gap-2">
+                        <ShoppingBag className="w-4 h-4" />
+                        {isSummaryOpen ? "Hide Order Summary" : "Show Order Summary"}
+                        {isSummaryOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </span>
+                    <span className="text-lg font-mono">{formatPrice(finalTotal)}</span>
+                </button>
+
+                {isSummaryOpen && (
+                    <div className="mt-6 pt-6 border-t border-border animate-in slide-in-from-top-4 fade-in duration-300">
+                        <div className="space-y-4 mb-6">
+                            {_cartItems.map((item) => (
+                                <div key={item.id} className="flex items-center justify-between text-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div className="relative w-12 h-12 bg-secondary border border-border rounded-sm">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={item.imageString} alt={item.name} className="object-cover w-full h-full p-1" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-medium line-clamp-1 max-w-[150px]">{item.name}</span>
+                                            <span className="text-muted-foreground text-xs uppercase">Qty: {item.quantity}</span>
+                                        </div>
+                                    </div>
+                                    <span className="font-mono">{formatPrice(item.price * item.quantity)}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="space-y-3 text-sm text-muted-foreground border-t border-border pt-4">
+                            <div className="flex justify-between">
+                                <span>Subtotal</span>
+                                <span className="font-mono">{formatPrice(subtotal)}</span>
+                            </div>
+                            {discountCode && discountPercentage && (
+                                <div className="flex justify-between text-accent">
+                                    <span>Discount ({discountCode})</span>
+                                    <span className="font-mono">-{formatPrice(discountAmount)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between">
+                                <span>Shipping</span>
+                                <span className="text-xs uppercase">Calc at next step</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
 
             <h2 className="text-xl font-light mb-6 uppercase tracking-widest">Shipping Details</h2>
 

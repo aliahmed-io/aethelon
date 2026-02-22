@@ -90,7 +90,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="container mx-auto px-6 lg:px-12 py-24 lg:py-32">
                 {/* Back Link */}
                 <div className="mb-8">
-                    <Link href="/shop" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">
+                    <Link href="/categories" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">
                         <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                         Back to Collection
                     </Link>

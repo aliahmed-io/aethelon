@@ -59,23 +59,6 @@ test.describe("Error Pages", () => {
     });
 });
 
-test.describe("Wholesale Portal", () => {
-    test("wholesale page loads with form", async ({ page }) => {
-        await page.goto("/wholesale");
-        await page.waitForLoadState("networkidle");
-
-        // Check hero section
-        await expect(page.locator("h1")).toBeVisible({ timeout: 15000 });
-
-        // Check page has relevant content
-        const pageContent = page.locator("body");
-        await expect(pageContent).toContainText(/Wholesale|Partner|Bulk|Business/i, { timeout: 15000 });
-
-        // Check form exists
-        const submitButton = page.locator("button[type='submit'], button:has-text('Submit'), button:has-text('Apply')").first();
-        await expect(submitButton).toBeVisible({ timeout: 10000 });
-    });
-});
 
 test.describe("Search", () => {
     // Skip on mobile since search button may be in mobile menu

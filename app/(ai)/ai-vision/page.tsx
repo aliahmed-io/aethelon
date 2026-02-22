@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import prisma from "@/lib/db";
 import { RoomVisualizerClient } from "@/components/visualizer/RoomVisualizerClient";
+import { VaultLanding } from "@/components/visualizer/VaultLanding";
 import type { VisualizerProduct } from "@/components/visualizer/types";
 import type { Metadata } from "next";
 
@@ -22,7 +23,7 @@ import { Product } from "@prisma/client";
 async function getVisualizerProducts(): Promise<VisualizerProduct[]> {
     const products = (await prisma.product.findMany({
         where: {
-            modelUrl: { not: null },
+            isVaultExclusive: true,
             status: "published",
         },
         include: {
@@ -57,6 +58,10 @@ interface AIVisionPageProps {
 export default async function AIVisionPage({ searchParams }: AIVisionPageProps) {
     const { product: preselectedProductId } = await searchParams;
     const products = await getVisualizerProducts();
+
+    if (!preselectedProductId) {
+        return <VaultLanding products={products} />;
+    }
 
     return (
         <Suspense

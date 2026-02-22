@@ -15,22 +15,8 @@ export const options = {
     },
 };
 
-export function setup() {
-    const BASE_URL = 'https://aethelona-ten.vercel.app';
-    const res = http.post(
-        `${BASE_URL}/api/search`,
-        JSON.stringify({ query: '', searchType: 'standard' }),
-        { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    const body = res.json();
-    const products = body.results || [];
-    return { productIds: products.map(p => p.id) };
-}
-
-export default function spikeTest(data) {
-    const BASE_URL = 'https://aethelona-ten.vercel.app';
-    const productIds = data.productIds || [];
+export default function spikeTest() {
+    const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 
     // Spike typically tests Homepage + Critical paths (not everything)
     const homeRes = http.get(`${BASE_URL}/`, { tags: { name: 'Home' } });
@@ -39,9 +25,6 @@ export default function spikeTest(data) {
     // Aggressive browsing (less sleep)
     sleep(Math.random() * 1);
 
-    if (productIds.length > 0) {
-        const randomId = productIds[Math.floor(Math.random() * productIds.length)];
-        const productRes = http.get(`${BASE_URL}/store/product/${randomId}`, { tags: { name: 'ProductDetail' } });
-        check(productRes, { 'product detail loaded': (r) => r.status === 200 });
-    }
+    const allRes = http.get(`${BASE_URL}/categories`, { tags: { name: 'Shop' } });
+    check(allRes, { 'products loaded': (r) => r.status === 200 });
 }

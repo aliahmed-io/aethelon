@@ -1,8 +1,7 @@
 import Prisma from "@/lib/db";
 import { CampaignClient } from "./CampaignClient";
 
-export const dynamic = "force-dynamic";
-
+export const revalidate = 3600; // Cache for 1 hour
 export default async function CampaignsPage() {
     const [banners, featuredProducts] = await Promise.all([
         Prisma.banner.findMany({
@@ -11,7 +10,7 @@ export default async function CampaignsPage() {
         }),
         Prisma.product.findMany({
             where: { isFeatured: true, status: "published" },
-            take: 3,
+            take: 8,
             orderBy: { createdAt: 'desc' },
             select: {
                 id: true,

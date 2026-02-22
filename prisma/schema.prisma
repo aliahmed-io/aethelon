@@ -81,6 +81,7 @@ model Product {
   images             String[]
   // Removed categoryId
   isFeatured         Boolean       @default(false)
+  isVaultExclusive   Boolean       @default(false)
   createdAt          DateTime      @default(now())
   color              String?       @default("")
   style              String?       @default("")
