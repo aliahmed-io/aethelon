@@ -6,11 +6,8 @@ import logger from "@/lib/logger";
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// M-3: Fail loudly if API key is missing — silent fallback with "re_mock" hides misconfiguration.
-if (!process.env.RESEND_API_KEY) {
-    throw new Error("[wishlist-alerts] RESEND_API_KEY is not set. Email sending is disabled.");
-}
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resend client is instantiated inside the handler (not at module level) so that
+// missing RESEND_API_KEY fails loudly at request time rather than crashing the build.
 
 /** H-4: Escape HTML special chars to prevent XSS injection through DB-sourced strings in email templates. */
 function escHtml(s: string): string {
@@ -30,6 +27,13 @@ export async function GET(req: Request) {
     if (!cronSecret || (authHeader !== `Bearer ${cronSecret}`)) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // M-3: Fail loudly at request time if RESEND_API_KEY is missing.
+    if (!process.env.RESEND_API_KEY) {
+        logger.error("[wishlist-alerts] RESEND_API_KEY is not set. Email sending is disabled.");
+        return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+    }
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     try {
         // Find items where current price is lower than added price (or last notified price)
