@@ -4,7 +4,14 @@ import { cookies } from "next/headers";
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const token = searchParams.get("token");
-    const redirectPath = searchParams.get("redirect") || "/bag";
+
+    // H-1: Validate redirect is a safe relative path to prevent open redirect phishing.
+    // Reject absolute URLs (e.g. "https://evil.com") and protocol-relative URLs (e.g. "//evil.com").
+    const rawRedirect = searchParams.get("redirect") || "/bag";
+    const redirectPath =
+        rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
+            ? rawRedirect
+            : "/bag";
 
     if (token) {
         // Set HTTP-only cookie for the session
@@ -18,6 +25,6 @@ export async function GET(request: NextRequest) {
         });
     }
 
-    // Redirect to bag or checkout
+    // Redirect to bag or checkout (validated relative path only)
     return NextResponse.redirect(new URL(redirectPath, request.url));
 }

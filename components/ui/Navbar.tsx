@@ -10,16 +10,22 @@ import { useSearch } from '@/components/search/SearchContext';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { LoginLink } from '@kinde-oss/kinde-auth-nextjs/components';
 
-interface NavbarProps {
-    isAdmin?: boolean;
-}
-
-export default function Navbar({ isAdmin = false }: NavbarProps) {
+export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
     const { openSearch } = useSearch();
     const { isAuthenticated } = useKindeBrowserClient();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetch('/api/auth/admin')
+                .then(res => res.json())
+                .then(data => setIsAdmin(data.isAdmin))
+                .catch(console.error);
+        }
+    }, [isAuthenticated]);
 
     // Hide Navbar completely on Room Visualizer
 

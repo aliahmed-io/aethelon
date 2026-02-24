@@ -271,23 +271,23 @@ export function PropertiesPanel({
 
             {/* Actions */}
             {selectedProduct && (
-                <div className="p-6 border-t border-border bg-black/5 space-y-4">
+                <div className="p-6 border-t border-border bg-muted/20 space-y-4">
                     <div className="flex justify-between items-end">
                         <span className="text-xs text-muted-foreground uppercase tracking-widest">
-                            Exclusive Piece
+                            Price
                         </span>
-                        <span className="font-display text-2xl text-accent">
+                        <span className="font-display text-2xl text-foreground">
                             {formatPrice(selectedProduct.price / 100)}
                         </span>
                     </div>
 
-                    <a
-                        href={`mailto:concierge@aethelon.com?subject=Inquiry regarding ${selectedProduct.name}`}
+                    <Link
+                        href={`/shop/${selectedProduct.id}`}
                         className="w-full flex items-center justify-center gap-2 bg-foreground text-background font-bold py-3.5 rounded-sm hover:bg-foreground/90 transition-colors uppercase tracking-widest text-sm"
                     >
-                        <Sparkles className="w-4 h-4 text-amber-500" />
-                        Inquire About Piece
-                    </a>
+                        <ShoppingCart className="w-4 h-4" />
+                        View Product
+                    </Link>
                 </div>
             )}
         </div>

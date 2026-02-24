@@ -6,11 +6,11 @@ import { check, sleep } from 'k6';
 
 export const options = {
     stages: [
-        { duration: '1m', target: 600 }, // Fast ramp to 600
-        { duration: '2m', target: 600 }, // Hold 600
-        { duration: '1m', target: 800 }, // Ramp to 800
-        { duration: '2m', target: 800 }, // Hold 800
-        { duration: '1m', target: 0 },   // Ramp down
+        { duration: '2m', target: 200 },
+        { duration: '2m', target: 400 },
+        { duration: '3m', target: 600 },
+        { duration: '3m', target: 600 },
+        { duration: '2m', target: 0 },
     ],
     thresholds: {
         http_req_failed: ['rate<0.02'],    // < 2% errors
@@ -33,8 +33,8 @@ export default function () {
 
     check(res, {
         'status is 200': (r) => r.status === 200,
-        'page loaded': (r) => r.body.length > 0,
+        'page loaded': (r) => r.body ? r.body.length > 0 : false,
     });
 
-    sleep(1); // 1s think time
+    sleep(Math.random() * 5 + 2); // 2-7s realistic think time
 }

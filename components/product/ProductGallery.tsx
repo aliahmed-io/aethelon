@@ -82,6 +82,7 @@ export function ProductGallery({ images, productName, modelUrl, related3DProduct
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 priority
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                                quality={100}
                             />
 
                             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 backdrop-blur-md p-2 rounded-full text-white">
@@ -135,6 +136,7 @@ export function ProductGallery({ images, productName, modelUrl, related3DProduct
                                 fill
                                 className="object-contain"
                                 quality={100}
+                                unoptimized
                                 priority
                             />
                             <Button

@@ -54,6 +54,7 @@ export function Showcase() {
                                 alt={item.alt}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                quality={60}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
                             <div className="absolute bottom-0 left-0 p-6 md:p-8">

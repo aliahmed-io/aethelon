@@ -10,7 +10,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
     const authHeader = req.headers.get("authorization");
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    // H-3: Fail closed — if CRON_SECRET is not set, deny all requests.
+    // Without this check, `authHeader !== 'Bearer undefined'` could be bypassed.
+    if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

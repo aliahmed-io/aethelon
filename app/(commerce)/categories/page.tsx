@@ -41,13 +41,13 @@ export default async function CategoriesIndexPage() {
                             href={`/categories/${category.slug}`}
                             className="group relative overflow-hidden rounded-md bg-muted block h-full isolate"
                         >
-                            {/* Background Image */}
                             <Image
                                 src={category.image || "/assets/placeholder.svg"}
                                 alt={category.name}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                quality={60}
                             />
 
                             {/* Overlay / Gradient */}

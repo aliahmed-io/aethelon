@@ -6,7 +6,21 @@ import logger from "@/lib/logger";
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const resend = new Resend(process.env.RESEND_API_KEY || "re_mock");
+// M-3: Fail loudly if API key is missing — silent fallback with "re_mock" hides misconfiguration.
+if (!process.env.RESEND_API_KEY) {
+    throw new Error("[wishlist-alerts] RESEND_API_KEY is not set. Email sending is disabled.");
+}
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+/** H-4: Escape HTML special chars to prevent XSS injection through DB-sourced strings in email templates. */
+function escHtml(s: string): string {
+    return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#x27;");
+}
 
 export async function GET(req: Request) {
     const authHeader = req.headers.get("authorization");
@@ -39,14 +53,14 @@ export async function GET(req: Request) {
                     await resend.emails.send({
                         from: "Aethelon <updates@aethelon.com>",
                         to: item.user.email,
-                        subject: `Price Drop Alert: ${item.product.name} is on sale!`,
+                        subject: `Price Drop Alert: ${escHtml(String(item.product.name))} is on sale!`,
                         html: `
-                            <h1>Good news, ${item.user.firstName}!</h1>
+                            <h1>Good news, ${escHtml(String(item.user.firstName))}!</h1>
                             <p>An item in your wishlist has dropped in price.</p>
-                            <p><strong>${item.product.name}</strong> is now <strong>$${(currentPrice / 100).toFixed(2)}</strong>.</p>
+                            <p><strong>${escHtml(String(item.product.name))}</strong> is now <strong>$${(currentPrice / 100).toFixed(2)}</strong>.</p>
                             <p>Was: $${(baselinePrice / 100).toFixed(2)}</p>
                             <br/>
-                            <a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://aethelon.com"}/shop/${item.product.id}">Buy Now</a>
+                            <a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://aethelon.com"}/shop/${escHtml(String(item.product.id))}">Buy Now</a>
                         `
                     });
 

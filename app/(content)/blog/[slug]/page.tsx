@@ -5,22 +5,43 @@ import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getBlogPostBySlug } from '@/app/actions/blog';
 import ReactMarkdown from 'react-markdown';
+import { articleSchema, breadcrumbSchema } from '@/lib/structured-data';
 
 
+
+const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://aethelon.com";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
     const post = await getBlogPostBySlug(slug);
 
     if (!post) {
-        return {
-            title: 'Post Not Found | Aethelon Journal',
-        };
+        return { title: 'Post Not Found | Aethelon Journal' };
     }
+
+    const description = post.metaDescription || post.excerpt || `Read ${post.title} on the Aethelon Journal.`;
+    const canonicalUrl = `${BASE_URL}/blog/${post.slug}`;
+    const ogImage = post.image || `${BASE_URL}/og-default.jpg`;
 
     return {
         title: `${post.title} | Aethelon Journal`,
-        description: post.metaDescription || post.excerpt || `Read more about ${post.title} on Aethelon Journal.`,
+        description,
+        alternates: { canonical: canonicalUrl },
+        openGraph: {
+            title: post.title,
+            description,
+            url: canonicalUrl,
+            type: "article",
+            publishedTime: post.publishedAt?.toISOString(),
+            authors: [post.author ?? "Aethelon Editorial"],
+            images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: post.title,
+            description,
+            images: [ogImage],
+        },
     };
 }
 
@@ -35,8 +56,32 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     // Default image if none provided
     const headerImage = post.image || "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=2000";
 
+    const ldArticle = articleSchema({
+        title: post.title,
+        slug: post.slug,
+        description: post.excerpt,
+        image: post.image,
+        publishedAt: post.publishedAt ? new Date(post.publishedAt) : null,
+        updatedAt: post.updatedAt ? new Date(post.updatedAt) : null,
+        author: post.author,
+    });
+    const ldBreadcrumb = breadcrumbSchema([
+        { name: "Home", url: BASE_URL },
+        { name: "Journal", url: `${BASE_URL}/blog` },
+        { name: post.title, url: `${BASE_URL}/blog/${post.slug}` },
+    ]);
+
     return (
-        <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
+        <main id="main-content" className="min-h-screen bg-background text-foreground pt-32 pb-20">
+            {/* JSON-LD: Article + Breadcrumb */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(ldArticle) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(ldBreadcrumb) }}
+            />
             <article className="container mx-auto px-6 max-w-4xl">
                 {/* Back Link */}
                 <Link

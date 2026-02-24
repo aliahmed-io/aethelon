@@ -68,6 +68,7 @@ export function ThreeDViewer({ modelUrl, usdzUrl, images, altTitle = "Product Im
                             alt={altTitle}
                             fill
                             className="object-contain p-12"
+                            quality={100}
                             priority
                         />
                     )}

@@ -438,13 +438,13 @@ export function MobileVisualizer({
                             </button>
                         )}
 
-                        <a
-                            href={`mailto:concierge@aethelon.com?subject=Inquiry regarding ${selectedProduct.name}`}
-                            className="flex items-center gap-1.5 bg-accent text-accent-foreground px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest"
+                        <Link
+                            href={`/shop/${selectedProduct.id}`}
+                            className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest"
                         >
-                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                            Inquire
-                        </a>
+                            <ShoppingCart className="w-3.5 h-3.5" />
+                            View
+                        </Link>
                     </div>
                 )}
 

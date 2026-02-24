@@ -1,6 +1,8 @@
+import 'dotenv/config';
 import { PrismaClient } from "@prisma/client";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-const DATABASE_URL = process.env.DATABASE_URL;
+
 
 const BLOG_POSTS = [
     {
@@ -65,12 +67,8 @@ async function main() {
     console.log("Starting Blog Seeding...");
 
     const prisma = new PrismaClient({
-        datasources: {
-            db: {
-                url: DATABASE_URL
-            }
-        }
-    });
+        accelerateUrl: process.env.DATABASE_URL!,
+    }).$extends(withAccelerate());
 
     try {
         for (const post of BLOG_POSTS) {

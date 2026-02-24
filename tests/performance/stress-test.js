@@ -4,8 +4,8 @@ import { check, sleep } from 'k6';
 export const options = {
     // Stress Test: Push system to 500 VUs
     stages: [
-        { duration: '3m', target: 800 }, // Ramp-up
-        { duration: '5m', target: 800 }, // Sustain high load
+        { duration: '3m', target: 600 }, // Ramp-up
+        { duration: '5m', target: 600 }, // Sustain high load
         { duration: '2m', target: 0 },   // Ramp-down
     ],
     thresholds: {

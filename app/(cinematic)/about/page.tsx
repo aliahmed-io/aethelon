@@ -1,14 +1,35 @@
+import type { Metadata } from "next";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/layout/Footer";
 import Image from "next/image";
 
-export const metadata = {
-    title: "About Us | Aethelon",
+const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://aethelon.com";
+
+export const metadata: Metadata = {
+    title: "About Us",
+    description:
+        "Learn the story behind Aethelon — handcrafted furniture built on a foundation of sustainable materials, master artisanship, and timeless design philosophy.",
+    alternates: {
+        canonical: `${BASE_URL}/about`,
+    },
+    openGraph: {
+        title: "About Aethelon — Crafted to Endure",
+        description:
+            "Learn the story behind Aethelon — premium furniture built on sustainable materials, master artisanship, and timeless design.",
+        url: `${BASE_URL}/about`,
+        type: "website",
+    },
+    twitter: {
+        title: "About Aethelon — Crafted to Endure",
+        description:
+            "Sustainably sourced, artisan-made premium furniture. Discover the Aethelon story.",
+    },
 };
+
 
 export default function AboutPage() {
     return (
-        <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
+        <main id="main-content" className="min-h-screen bg-background text-foreground pt-32 pb-20">
             <Navbar />
             <div className="container mx-auto px-6 lg:px-12 max-w-5xl">
                 {/* Hero */}
@@ -29,8 +50,9 @@ export default function AboutPage() {
                                 src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=1200"
                                 alt="Aethelon Workshop"
                                 fill
-                                unoptimized
                                 className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                priority
                             />
                         </div>
                     </div>
@@ -87,8 +109,8 @@ export default function AboutPage() {
                                 src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200"
                                 alt="Aethelon Atelier"
                                 fill
-                                unoptimized
                                 className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                                sizes="(max-width: 768px) 100vw, 50vw"
                             />
                         </div>
                     </div>

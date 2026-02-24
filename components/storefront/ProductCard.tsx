@@ -72,6 +72,7 @@ export function ProductCard({ item, priority = false }: iAppProps) {
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 50vw"
             className="object-contain p-4 transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
             priority={priority}
+            quality={60}
           />
 
           {/* Discount Badge */}

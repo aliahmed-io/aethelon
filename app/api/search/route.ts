@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import prisma, { safeQuery } from "@/lib/db";
 import logger from "@/lib/logger";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -10,13 +10,19 @@ import { searchProductsHybrid } from "@/lib/search/hybrid";
 
 import { trackSearchQuery } from "@/lib/search/analytics";
 
+/** Extracts the real client IP safely without relying on the unstable `.ip` accessor. */
+function getClientIp(request: NextRequest): string {
+    return (
+        request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+        "127.0.0.1"
+    );
+}
+
 // GET handler for direct search queries
 export async function GET(request: NextRequest) {
     // Rate Limit: 60 requests per minute by IP
-    // Fix: Use generic header check or trust proxy if configured
-    // @ts-ignore - NextRequest has .ip but types might be lagging or strict
-    const ip = request.ip ?? request.headers.get("x-forwarded-for")?.split(',')[0] ?? "127.0.0.1";
-    const { success } = await rateLimit(`search-${ip}`, 60, "60 s");
+    const ip = getClientIp(request);
+    const { success } = await rateLimit(`search-get-${ip}`, 60, "60 s");
 
     if (!success) {
         return NextResponse.json({ error: "Too many requests" }, { status: 429 });
@@ -36,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        let products: any[] = [];
+        let products: unknown[] = [];
         let total = 0;
 
         // Use Hybrid Search if a textual query is present
@@ -64,7 +70,10 @@ export async function GET(request: NextRequest) {
             total = result.total;
         }
 
-        return NextResponse.json({ products, total, query, filters: { category, minPrice, maxPrice, inStock, sortBy } });
+        return NextResponse.json(
+            { products, total, query, filters: { category, minPrice, maxPrice, inStock, sortBy } },
+            { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=60' } }
+        );
     } catch (error) {
         logger.error({ err: error }, "[Search API Error]");
         return NextResponse.json({ error: "Failed to search products" }, { status: 500 });
@@ -72,9 +81,16 @@ export async function GET(request: NextRequest) {
 }
 
 // POST handler for SearchOverlay compatibility
+// H-2: Rate-limited to 30 req/min per IP to prevent DB enumeration / scraping.
 export async function POST(request: NextRequest) {
+    const ip = getClientIp(request);
+    const { success } = await rateLimit(`search-post-${ip}`, 30, "60 s");
+    if (!success) {
+        return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     try {
-        const body = await request.json();
+        const body = await request.json() as { query?: string; searchType?: string };
         const { query, searchType } = body;
 
         if (!query) {
@@ -85,12 +101,16 @@ export async function POST(request: NextRequest) {
 
         // For AI search, we could add ranking logic here
         // For now, both types return the same results
-        return NextResponse.json({ results: products, searchType });
+        return NextResponse.json(
+            { results: products, searchType },
+            { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=60' } }
+        );
     } catch (error) {
         logger.error({ err: error }, "[Search API Error]");
         return NextResponse.json({ error: "Failed to search products", results: [] }, { status: 500 });
     }
 }
+
 
 // Shared search function
 async function searchProducts({
@@ -143,23 +163,26 @@ async function searchProducts({
     }
 
     const [products, total] = await Promise.all([
-        prisma.product.findMany({
-            where,
-            orderBy,
-            take: limit,
-            select: {
-                id: true,
-                name: true,
-                price: true,
-                images: true,
-                mainCategory: true,
-                stockQuantity: true,
-                averageRating: true,
-                reviewCount: true,
-                categories: { select: { name: true } }
-            }
-        }),
-        prisma.product.count({ where })
+        safeQuery(
+            prisma.product.findMany({
+                where,
+                orderBy,
+                take: limit,
+                select: {
+                    id: true,
+                    name: true,
+                    price: true,
+                    images: true,
+                    mainCategory: true,
+                    stockQuantity: true,
+                    averageRating: true,
+                    reviewCount: true,
+                    categories: { select: { name: true } }
+                }
+            }),
+            []
+        ),
+        safeQuery(prisma.product.count({ where }), 0)
     ]);
 
     return { products, total };

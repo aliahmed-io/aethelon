@@ -9,17 +9,10 @@ import { AIChatbotProvider } from "@/components/providers/AIChatbotProvider";
  * No heavy cinematic visuals, but includes functional enhancements like chatbot.
  * Optimized for conversion-critical flows: shop, cart, checkout.
  */
-export default async function CommerceLayout({ children }: { children: ReactNode }) {
-    let isAdmin = false;
-    try {
-        isAdmin = await isAdminUser();
-    } catch (error) {
-        console.error("Failed to check admin status:", error);
-    }
-
+export default function CommerceLayout({ children }: { children: ReactNode }) {
     return (
         <>
-            <Navbar isAdmin={isAdmin} />
+            <Navbar />
             {children}
             <AIChatbotProvider />
             <Footer />

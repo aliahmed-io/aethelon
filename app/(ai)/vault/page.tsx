@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
-import prisma from "@/lib/db";
+import prisma, { safeQuery } from "@/lib/db";
 import { PremiumProductCard } from "@/components/storefront/PremiumProductCard";
 import { PremiumSort } from "./PremiumSort";
 
@@ -33,26 +33,31 @@ export default async function PremiumProductsPage({
   const params = await searchParams;
   const orderBy = getOrderBy(params.sort);
 
-  const premiumProducts = await prisma.product.findMany({
-    where: {
-      status: "published",
-      OR: [
-        { isFeatured: true },
-        { tags: { has: "premium" } },
-        { tags: { has: "rare" } },
-      ],
-    },
-    orderBy,
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      price: true,
-      images: true,
-      discountPercentage: true,
-      brand: true,
-    },
-  });
+  const premiumProducts = await safeQuery(
+    prisma.product.findMany({
+      where: {
+        status: "published",
+        OR: [
+          { isFeatured: true },
+          { tags: { has: "premium" } },
+          { tags: { has: "rare" } },
+        ],
+      },
+      orderBy,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        images: true,
+        discountPercentage: true,
+        brand: true,
+      },
+    }),
+    []
+  );
+
+  const isThrottled = premiumProducts.length === 0;
 
   return (
     <div className="bg-background min-h-screen text-foreground pb-20 selection:bg-accent/30">
@@ -107,21 +112,22 @@ export default async function PremiumProductsPage({
             ))}
           </div>
         ) : (
-          /* Empty state */
+          /* Empty state or Throttled state */
           <div className="min-h-[50vh] flex flex-col items-center justify-center border border-border rounded-sm bg-muted/30 backdrop-blur-sm relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
 
             <div className="w-24 h-24 rounded-full bg-gradient-to-b from-accent/10 to-transparent flex items-center justify-center mb-8 border border-border shadow-2xl relative">
               <div className="absolute inset-0 rounded-full border border-accent/20 animate-[ping_3s_linear_infinite]" />
-              <Sparkles className="w-8 h-8 text-muted-foreground" />
+              <Sparkles className={`w-8 h-8 ${isThrottled ? 'text-accent' : 'text-muted-foreground'}`} />
             </div>
 
             <h2 className="text-2xl font-light tracking-wide mb-3 uppercase">
-              Premium Collection
+              {isThrottled ? 'Service Temporarily Throttled' : 'Premium Collection'}
             </h2>
             <p className="text-muted-foreground max-w-md text-center mb-10 font-light leading-relaxed">
-              Our rarest and most exceptional pieces will appear here.
-              Stock is limited and not guaranteed—inquiries by request.
+              {isThrottled
+                ? 'High demand has temporarily reached our database capacity limits. Access to the luxury collection will resume shortly.'
+                : 'Our rarest and most exceptional pieces will appear here. Stock is limited and not guaranteed—inquiries by request.'}
             </p>
 
             <Link

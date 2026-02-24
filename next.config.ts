@@ -8,9 +8,7 @@ const nextConfig: NextConfig = {
     typescript: {
         ignoreBuildErrors: false,
     },
-    env: {
-        DATABASE_URL: process.env.DATABASE_URL || "",
-    },
+
     images: {
         formats: ['image/avif', 'image/webp'],
         remotePatterns: [

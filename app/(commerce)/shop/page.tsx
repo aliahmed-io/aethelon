@@ -1,11 +1,37 @@
+import type { Metadata } from "next";
 import { FurnitureFilterBar } from "@/components/shop/FurnitureFilterBar";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import prisma from "@/lib/db";
 import { ProductStatus, Prisma } from "@prisma/client";
 
+const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://aethelon.com";
+
+export const metadata: Metadata = {
+    title: "Shop",
+    description:
+        "Browse Aethelon's full collection of premium, sustainably crafted furniture. Filter by category, style, price, and more.",
+    alternates: { canonical: `${BASE_URL}/shop` },
+    openGraph: {
+        title: "Shop Premium Furniture — Aethelon",
+        description:
+            "Browse our full collection of sustainably crafted premium furniture pieces.",
+        url: `${BASE_URL}/shop`,
+        type: "website",
+    },
+    twitter: {
+        title: "Shop Premium Furniture — Aethelon",
+        description:
+            "Browse our full collection of sustainably crafted premium furniture pieces.",
+    },
+};
+
+// ISR: revalidate every hour so product listings stay fresh without full SSR cost.
+export const revalidate = 3600;
+
 interface ShopPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
+
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
     const { category, sort, price, color, size, style } = await searchParams;

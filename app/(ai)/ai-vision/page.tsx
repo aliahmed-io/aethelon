@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
-import prisma from "@/lib/db";
+import prisma, { safeQuery } from "@/lib/db";
 import { RoomVisualizerClient } from "@/components/visualizer/RoomVisualizerClient";
-import { VaultLanding } from "@/components/visualizer/VaultLanding";
 import type { VisualizerProduct } from "@/components/visualizer/types";
 import type { Metadata } from "next";
 
@@ -17,26 +16,29 @@ export const metadata: Metadata = {
 };
 
 import { Product } from "@prisma/client";
+import { TryOnLanding } from "@/components/visualizer/TryOnLanding";
 
 // ...
 
 async function getVisualizerProducts(): Promise<VisualizerProduct[]> {
-    const products = (await prisma.product.findMany({
-        where: {
-            isVaultExclusive: true,
-            status: "published",
-        },
-        include: {
-            categories: {
-                select: {
-                    id: true,
-                    name: true,
+    const products = (await safeQuery(
+        prisma.product.findMany({
+            where: {
+                status: "published",
+            },
+            include: {
+                categories: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
                 },
             },
-        },
-        orderBy: [{ isFeatured: "desc" }, { staticScore: "desc" }],
-        take: 24,
-    })) as unknown as (Product & { categories: { id: string; name: string }[] })[];
+            orderBy: [{ isFeatured: "desc" }, { staticScore: "desc" }],
+            take: 24,
+        }),
+        []
+    )) as unknown as (Product & { categories: { id: string; name: string }[] })[];
 
     return products
         .filter((p) => p.modelUrl !== null)
@@ -60,7 +62,7 @@ export default async function AIVisionPage({ searchParams }: AIVisionPageProps) 
     const products = await getVisualizerProducts();
 
     if (!preselectedProductId) {
-        return <VaultLanding products={products} />;
+        return <TryOnLanding products={products} />;
     }
 
     return (

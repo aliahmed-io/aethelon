@@ -15,6 +15,16 @@ interface CartData {
     items: CartItem[];
 }
 
+/** H-4: Escape HTML special chars to prevent XSS through DB-sourced strings in email templates. */
+function escHtml(s: string): string {
+    return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#x27;");
+}
+
 function formatPrice(cents: number): string {
     return `$${(cents / 100).toFixed(2)}`;
 }
@@ -30,10 +40,10 @@ function generateCartEmailHtml(
             (item) => `
         <tr>
             <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
-                ${item.name}
+                ${escHtml(item.name)}
             </td>
             <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
-                ${item.quantity}
+                ${escHtml(String(item.quantity))}
             </td>
             <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">
                 ${formatPrice(item.price * item.quantity)}

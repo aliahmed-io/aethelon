@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Metadata, ResolvingMetadata } from "next";
 import { CurrencyService, SUPPORTED_CURRENCIES } from "@/modules/currency/currency.service";
+import { productSchema, breadcrumbSchema } from "@/lib/structured-data";
 
 // Post-Hydration Components
 const RecentlyViewed = dynamic(
@@ -27,17 +28,33 @@ export async function generateMetadata(
     const { id } = await params;
     const product = await Prisma.product.findUnique({
         where: { id },
-        select: { name: true, description: true, images: true }
+        select: { name: true, description: true, images: true, price: true, stockQuantity: true }
     });
 
     if (!product) return { title: "Product Not Found" };
 
+    const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://aethelon.com";
+    const canonicalUrl = `${BASE_URL}/shop/${id}`;
+    const ogImage = product.images[0] || "";
+    const description = product.description?.substring(0, 160) ?? `Shop ${product.name} at Aethelon — premium handcrafted furniture.`;
+
     return {
         title: product.name,
-        description: product.description?.substring(0, 160),
+        description,
+        alternates: { canonical: canonicalUrl },
         openGraph: {
-            images: [product.images[0] || ""],
-        }
+            title: `${product.name} — Aethelon`,
+            description,
+            url: canonicalUrl,
+            type: "website",
+            images: ogImage ? [{ url: ogImage, width: 1200, height: 800, alt: product.name }] : [],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${product.name} — Aethelon`,
+            description,
+            images: ogImage ? [ogImage] : [],
+        },
     };
 }
 
@@ -56,7 +73,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         where: {
             modelUrl: { not: null },
             id: { not: product.id },
-            categories: { some: { id: { in: product.categories.map(c => c.id) } } }
+            categories: { some: { id: { in: product.categories.map((c: { id: string }) => c.id) } } }
         },
         take: 4,
         select: { id: true, name: true, modelUrl: true, images: true }
@@ -67,7 +84,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         const moreProducts = await Prisma.product.findMany({
             where: {
                 modelUrl: { not: null },
-                id: { notIn: [product.id, ...related3DProducts.map(p => p.id)] },
+                id: { notIn: [product.id, ...related3DProducts.map((p: { id: string }) => p.id)] },
                 isFeatured: true
             },
             take: 4 - related3DProducts.length,
@@ -76,8 +93,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
         related3DProducts.push(...moreProducts);
     }
 
+    const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://aethelon.com";
+    const ldProduct = productSchema({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        images: product.images,
+        price: product.price,
+        inStock: product.stockQuantity > 0,
+        ratingValue: product.averageRating,
+        reviewCount: product.reviewCount,
+    });
+    const ldBreadcrumb = breadcrumbSchema([
+        { name: "Home", url: BASE_URL },
+        { name: "Shop", url: `${BASE_URL}/shop` },
+        { name: product.name, url: `${BASE_URL}/shop/${product.id}` },
+    ]);
+
     return (
-        <main className="min-h-screen bg-background text-foreground animate-in fade-in duration-1000">
+        <main id="main-content" className="min-h-screen bg-background text-foreground animate-in fade-in duration-1000">
+            {/* JSON-LD: Product + Breadcrumb */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(ldProduct) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(ldBreadcrumb) }}
+            />
             {/* Analytics */}
             <ProductTrackerLazy product={{
                 id: product.id,
@@ -119,7 +162,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             images={product.images}
                             productName={product.name}
                             modelUrl={product.modelUrl}
-                            related3DProducts={related3DProducts.map(p => ({
+                            related3DProducts={related3DProducts.map((p: { id: string; name: string; modelUrl: string | null; images: string[] }) => ({
                                 id: p.id,
                                 name: p.name,
                                 modelUrl: p.modelUrl!,
