@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import type { CampaignWithProducts } from "@/lib/types/prisma-payloads";
 
+export const dynamic = "force-dynamic";
+
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     const campaign = await Prisma.campaign.findUnique({
         where: { slug: params.slug },

@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     },
 };
 
-// ISR: revalidate every hour so product listings stay fresh without full SSR cost.
-export const revalidate = 3600;
+// SSR: product listings must be fresh and must not hit DB during build.
+export const dynamic = "force-dynamic";
 
 interface ShopPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

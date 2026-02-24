@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description: "Explore our comprehensive collection of premium furniture categories.",
 };
 
-export const revalidate = 3600; // Cache for 1 hour
+export const dynamic = "force-dynamic";
 export default async function CategoriesIndexPage() {
     // Fetch top-level categories
     const categories = await prisma.category.findMany({
