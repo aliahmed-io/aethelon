@@ -1,12 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { withAccelerate } from '@prisma/extension-accelerate';
-import { withOptimize } from '@prisma/extension-optimize';
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
     accelerateUrl: process.env.DATABASE_URL!,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-  }).$extends(withAccelerate()).$extends(withOptimize({ apiKey: process.env.PRISMA_OPTIMIZE_API_KEY || "" }));
+  }).$extends(withAccelerate());
 };
 
 declare global {
