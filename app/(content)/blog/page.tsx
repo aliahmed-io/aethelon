@@ -4,10 +4,13 @@ import Image from "next/image";
 import { getBlogPosts } from "@/app/actions/blog";
 import { BlogPost } from "@prisma/client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Journal — Aethelon",
     description: "Design stories, craft process journals, and living inspiration from the Aethelon editorial team.",
 };
+
 
 
 export default async function BlogPage() {
