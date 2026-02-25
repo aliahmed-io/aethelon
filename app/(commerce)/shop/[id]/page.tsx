@@ -153,6 +153,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             currencyCode={currentCurrency}
                             exchangeRate={SUPPORTED_CURRENCIES[currentCurrency].rate}
                         />
+                        {/* Try in AR — shown only when a 3D model exists */}
+                        {product.modelUrl && (
+                            <Link
+                                href={`/ar?id=${product.id}`}
+                                className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.2em] transition-colors hover:opacity-80"
+                                style={{ color: "hsl(var(--accent))", border: "1px solid hsl(var(--border))", padding: "10px 16px" }}
+                            >
+                                <span>⬡</span> Try in AR
+                            </Link>
+                        )}
+
                     </div>
 
                     {/* Right: Gallery (Desktop Order: Gallery) */}

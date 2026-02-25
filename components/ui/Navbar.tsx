@@ -14,6 +14,7 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const isVault = pathname.startsWith('/vault');
     const { openSearch } = useSearch();
     const { isAuthenticated } = useKindeBrowserClient();
     const [isAdmin, setIsAdmin] = useState(false);
@@ -66,17 +67,27 @@ export default function Navbar() {
             className={cn(
                 'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
                 isScrolled
-                    ? 'py-4 bg-background/80 backdrop-blur-md border-b border-border shadow-sm'
+                    ? 'py-4 backdrop-blur-md border-b shadow-sm'
                     : 'py-6 bg-transparent'
             )}
+            style={isScrolled ? {
+                background: isVault ? 'rgba(19,16,9,0.92)' : 'rgba(250,249,245,0.85)',
+                borderColor: isVault ? '#57412A' : 'hsl(var(--border))',
+            } : {}}
         >
             <div className="container mx-auto px-6 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="z-50 relative group">
-                    <span className="font-display text-2xl tracking-widest font-bold text-foreground">
+                    <span
+                        className="font-display text-2xl tracking-widest font-bold transition-colors duration-300"
+                        style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
+                    >
                         AETHELON
                     </span>
-                    <span className="block h-0.5 w-0 bg-accent transition-all duration-300 group-hover:w-full" />
+                    <span
+                        className="block h-0.5 w-0 transition-all duration-300 group-hover:w-full"
+                        style={{ background: isVault ? 'var(--vault-gold, #AB7E22)' : 'hsl(var(--accent))' }}
+                    />
                 </Link>
 
                 {/* Desktop Navigation */}
@@ -87,14 +98,19 @@ export default function Navbar() {
                             href={link.href}
                             className={cn(
                                 'text-sm font-medium tracking-wide transition-colors hover:text-accent relative py-2',
-                                pathname === link.href ? 'text-accent' : 'text-muted-foreground'
                             )}
+                            style={{
+                                color: pathname === link.href
+                                    ? isVault ? 'var(--vault-gold, #AB7E22)' : 'hsl(var(--accent))'
+                                    : isVault ? 'var(--vault-muted, #9A7A5C)' : 'hsl(var(--muted-foreground))',
+                            }}
                         >
                             {link.label}
                             {pathname === link.href && (
                                 <motion.div
                                     layoutId="navbar-indicator"
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent"
+                                    className="absolute bottom-0 left-0 right-0 h-0.5"
+                                    style={{ background: isVault ? 'var(--vault-gold, #AB7E22)' : 'hsl(var(--accent))' }}
                                 />
                             )}
                         </Link>
@@ -105,7 +121,8 @@ export default function Navbar() {
                 <div className="flex items-center gap-4 z-50">
                     <button
                         onClick={openSearch}
-                        className="text-foreground hover:text-accent transition-colors p-2"
+                        className="transition-colors p-2"
+                        style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
                         aria-label="Search"
                         data-testid="search-button"
                     >
@@ -113,7 +130,8 @@ export default function Navbar() {
                     </button>
                     <Link
                         href="/bag"
-                        className="text-foreground hover:text-accent transition-colors p-2 relative"
+                        className="transition-colors p-2 relative"
+                        style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
                         aria-label="Cart"
                     >
                         <ShoppingBag className="w-5 h-5" />
@@ -121,7 +139,8 @@ export default function Navbar() {
                     {isAdmin && (
                         <Link
                             href="/dashboard"
-                            className="text-foreground hover:text-red-500 transition-colors p-2"
+                            className="hover:text-red-500 transition-colors p-2"
+                            style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
                             aria-label="Admin Dashboard"
                             title="Admin Dashboard"
                         >
@@ -129,7 +148,12 @@ export default function Navbar() {
                         </Link>
                     )}
                     {isAuthenticated ? (
-                        <Link href="/account" className="text-foreground hover:text-accent transition-colors p-2" aria-label="Account">
+                        <Link
+                            href="/account"
+                            className="transition-colors p-2"
+                            style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
+                            aria-label="Account"
+                        >
                             <User className="w-5 h-5" />
                         </Link>
                     ) : (
@@ -139,7 +163,8 @@ export default function Navbar() {
                         </LoginLink>
                     )}
                     <button
-                        className="md:hidden text-foreground hover:text-accent transition-colors p-2"
+                        className="md:hidden transition-colors p-2"
+                        style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Menu"
                     >
@@ -155,7 +180,8 @@ export default function Navbar() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: '100vh' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="fixed inset-0 bg-background pt-24 px-6 md:hidden overflow-hidden"
+                        className="fixed inset-0 pt-24 px-6 md:hidden overflow-hidden"
+                        style={{ background: isVault ? '#131009' : 'hsl(var(--background))' }}
                     >
                         <nav className="flex flex-col gap-6 items-center">
                             {navLinks.map((link) => (
@@ -163,7 +189,8 @@ export default function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-2xl font-display text-foreground hover:text-accent transition-colors"
+                                    className="text-2xl font-display transition-colors"
+                                    style={{ color: isVault ? '#EDE0CC' : 'hsl(var(--foreground))' }}
                                 >
                                     {link.label}
                                 </Link>

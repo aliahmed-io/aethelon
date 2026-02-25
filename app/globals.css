@@ -168,3 +168,49 @@ body.custom-cursor [role="button"] {
     background-position: 200% 0;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   VAULT — Private gallery palette (analogous dark inversion of site palette)
+   Hues stay 25–42° (same wheel arc as brand); value compressed to 5–16%.
+   60% dominant near-black / 30% lotus-brown midtone / 10% desaturated gold.
+   ══════════════════════════════════════════════════════════════════════════ */
+.vault {
+  --vault-bg: #131009;
+  /* HSL 28 12%  7%  — dominant near-black  */
+  --vault-surface: #1C1510;
+  /* HSL 28 14% 11%  — card surface         */
+  --vault-surface-2: #2A1E14;
+  /* HSL 28 16% 16%  — lotus brown depth    */
+  --vault-border: #57412A;
+  /* HSL 35 28% 28%  — warm brown border    */
+  --vault-muted: #9A7A5C;
+  /* HSL 30 20% 55%  — secondary text       */
+  --vault-fg: #EDE0CC;
+  /* HSL 38 35% 90%  — warm off-white       */
+  --vault-gold: #AB7E22;
+  /* HSL 40 58% 42%  — restrained gold      */
+  --vault-gold-bright: #C99028;
+  /* HSL 42 62% 50%  — hover highlight      */
+}
+
+@keyframes vault-shimmer {
+  0% {
+    background-position: 200% center;
+  }
+
+  100% {
+    background-position: -200% center;
+  }
+}
+
+@keyframes vault-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -29,14 +29,37 @@ export function PremiumSort() {
 
     return (
         <div className="flex items-center gap-3">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Sort</span>
+            <span
+                className="text-[9px] uppercase tracking-[0.25em] font-mono"
+                style={{ color: "var(--vault-muted)" }}
+            >
+                Sort
+            </span>
             <Select value={sort} onValueChange={handleChange}>
-                <SelectTrigger className="w-[200px] h-9 border-border bg-background text-foreground text-xs uppercase tracking-wider">
+                <SelectTrigger
+                    className="w-[190px] h-8 text-[10px] uppercase tracking-wider font-mono rounded-none border"
+                    style={{
+                        background: "var(--vault-surface)",
+                        borderColor: "var(--vault-border)",
+                        color: "var(--vault-fg)",
+                    }}
+                >
                     <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-background border-border">
+                <SelectContent
+                    className="rounded-none border"
+                    style={{
+                        background: "var(--vault-surface)",
+                        borderColor: "var(--vault-border)",
+                        color: "var(--vault-fg)",
+                    }}
+                >
                     {SORT_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value} className="text-xs uppercase tracking-wider">
+                        <SelectItem
+                            key={opt.value}
+                            value={opt.value}
+                            className="text-[10px] uppercase tracking-wider font-mono focus:bg-[var(--vault-surface-2)] focus:text-[var(--vault-gold)]"
+                        >
                             {opt.label}
                         </SelectItem>
                     ))}

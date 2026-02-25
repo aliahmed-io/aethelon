@@ -1,46 +1,37 @@
-import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import prisma, { safeQuery } from "@/lib/db";
-import { PremiumProductCard } from "@/components/storefront/PremiumProductCard";
+import { PremiumProductCard, LoadingPremiumProductCard } from "@/components/storefront/PremiumProductCard";
 import { PremiumSort } from "./PremiumSort";
 import { unstable_noStore as noStore } from "next/cache";
 
-// Force SSR on every request — never statically cache this page
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Premium Collection | Aethelon",
-  description: "Rare and exceptional pieces. Curated premium furniture.",
+  title: "The Vault | Aethelon",
+  description: "Rare and exceptional pieces. A private gallery of curated premium furniture.",
 };
-
 
 function getOrderBy(sort: string | string[] | undefined) {
   const s = (Array.isArray(sort) ? sort[0] : sort) || "price-desc";
   switch (s) {
-    case "price-asc":
-      return { price: "asc" as const };
-    case "newest":
-      return { createdAt: "desc" as const };
-    case "name-asc":
-      return { name: "asc" as const };
-    case "price-desc":
-    default:
-      return { price: "desc" as const };
+    case "price-asc": return { price: "asc" as const };
+    case "newest": return { createdAt: "desc" as const };
+    case "name-asc": return { name: "asc" as const };
+    default: return { price: "desc" as const };
   }
 }
 
-export default async function PremiumProductsPage({
+export default async function VaultPage({
   searchParams,
 }: {
   searchParams: Promise<{ sort?: string | string[] }>;
 }) {
-  noStore(); // Opt out of all caching — always fetch fresh from DB
+  noStore();
   const params = await searchParams;
   const orderBy = getOrderBy(params.sort);
 
-
-  const premiumProducts = await safeQuery(
+  const products = await safeQuery(
     prisma.product.findMany({
       where: {
         status: "published",
@@ -52,101 +43,151 @@ export default async function PremiumProductsPage({
       },
       orderBy,
       select: {
-        id: true,
-        name: true,
-        description: true,
-        price: true,
-        images: true,
-        discountPercentage: true,
-        brand: true,
+        id: true, name: true, description: true, price: true,
+        images: true, discountPercentage: true, brand: true, tags: true,
       },
     }),
     []
   );
 
-  const isThrottled = premiumProducts.length === 0;
+  const isEmpty = products.length === 0;
 
   return (
-    <div className="bg-background min-h-screen text-foreground pb-20 selection:bg-accent/30">
+    /* ── vault scope — applies CSS custom properties from globals.css ── */
+    <div
+      className="vault min-h-screen pb-24 selection:bg-[var(--vault-gold)]/20 selection:text-[var(--vault-fg)]"
+      style={{ background: "var(--vault-bg)", color: "var(--vault-fg)" }}
+    >
       <div className="pt-32 container mx-auto px-6 lg:px-12">
-        {/* Header */}
-        <div className="border-b border-border pb-12 mb-16">
+
+        {/* ── Header ───────────────────────────────────────────────── */}
+        <header
+          className="border-b pb-14 mb-16"
+          style={{ borderColor: "var(--vault-border)" }}
+        >
           <div className="flex flex-col lg:flex-row justify-between items-end gap-10">
             <div>
-              <div className="flex items-center gap-3 mb-4 opacity-0 animate-[fadeIn_0.8s_ease-out_forwards]">
-                <Sparkles className="w-4 h-4 text-accent" />
-                <span className="text-xs font-mono uppercase tracking-[0.2em] text-accent">
-                  Rare & Exceptional
-                </span>
-              </div>
-              <h1 className="text-5xl lg:text-7xl font-light tracking-tight mb-2 uppercase opacity-0 animate-[slideUp_0.8s_ease-out_0.1s_forwards]">
-                Premium Collection
+              {/* Eyebrow — plain type, no icon */}
+              <p
+                className="text-[10px] font-mono uppercase tracking-[0.35em] mb-5"
+                style={{ color: "var(--vault-gold)" }}
+              >
+                Rare &amp; Exceptional · Private Collection
+              </p>
+
+              <h1
+                className="text-5xl lg:text-8xl font-light tracking-[0.06em] uppercase mb-3"
+                style={{
+                  color: "var(--vault-fg)",
+                  animation: "vault-reveal 0.9s ease-out both",
+                }}
+              >
+                The Vault
               </h1>
-              <p className="text-muted-foreground font-mono text-sm tracking-widest pl-1 opacity-0 animate-[slideUp_0.8s_ease-out_0.2s_forwards]">
-                CURATED PIECES • LIMITED AVAILABILITY
+
+              {/* Thin gold rule */}
+              <div
+                className="w-16 h-px mb-4"
+                style={{ background: "var(--vault-gold)", opacity: 0.6 }}
+              />
+
+              <p
+                className="font-mono text-sm tracking-widest"
+                style={{
+                  color: "var(--vault-muted)",
+                  animation: "vault-reveal 0.9s ease-out 0.15s both",
+                }}
+              >
+                Curated pieces · Limited availability
               </p>
             </div>
 
-            {premiumProducts.length > 0 && (
-              <div className="flex flex-wrap items-center gap-8 text-right opacity-0 animate-[fadeIn_1s_ease-out_0.4s_forwards]">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+            {!isEmpty && (
+              <div
+                className="flex flex-wrap items-center gap-10"
+                style={{ animation: "vault-reveal 1s ease-out 0.3s both" }}
+              >
+                {/* Count */}
+                <div className="text-right">
+                  <p
+                    className="text-[9px] uppercase tracking-widest mb-1 font-mono"
+                    style={{ color: "var(--vault-muted)" }}
+                  >
                     Pieces
                   </p>
-                  <p className="text-3xl font-light">
-                    {premiumProducts.length.toString().padStart(2, "0")}
+                  <p className="text-4xl font-light tabular-nums" style={{ color: "var(--vault-fg)" }}>
+                    {products.length.toString().padStart(2, "0")}
                   </p>
                 </div>
+
                 <Suspense fallback={null}>
                   <PremiumSort />
                 </Suspense>
               </div>
             )}
           </div>
-        </div>
+        </header>
 
-        {/* Product Grid — sort only, no filters */}
-        {premiumProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10">
-            {premiumProducts.map((item, idx) => (
-              <div
-                key={item.id}
-                className="opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]"
-                style={{ animationDelay: `${idx * 80}ms` }}
-              >
-                <PremiumProductCard item={item} priority={idx < 4} />
+        {/* ── Grid / Empty state ───────────────────────────────────── */}
+        {!isEmpty ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px"
+            style={{ background: "var(--vault-border)" }}
+          >
+            {products.map((item, idx) => (
+              <div key={item.id} style={{ background: "var(--vault-bg)" }}>
+                <PremiumProductCard item={item} priority={idx < 4} index={idx} />
               </div>
             ))}
           </div>
         ) : (
-          /* Empty state or Throttled state */
-          <div className="min-h-[50vh] flex flex-col items-center justify-center border border-border rounded-sm bg-muted/30 backdrop-blur-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
-
-            <div className="w-24 h-24 rounded-full bg-gradient-to-b from-accent/10 to-transparent flex items-center justify-center mb-8 border border-border shadow-2xl relative">
-              <div className="absolute inset-0 rounded-full border border-accent/20 animate-[ping_3s_linear_infinite]" />
-              <Sparkles className={`w-8 h-8 ${isThrottled ? 'text-accent' : 'text-muted-foreground'}`} />
+          /* Empty / throttled state */
+          <div
+            className="min-h-[55vh] flex flex-col items-center justify-center border"
+            style={{ borderColor: "var(--vault-border)", background: "var(--vault-surface)" }}
+          >
+            {/* Thin circle — no Sparkles */}
+            <div
+              className="w-20 h-20 rounded-full flex items-center justify-center mb-8 border"
+              style={{ borderColor: "var(--vault-gold)", opacity: 0.6 }}
+            >
+              <div
+                className="w-1 h-1 rounded-full"
+                style={{ background: "var(--vault-gold)" }}
+              />
             </div>
 
-            <h2 className="text-2xl font-light tracking-wide mb-3 uppercase">
-              {isThrottled ? 'Service Temporarily Throttled' : 'Premium Collection'}
+            <p
+              className="text-[9px] font-mono uppercase tracking-[0.3em] mb-4"
+              style={{ color: "var(--vault-gold)" }}
+            >
+              Collection unavailable
+            </p>
+            <h2
+              className="text-2xl font-light tracking-widest uppercase mb-4"
+              style={{ color: "var(--vault-fg)" }}
+            >
+              The Vault
             </h2>
-            <p className="text-muted-foreground max-w-md text-center mb-10 font-light leading-relaxed">
-              {isThrottled
-                ? 'High demand has temporarily reached our database capacity limits. Access to the luxury collection will resume shortly.'
-                : 'Our rarest and most exceptional pieces will appear here. Stock is limited and not guaranteed—inquiries by request.'}
+            <p
+              className="max-w-sm text-center mb-12 font-light leading-relaxed text-sm"
+              style={{ color: "var(--vault-muted)" }}
+            >
+              Our rarest and most exceptional pieces appear here. Stock is
+              limited and not guaranteed — enquiries are taken by appointment.
             </p>
 
-            <Link
+            <a
               href="/shop"
-              className="group relative px-8 py-4 bg-accent text-accent-foreground overflow-hidden rounded-sm hover:scale-105 transition-transform duration-300"
+              className="group relative px-8 py-3 overflow-hidden text-[10px] font-mono uppercase tracking-[0.25em] transition-colors duration-300"
+              style={{
+                border: `1px solid var(--vault-border)`,
+                color: "var(--vault-fg)",
+              }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              <span className="relative flex items-center gap-3 font-bold text-xs uppercase tracking-[0.2em]">
-                Explore Full Collection
-                <ArrowRight className="w-4 h-4" />
+              <span className="relative flex items-center gap-3">
+                Explore Collection <ArrowRight className="w-3 h-3" />
               </span>
-            </Link>
+            </a>
           </div>
         )}
       </div>
