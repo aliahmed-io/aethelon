@@ -4,11 +4,16 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import prisma, { safeQuery } from "@/lib/db";
 import { PremiumProductCard } from "@/components/storefront/PremiumProductCard";
 import { PremiumSort } from "./PremiumSort";
+import { unstable_noStore as noStore } from "next/cache";
+
+// Force SSR on every request — never statically cache this page
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Premium Collection | Aethelon",
   description: "Rare and exceptional pieces. Curated premium furniture.",
 };
+
 
 function getOrderBy(sort: string | string[] | undefined) {
   const s = (Array.isArray(sort) ? sort[0] : sort) || "price-desc";
@@ -30,8 +35,10 @@ export default async function PremiumProductsPage({
 }: {
   searchParams: Promise<{ sort?: string | string[] }>;
 }) {
+  noStore(); // Opt out of all caching — always fetch fresh from DB
   const params = await searchParams;
   const orderBy = getOrderBy(params.sort);
+
 
   const premiumProducts = await safeQuery(
     prisma.product.findMany({

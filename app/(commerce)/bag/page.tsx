@@ -7,8 +7,7 @@ import { redirect } from "next/navigation";
 import { delItem } from "@/app/store/actions";
 import { redis } from "@/lib/redis";
 import { Cart } from "@/lib/interfaces";
-
-import { formatPrice } from "@/lib/utils";
+import { CurrencyService } from "@/modules/currency/currency.service";
 
 export const metadata = {
     title: "Your Bag | Aethelon",
@@ -19,6 +18,9 @@ export default async function BagPage() {
     const user = await getUser();
 
     if (!user) return redirect("/api/auth/login");
+
+    const currency = await CurrencyService.getCurrency();
+    const fmt = (cents: number) => CurrencyService.format(cents, currency);
 
     let cart: Cart | null = null;
     if (redis) {
@@ -79,7 +81,7 @@ export default async function BagPage() {
                                                 <h3 className="font-light text-lg">{item.name}</h3>
                                                 <p className="text-xs text-muted-foreground font-mono mt-1 uppercase">Size: {item.size}</p>
                                             </div>
-                                            <p className="font-mono text-sm">{formatPrice(item.price)}</p>
+                                            <p className="font-mono text-sm">{fmt(item.price)}</p>
                                         </div>
 
                                         <div className="flex justify-between items-center mt-4">
@@ -103,7 +105,7 @@ export default async function BagPage() {
                                 <div className="space-y-4 mb-8 text-sm">
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Subtotal</span>
-                                        <span className="font-mono">{formatPrice(totalPrice)}</span>
+                                        <span className="font-mono">{fmt(totalPrice)}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-muted-foreground">Shipping</span>
@@ -114,7 +116,7 @@ export default async function BagPage() {
                                 <div className="pt-6 border-t border-border mb-8">
                                     <div className="flex justify-between items-end">
                                         <span className="text-sm font-bold uppercase tracking-widest">Total</span>
-                                        <span className="text-xl font-light font-mono">{formatPrice(totalPrice)}</span>
+                                        <span className="text-xl font-light font-mono">{fmt(totalPrice)}</span>
                                     </div>
                                 </div>
 

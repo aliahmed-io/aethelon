@@ -98,3 +98,73 @@ body.custom-cursor button,
 body.custom-cursor [role="button"] {
   cursor: none;
 }
+
+/* ── Keyframes used by Tailwind arbitrary animations ────────────────────────
+   animate-[fadeIn_*], animate-[slideUp_*], animate-[ping_*] etc.
+   These MUST be defined globally – Tailwind cannot generate @keyframes for
+   arbitrary names. Without them, opacity-0 elements stay permanently hidden. */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ping {
+
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}

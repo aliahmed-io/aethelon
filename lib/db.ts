@@ -12,15 +12,19 @@ declare global {
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+// Always create a fresh client in development so env var changes are picked up
+const prisma = process.env.NODE_ENV === "production"
+  ? (globalThis.prismaGlobal ?? prismaClientSingleton())
+  : prismaClientSingleton();
 
 export const safeQuery = async <T>(query: Promise<T>, fallback: T): Promise<T> => {
   try {
     return await query;
   } catch (error: any) {
-    // P6003 is plan limit reached. All P6xxx are Accelerate errors.
+    // Log ALL errors in dev so we can diagnose issues
+    console.error('[safeQuery] Error:', error.code, error.message?.substring(0, 300));
+    // P6xxx = Prisma Accelerate errors (quota, plan limits, etc.)
     if (error.code?.startsWith('P6')) {
-      console.error('[Prisma Accelerate Quota/Error]', error.message);
       return fallback;
     }
     throw error;
@@ -29,4 +33,4 @@ export const safeQuery = async <T>(query: Promise<T>, fallback: T): Promise<T> =
 
 export default prisma;
 
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+if (process.env.NODE_ENV === "production") globalThis.prismaGlobal = prisma;
