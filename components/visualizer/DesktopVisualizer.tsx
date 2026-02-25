@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Loader2, Sparkles, Box } from "lucide-react";
-import "@google/model-viewer";
+// Dynamically imported in useEffect — @google/model-viewer uses browser globals
+// (self, customElements) at module-eval time which crashes SSR.
 import { ProductCatalog } from "@/components/visualizer/ProductCatalog";
 import { PropertiesPanel } from "@/components/visualizer/PropertiesPanel";
 import type { VisualizerSharedProps } from "@/components/visualizer/shared-props";
@@ -68,6 +69,11 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
         categoryFilter,
         setCategoryFilter,
     } = props;
+
+    // Load model-viewer only on client — it references `self` at module level
+    useEffect(() => {
+        import("@google/model-viewer").catch(() => null);
+    }, []);
 
     const viewerRef = useRef<HTMLElement>(null);
     const [isModelLoading, setIsModelLoading] = useState(false);
