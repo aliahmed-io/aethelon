@@ -61,7 +61,7 @@ export function CampaignClient({ campaign, products, footer }: CampaignClientPro
             <Navbar />
 
             {/* HERO BANNER - CINEMATIC ENTRY */}
-            <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
+            <section className="relative h-[100svh] w-full overflow-hidden flex items-center justify-center">
                 {campaign.heroImage && (
                     <>
                         <Image
@@ -117,7 +117,7 @@ export function CampaignClient({ campaign, products, footer }: CampaignClientPro
 
             {/* LOOM TRACK CONTAINER */}
             <div className="relative min-h-[400vh]" ref={containerRef}>
-                <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col">
+                <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col">
 
                     {/* BACKGROUND LAYER - LOOMING DEPTH */}
                     <motion.div
@@ -154,6 +154,7 @@ export function CampaignClient({ campaign, products, footer }: CampaignClientPro
                                 index={idx}
                                 total={products.length}
                                 scrollYProgress={scrollYProgress}
+                                isActive={idx === activeIndex}
                             />
                         ))}
                     </div>
@@ -189,34 +190,37 @@ export function CampaignClient({ campaign, products, footer }: CampaignClientPro
     );
 }
 
-function LoomCard({ product, index, total, scrollYProgress }: {
+function LoomCard({ product, index, total, scrollYProgress, isActive }: {
     product: Product;
     index: number;
     total: number;
     scrollYProgress: any;
+    isActive: boolean;
 }) {
     const start = index / total;
     const end = (index + 1) / total;
     const mid = (start + end) / 2;
 
+    // Dead-zone padding prevents two cards from both appearing "active" at the same time,
+    // which is a common cause of jitter/overlap on mobile browsers.
+    const pad = Math.min(0.03, 0.5 / total);
+    const safeStart = start + pad;
+    const safeEnd = end - pad;
+    const safeMid = (safeStart + safeEnd) / 2;
+
     const x = useTransform(scrollYProgress,
-        [start - 0.1, start, mid, end, end + 0.1],
+        [safeStart - 0.12, safeStart, safeMid, safeEnd, safeEnd + 0.12],
         ["100%", "0%", "0%", "0%", "-100%"]
     );
 
     const scale = useTransform(scrollYProgress,
-        [start, mid, end],
+        [safeStart, safeMid, safeEnd],
         [0.85, 1, 0.95]
     );
 
     const opacity = useTransform(scrollYProgress,
-        [start - 0.15, start, end, end + 0.15],
+        [safeStart - 0.18, safeStart, safeEnd, safeEnd + 0.18],
         [0, 1, 1, 0]
-    );
-
-    const pointerEvents = useTransform(scrollYProgress,
-        [start - 0.05, start, end, end + 0.05],
-        ["none", "auto", "auto", "none"]
     );
 
     return (
@@ -226,7 +230,7 @@ function LoomCard({ product, index, total, scrollYProgress }: {
                 x,
                 scale,
                 opacity,
-                pointerEvents
+                pointerEvents: isActive ? "auto" : "none"
             }}
         >
             <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center pointer-events-auto">
@@ -271,7 +275,7 @@ function LoomCard({ product, index, total, scrollYProgress }: {
                         </div>
 
                         <Link
-                            href={`/product/${product.id}`}
+                            href={`/shop/${product.id}`}
                             className="h-14 px-8 border border-[#AB7E22] text-[#AB7E22] uppercase font-mono text-[10px] tracking-[0.3em] flex items-center justify-center transition-all duration-300 hover:bg-[#AB7E22] hover:text-[#131009] group"
                         >
                             View Details

@@ -32,7 +32,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ThreeDViewer } from "@/components/product/ThreeDViewer";
+import ArModelViewer from "@/components/product/ArModelViewer";
 
 import { useActionState, useState, useTransition, useEffect } from "react";
 
@@ -690,7 +690,11 @@ function ModelSwitch({
                   <DialogTitle>3D Model Preview</DialogTitle>
                 </DialogHeader>
                 <div className="w-full h-full min-h-[500px] bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden">
-                  <ThreeDViewer modelUrl={currentModelUrl!} images={imageUrls} />
+                  <ArModelViewer
+                    src={currentModelUrl!}
+                    poster={imageUrls[0]}
+                    alt="3D Model Preview"
+                  />
                 </div>
               </DialogContent>
             </Dialog>

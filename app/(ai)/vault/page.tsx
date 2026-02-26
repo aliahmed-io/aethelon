@@ -4,6 +4,7 @@ import prisma, { safeQuery } from "@/lib/db";
 import { PremiumProductCard, LoadingPremiumProductCard } from "@/components/storefront/PremiumProductCard";
 import { PremiumSort } from "./PremiumSort";
 import { unstable_noStore as noStore } from "next/cache";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -176,18 +177,13 @@ export default async function VaultPage({
               limited and not guaranteed — enquiries are taken by appointment.
             </p>
 
-            <a
+            <Link
               href="/shop"
-              className="group relative px-8 py-3 overflow-hidden text-[10px] font-mono uppercase tracking-[0.25em] transition-colors duration-300"
-              style={{
-                border: `1px solid var(--vault-border)`,
-                color: "var(--vault-fg)",
-              }}
+              className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.25em] transition-colors duration-300"
+              style={{ color: "var(--vault-muted)" }}
             >
-              <span className="relative flex items-center gap-3">
-                Explore Collection <ArrowRight className="w-3 h-3" />
-              </span>
-            </a>
+              Explore the Shop
+            </Link>
           </div>
         )}
       </div>

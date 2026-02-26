@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 const ThreeDViewerInner = dynamic(
-    () => import("@/components/product/ThreeDViewer").then((m) => m.ThreeDViewer),
+    () => import("@/components/product/ArModelViewer").then((m) => m.default),
     { ssr: false, loading: () => <div className="aspect-square bg-muted animate-pulse rounded-sm" /> }
 );
 
@@ -29,7 +29,14 @@ export function ThreeDViewerLazy(props: {
     images: string[];
     altTitle: string;
 }) {
-    return <ThreeDViewerInner {...props} />;
+    return (
+        <ThreeDViewerInner
+            src={props.modelUrl}
+            iosSrc={props.usdzUrl}
+            poster={props.images[0]}
+            alt={props.altTitle}
+        />
+    );
 }
 
 export function ARButtonLazy(props: {

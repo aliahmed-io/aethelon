@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { ThreeDViewer } from "@/components/product/ThreeDViewer";
+import ArModelViewer from "@/components/product/ArModelViewer";
 
 interface iAppProps {
   images: string[];
@@ -34,11 +34,21 @@ export function ImageSlider({ images, modelUrl }: iAppProps) {
   return (
     <div className="grid gap-6 md:gap-3 items-start">
       <div className="relative overflow-hidden rounded-lg aspect-square">
-        <ThreeDViewer
-          key={mainImageIndex}
-          images={[images[mainImageIndex]]}
-          modelUrl={mainImageIndex === 0 ? modelUrl || null : null}
-        />
+        {mainImageIndex === 0 && modelUrl ? (
+          <ArModelViewer
+            src={modelUrl}
+            poster={images[mainImageIndex]}
+            alt="Product 3D Preview"
+          />
+        ) : (
+          <Image
+            src={images[mainImageIndex]}
+            alt="Product Image"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 600px"
+          />
+        )}
 
         <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
           <Button onClick={handlePreviousClick} variant="ghost" size="icon" className="pointer-events-auto">

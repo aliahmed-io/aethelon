@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import prisma, { safeQuery } from "@/lib/db";
-import { MobileARViewer } from "@/components/ar/MobileARViewer";
+import { ArSession } from "@/components/ar/ArSession";
 
 export const dynamic = "force-dynamic";
 
@@ -69,5 +69,24 @@ export default async function ARPage({
         }
     }
 
-    return <MobileARViewer product={selected} allProducts={allProducts} />;
+    const fallbackSelected = selected ?? allProducts[0] ?? null;
+
+    if (!fallbackSelected) {
+        notFound();
+    }
+
+    return (
+        <ArSession
+            modelUrl={fallbackSelected.modelUrl}
+            usdzUrl={fallbackSelected.usdzUrl}
+            related3DProducts={allProducts
+                .filter((p) => p.id !== fallbackSelected.id)
+                .map((p) => ({
+                    id: p.id,
+                    name: p.name,
+                    modelUrl: p.modelUrl,
+                    image: p.images[0] ?? "",
+                }))}
+        />
+    );
 }
