@@ -3,13 +3,15 @@ import { CampaignClient } from "../CampaignClient";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import type { CampaignWithProducts } from "@/lib/types/prisma-payloads";
+import Footer from "@/components/layout/Footer";
 
 export const dynamic = "force-dynamic";
 
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
     const campaign = await Prisma.campaign.findUnique({
-        where: { slug: params.slug },
+        where: { slug },
         select: { title: true, description: true }
     });
 
@@ -21,9 +23,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
 }
 
-export default async function CampaignPage({ params }: { params: { slug: string } }) {
+export default async function CampaignPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+
     const campaign = await Prisma.campaign.findUnique({
-        where: { slug: params.slug },
+        where: { slug },
         include: {
             products: {
                 where: {
@@ -43,16 +47,13 @@ export default async function CampaignPage({ params }: { params: { slug: string 
         return notFound();
     }
 
-    // Adapt to CampaignClient expected props
-    // We treat the Campaign as a "HeroBanner" for the UI
-    const fakeBanner = campaign.heroImage ? {
-        id: campaign.id,
-        title: campaign.title,
-        imageString: campaign.heroImage,
-        link: null // No link needed, we are on the page
-    } : null;
-
     const featuredProducts = campaign.products.map((cp) => cp.product);
 
-    return <CampaignClient heroBanner={fakeBanner} featuredProducts={featuredProducts} />;
+    return (
+        <CampaignClient
+            campaign={campaign as any}
+            products={featuredProducts}
+            footer={<Footer />}
+        />
+    );
 }

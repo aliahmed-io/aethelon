@@ -128,7 +128,7 @@ export default function NarrativeSections() {
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 justify-center">
                             <Link
-                                href="/ai-vision"
+                                href="/ar"
                                 className="bg-accent text-accent-foreground px-8 py-4 rounded-full font-medium hover:scale-105 transition-transform"
                             >
                                 Try Room Visualizer

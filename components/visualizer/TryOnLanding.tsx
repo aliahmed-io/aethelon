@@ -44,7 +44,7 @@ export function TryOnLanding({ products }: TryOnLandingProps) {
                     {products.map((product) => (
                         <Link
                             key={product.id}
-                            href={`/ai-vision?product=${product.id}`}
+                            href={`/ar?id=${product.id}`}
                             className="group relative flex flex-col items-center justify-between bg-muted/20 border border-border rounded-lg p-6 hover:border-accent transition-colors"
                         >
                             <div className="relative w-full aspect-square mb-6 overflow-hidden rounded-md">

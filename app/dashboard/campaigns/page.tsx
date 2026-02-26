@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Link as LinkIcon } from "lucide-react";
+import { PlusCircle, Link as LinkIcon, Pencil } from "lucide-react";
 import Prisma from "@/lib/db";
 import {
     Table,
@@ -56,12 +56,13 @@ export default async function CampaignsPage() {
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs">Products</TableHead>
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs">Link</TableHead>
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs text-right">Date</TableHead>
+                            <TableHead className="text-muted-foreground uppercase tracking-widest text-xs text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {campaigns.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center text-muted-foreground h-24">
+                                <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
                                     No campaigns found. Create one to get started.
                                 </TableCell>
                             </TableRow>
@@ -91,6 +92,11 @@ export default async function CampaignsPage() {
                                     </TableCell>
                                     <TableCell className="text-right text-muted-foreground text-sm">
                                         {new Date(item.createdAt).toLocaleDateString()}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Link href={`/dashboard/campaigns/${item.id}`} className="text-amber-400 hover:underline flex items-center justify-end gap-1 text-xs uppercase tracking-wider">
+                                            <Pencil className="w-3 h-3" /> Edit
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             ))

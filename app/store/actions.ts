@@ -557,6 +557,99 @@ export async function createBanner(_prevState: unknown, formData: FormData) {
     return redirect("/dashboard/banner");
 }
 
+export async function updateCampaign(_prevState: unknown, formData: FormData) {
+    await requireAdmin();
+
+    const campaignId = formData.get("campaignId") as string;
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const imageString = formData.get("imageString") as string;
+    const selectedProductsRaw = formData.get("selectedProducts") as string;
+    const selectedProductDetailsRaw = formData.get("selectedProductDetails") as string;
+
+    type ProductDetail = { id: string; order?: number; badge?: string | null; highlightText?: string | null };
+    const productDetails: Record<string, ProductDetail> = selectedProductDetailsRaw
+        ? parseOptionalJson<ProductDetail[]>(selectedProductDetailsRaw)?.reduce(
+            (acc, item) => {
+                if (item?.id) acc[item.id] = item;
+                return acc;
+            },
+            {} as Record<string, ProductDetail>
+        ) ?? {}
+        : {};
+
+    const productIds: string[] = selectedProductsRaw ? JSON.parse(selectedProductsRaw) : [];
+
+    const statusRaw = formData.get("status") as string;
+    const status = statusRaw === "ACTIVE" || statusRaw === "ARCHIVED" ? statusRaw : "DRAFT";
+    const startDateRaw = formData.get("startDate") as string;
+    const endDateRaw = formData.get("endDate") as string;
+    const startDate = startDateRaw ? new Date(startDateRaw) : null;
+    const endDate = endDateRaw ? new Date(endDateRaw) : null;
+    const mobileHeroImage = (formData.get("mobileHeroImage") as string) || null;
+    const theme = parseOptionalJson<Record<string, unknown>>(formData.get("theme") as string);
+    const metadata = parseOptionalJson<Record<string, unknown>>(formData.get("metadata") as string);
+
+    // Delete existing product associations then re-create
+    await prisma.campaignProduct.deleteMany({ where: { campaignId } });
+
+    await prisma.campaign.update({
+        where: { id: campaignId },
+        data: {
+            title,
+            slug: title.toLowerCase().replace(/ /g, "-").replace(/[^a-z0-9-]/g, "-"),
+            description,
+            status,
+            startDate,
+            endDate,
+            heroImage: imageString || null,
+            mobileHeroImage,
+            theme: theme ?? undefined,
+            metadata: metadata ?? undefined,
+            products: {
+                create: productIds.map((id, index) => {
+                    const detail = productDetails[id];
+                    return {
+                        product: { connect: { id } },
+                        order: detail?.order ?? index,
+                        badge: detail?.badge ?? null,
+                        highlightText: detail?.highlightText ?? null,
+                    };
+                }),
+            },
+        },
+    });
+
+    return redirect("/dashboard/campaigns");
+}
+
+export async function updateBanner(_prevState: unknown, formData: FormData) {
+    await requireAdmin();
+
+    const bannerId = formData.get("bannerId") as string;
+    const campaignId = formData.get("campaignId") as string;
+    let link = formData.get("link") as string;
+
+    if (campaignId) {
+        const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } });
+        if (campaign) {
+            link = `/campaigns/${campaign.slug}`;
+        }
+    }
+
+    await prisma.banner.update({
+        where: { id: bannerId },
+        data: {
+            title: formData.get("title") as string,
+            imageString: formData.get("imageString") as string,
+            link: link || "/",
+            campaignId: campaignId || null,
+        },
+    });
+
+    return redirect("/dashboard/banner");
+}
+
 export async function createReview(_prevState: unknown, formData: FormData) {
     const user = await requireUser();
 

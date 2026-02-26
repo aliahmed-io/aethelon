@@ -79,6 +79,17 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
         return () => el.removeEventListener("load", onLoad);
     }, [selected?.id]);
 
+    // Auto-launch AR when model is ready after picker selection
+    useEffect(() => {
+        if (!modelReady || arLaunched || !selected) return;
+        const el = mvRef.current;
+        if (!el) return;
+        if (typeof el.activateAR === "function" && el.canActivateAR) {
+            el.activateAR();
+            setArLaunched(true);
+        }
+    }, [modelReady, arLaunched, selected]);
+
     const launchAR = () => {
         const el = mvRef.current;
         if (!el) return;
@@ -105,7 +116,7 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                     style={{ borderColor: "#2A1E14" }}
                 >
                     <Link
-                        href="/ai-vision"
+                        href="/shop"
                         className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-widest"
                         style={{ color: "#9A7A5C" }}
                     >
@@ -143,7 +154,7 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                                         setSelected(p);
                                         setShowPicker(false);
                                     }}
-                                    className="relative overflow-hidden text-left transition-all duration-200 active:scale-95"
+                                    className="relative overflow-hidden text-left transition-all duration-200 active:scale-95 group"
                                     style={{ border: "1px solid #2A1E14", background: "#131009" }}
                                 >
                                     <div className="aspect-square relative">
@@ -274,9 +285,12 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                     </h2>
 
                     {!modelReady && (
-                        <p className="text-xs font-mono mt-2" style={{ color: "#57412A" }}>
-                            Loading 3D model…
-                        </p>
+                        <div className="flex flex-col items-center gap-3 mt-4">
+                            <div className="w-8 h-8 border-2 border-[#AB7E22] border-t-transparent rounded-full animate-spin" />
+                            <p className="text-xs font-mono uppercase tracking-widest" style={{ color: "#9A7A5C" }}>
+                                Synchronizing 3D Assets…
+                            </p>
+                        </div>
                     )}
                 </div>
 
@@ -298,11 +312,11 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
 
             {/* CTA */}
             <div className="px-6 pb-10 flex flex-col gap-3 flex-shrink-0">
-                {/* Fix #8: disable button on iOS without USDZ */}
                 <button
+                    id="ar-launch-btn"
                     onClick={launchAR}
                     disabled={!modelReady || iOSNoUsdz}
-                    className="w-full py-5 text-[11px] font-mono uppercase tracking-[0.25em] transition-all duration-300 disabled:opacity-40 flex items-center justify-center gap-3"
+                    className="w-full py-5 text-[11px] font-mono uppercase tracking-[0.25em] transition-all duration-300 disabled:opacity-40 flex items-center justify-center gap-3 shadow-xl"
                     style={{
                         border: `1px solid ${modelReady && !iOSNoUsdz ? "#AB7E22" : "#2A1E14"}`,
                         background: modelReady && !iOSNoUsdz ? "#AB7E22" : "transparent",

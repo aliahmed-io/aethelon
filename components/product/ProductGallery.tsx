@@ -111,15 +111,17 @@ export function ProductGallery({ images, productName, modelUrl, related3DProduct
                                     </Button>
                                 )}
 
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-9 px-4 rounded-full bg-zinc-800/80 hover:bg-zinc-700/80 text-white border border-white/5 gap-2"
-                                    onClick={(e) => e.stopPropagation()} // Placeholder action
-                                >
-                                    <ScanFace size={16} className="text-amber-500" />
-                                    <span>Try On</span>
-                                </Button>
+                                {modelUrl && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-9 px-4 rounded-full bg-zinc-800/80 hover:bg-zinc-700/80 text-white border border-white/5 gap-2"
+                                        onClick={(e) => e.stopPropagation()} // Placeholder action
+                                    >
+                                        <ScanFace size={16} className="text-amber-500" />
+                                        <span>Try On</span>
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </DialogTrigger>

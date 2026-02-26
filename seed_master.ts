@@ -187,8 +187,8 @@ const PRODUCTS = [
 
     {
         name: 'Atelier Writing Desk', cat: 'desks', extras: ['new-arrivals'], isFeatured: true, price: 189900, rating: 4.7, reviews: 14, stock: 8,
-        modelUrl: `${BASE_URL}/models/sofa_velvet.glb`,
-        usdzUrl: `${BASE_URL}/models/sofa_velvet.usdz`,
+        modelUrl: `/models/sofa_velvet.glb`,
+        usdzUrl: `/models/sofa_velvet.usdz`,
         images: ['https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=1200'],
         tags: ['desk', 'marble', 'premium', 'ar'], features: ['Carrara marble top', 'Brass frame', 'Cable management'],
         desc: 'Carrara marble writing surface on hand-welded brass legs. Each slab is unique — no two desks are identical.'
@@ -197,8 +197,8 @@ const PRODUCTS = [
     // ── Lighting ──────────────────────────────────────────────────────────────
     {
         name: 'Arc Floor Lamp', cat: 'floor-lamps', extras: ['best-sellers'], isFeatured: false, price: 89900, rating: 4.6, reviews: 37, stock: 20,
-        modelUrl: `${BASE_URL}/models/floor_lamp.glb`,
-        usdzUrl: `${BASE_URL}/models/floor_lamp.usdz`,
+        modelUrl: `/models/floor_lamp.glb`,
+        usdzUrl: `/models/floor_lamp.usdz`,
         images: ['https://images.unsplash.com/photo-1513506003901-1e6a35b98687?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200'],
         tags: ['lamp', 'arc', 'bronze', 'ar'], features: ['2m arc radius', 'Linen shade', 'Dimmable', 'Brushed bronze'],
         desc: 'Statement arc lamp in brushed bronze with hand-spun linen shade. Casts warm diffused light across a 2-metre arc.'
@@ -272,8 +272,8 @@ const PRODUCTS = [
 
     {
         name: 'Aethelon Grand Armchair', cat: 'accent-chairs', extras: ['comfort'], isFeatured: true, price: 289900, rating: 4.8, reviews: 9, stock: 10,
-        modelUrl: `${BASE_URL}/models/chair_damask.glb`,
-        usdzUrl: `${BASE_URL}/models/chair_damask.usdz`,
+        modelUrl: `/models/chair_damask.glb`,
+        usdzUrl: `/models/chair_damask.usdz`,
         images: ['https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&q=80&w=1200'],
         tags: ['chair', 'velvet', 'premium', 'walnut', 'ar'], features: ['Deep-buttoned velvet', 'Solid walnut frame', 'Piped edging'],
         desc: 'Deep-buttoned velvet upholstery on a solid walnut frame, inspired by Parisian gentlemen\'s clubs.'
@@ -282,8 +282,8 @@ const PRODUCTS = [
     // ── AR test products ──────────────────────────────────────────────────────
     {
         name: 'Velvet Accent Chair', cat: 'accent-chairs', extras: ['comfort'], isFeatured: true, price: 189900, rating: 4.7, reviews: 22, stock: 12,
-        modelUrl: `${BASE_URL}/models/sofa_velvet.glb`,
-        usdzUrl: `${BASE_URL}/models/sofa_velvet.usdz`,
+        modelUrl: `/models/sofa_velvet.glb`,
+        usdzUrl: `/models/sofa_velvet.usdz`,
         images: ['https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1200'],
         tags: ['chair', 'velvet', 'accent', 'ar', 'premium'], features: ['Sculptural silhouette', 'Solid brass legs', 'Deep velvet'],
         desc: 'A refined accent chair upholstered in deep velvet, featuring a sculptural silhouette and solid brass legs.'

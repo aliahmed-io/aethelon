@@ -44,7 +44,7 @@ export function VaultLanding({ products }: VaultLandingProps) {
                         <PremiumVaultCard
                             key={product.id}
                             product={product}
-                            href={`/ai-vision?product=${product.id}`}
+                            href={`/ar?id=${product.id}`}
                         />
                     ))}
                 </div>

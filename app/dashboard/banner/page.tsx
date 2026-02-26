@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Pencil } from "lucide-react";
 import Prisma from "@/lib/db";
 import {
     Table,
@@ -41,12 +41,13 @@ export default async function BannerPage() {
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs">Image</TableHead>
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs">Title</TableHead>
                             <TableHead className="text-muted-foreground uppercase tracking-widest text-xs text-right">Link</TableHead>
+                            <TableHead className="text-muted-foreground uppercase tracking-widest text-xs text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {banners.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={3} className="text-center text-muted-foreground h-24">
+                                <TableCell colSpan={4} className="text-center text-muted-foreground h-24">
                                     No banners found. Create one to get started.
                                 </TableCell>
                             </TableRow>
@@ -60,6 +61,11 @@ export default async function BannerPage() {
                                     </TableCell>
                                     <TableCell className="font-medium text-foreground">{banner.title}</TableCell>
                                     <TableCell className="text-right text-sm text-muted-foreground font-mono">{banner.link || "/"}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Link href={`/dashboard/banner/${banner.id}`} className="text-amber-400 hover:underline flex items-center justify-end gap-1 text-xs uppercase tracking-wider">
+                                            <Pencil className="w-3 h-3" /> Edit
+                                        </Link>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         )}

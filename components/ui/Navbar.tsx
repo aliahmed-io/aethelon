@@ -53,12 +53,12 @@ export default function Navbar() {
         { href: '/campaigns', label: 'Campaigns' },
         { href: '/categories', label: 'Categories' },
         { href: '/ai-search', label: 'Advanced Search' },
-        { href: '/ai-vision', label: 'Try-On' },
+        { href: '/ar', label: 'Try-On' },
         { href: '/vault', label: 'Vault' },
         { href: '/blog', label: 'Blog' },
     ];
 
-    if (pathname === '/ai-vision') {
+    if (pathname === '/ar') {
         return null;
     }
 
