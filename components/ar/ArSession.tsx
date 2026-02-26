@@ -1,24 +1,22 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { XR, createXRStore } from "@react-three/xr";
-import { useGLTF } from "@react-three/drei";
-import { useState, useRef, useEffect, useCallback } from "react";
-import * as THREE from "three";
-import { Camera } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { Camera } from "lucide-react";
+import "@google/model-viewer";
 
-// Store configuration for WebXR session
-export const arStore = createXRStore({
-    depthSensing: true,
-    hitTest: true,
-});
-
-// Preload the model to prevent jank on placement
-// (useGLTF.preload is already provided by drei)
+// ---------------------------------------------------------------------------
+// arStore stub — kept for backwards-compat with any remaining import sites.
+// The WebXR createXRStore approach has been replaced with model-viewer AR.
+// ---------------------------------------------------------------------------
+export const arStore = {
+    /** No-op: AR is now triggered via model-viewer ref in ArSession. */
+    enterAR: () => undefined,
+};
 
 interface ArSessionProps {
     modelUrl: string;
+    usdzUrl?: string | null;
     related3DProducts?: {
         id: string;
         name: string;
@@ -28,134 +26,94 @@ interface ArSessionProps {
     onClose?: () => void;
 }
 
+type ModelViewerEl = HTMLElement & {
+    activateAR(): void;
+    canActivateAR: boolean;
+};
+
 /**
- * AR Scene Logic Validation:
- * - Uses 'requestHitTestSource' for unstable surface detection (floor/tables).
- * - Matches '3D-WebXR-Furniture' logic: Hit Test -> Reticle Matrix -> Tap -> Clone -> Decompose -> Place.
+ * ArSession — model-viewer-based AR session overlay.
+ *
+ * Replaces the previous @react-three/xr WebXR implementation which was
+ * incompatible with React 19 + @react-three/fiber v9. This approach:
+ *  - Uses Google Scene Viewer on Android (via `ar-modes="scene-viewer"`)
+ *  - Uses Quick Look on iOS (via `ios-src` / `ar-modes="quick-look"`)
+ *  - Requires no WebXR browser flag
+ *  - Works on ~95 % of mobile AR-capable devices
  */
-// Internal component to handle AR logic and feedback
-function ArScene({
+export function ArSession({
     modelUrl,
-    onPlaced
-}: {
-    modelUrl: string;
-    onPlaced: () => void
-}) {
-    const [models, setModels] = useState<THREE.Matrix4[]>([]);
-    const [reticleVisible, setReticleVisible] = useState(false);
-
-    // Refs for performance
-    const reticleRef = useRef<THREE.Mesh>(null);
-    const hitTestSourceRef = useRef<XRHitTestSource | null>(null);
-
-    const { gl } = useThree();
-    const { scene: gltfScene } = useGLTF(modelUrl);
-
-    // Reset models when URL changes
-    useEffect(() => {
-        setModels([]);
-    }, [modelUrl]);
-
-    useFrame((state, delta, frame: any) => {
-        if (!frame) return;
-        const session = frame.session;
-        if (!session) return;
-
-        if (!hitTestSourceRef.current) {
-            session.requestReferenceSpace("viewer").then((refSpace: any) => {
-                session.requestHitTestSource({ space: refSpace }).then((source: any) => {
-                    hitTestSourceRef.current = source;
-                });
-            });
-        }
-
-        const hitTestSource = hitTestSourceRef.current;
-        if (hitTestSource) {
-            const hitTestResults = frame.getHitTestResults(hitTestSource);
-            if (hitTestResults.length > 0) {
-                const hit = hitTestResults[0];
-                // @ts-ignore
-                const pose = hit.getPose(gl.xr.getReferenceSpace());
-                if (pose && reticleRef.current) {
-                    setReticleVisible(true);
-                    reticleRef.current.visible = true;
-                    reticleRef.current.matrix.fromArray(pose.transform.matrix);
-                }
-            } else {
-                setReticleVisible(false);
-            }
-        }
-    });
-
-    const handleSelect = useCallback(() => {
-        if (reticleVisible && reticleRef.current) {
-            // Haptic Feedback
-            if (navigator.vibrate) navigator.vibrate(20);
-
-            const position = new THREE.Vector3();
-            const quaternion = new THREE.Quaternion();
-            const scale = new THREE.Vector3();
-            reticleRef.current.matrix.decompose(position, quaternion, scale);
-
-            const matrix = new THREE.Matrix4();
-            matrix.compose(position, quaternion, new THREE.Vector3(1, 1, 1));
-
-            setModels((prev) => [...prev, matrix]);
-            onPlaced(); // Notify parent
-        }
-    }, [reticleVisible, onPlaced]);
-
-    useEffect(() => {
-        const session = gl.xr.getSession();
-        if (session) {
-            session.addEventListener("select", handleSelect);
-            return () => session.removeEventListener("select", handleSelect);
-        }
-    }, [gl.xr, handleSelect]);
-
-    return (
-        <>
-            <ambientLight intensity={1} />
-            <directionalLight position={[5, 10, 5]} intensity={2} castShadow />
-
-            <mesh ref={reticleRef} matrixAutoUpdate={false} visible={reticleVisible}>
-                <ringGeometry args={[0.15, 0.2, 32]} />
-                <meshBasicMaterial color="white" opacity={0.8} transparent />
-            </mesh>
-
-            {models.map((matrix, i) => (
-                <primitive key={i} object={gltfScene.clone(true)} applyMatrix4={matrix} />
-            ))}
-        </>
-    );
-}
-
-export function ArSession({ modelUrl, related3DProducts = [], onClose }: ArSessionProps) {
+    usdzUrl,
+    related3DProducts = [],
+    onClose,
+}: ArSessionProps) {
     const [activeModelUrl, setActiveModelUrl] = useState(modelUrl);
-    const [hasPlaced, setHasPlaced] = useState(false);
+    const [activeUsdzUrl, setActiveUsdzUrl] = useState(usdzUrl ?? null);
+    const [hasLaunched, setHasLaunched] = useState(false);
+    const [modelReady, setModelReady] = useState(false);
+    const [arUnavailable, setArUnavailable] = useState(false);
+
+    // Use a dedicated canvas ref for snapshot (avoids querySelector ambiguity: fix #10)
+    const mvRef = useRef<ModelViewerEl>(null);
+
+    // Reset on model swap
+    useEffect(() => {
+        setModelReady(false);
+        setHasLaunched(false);
+        setArUnavailable(false);
+    }, [activeModelUrl]);
+
+    // Track model-viewer load
+    useEffect(() => {
+        const el = mvRef.current;
+        if (!el) return;
+        const onLoad = () => setModelReady(true);
+        el.addEventListener("load", onLoad);
+        return () => el.removeEventListener("load", onLoad);
+    }, [activeModelUrl]);
+
+    const launchAR = () => {
+        const el = mvRef.current;
+        if (!el) return;
+
+        // Fix #6 + #10: check canActivateAR before calling activateAR
+        if (typeof el.activateAR === "function" && el.canActivateAR) {
+            el.activateAR();
+            setHasLaunched(true);
+            if (navigator.vibrate) navigator.vibrate(20);
+        } else {
+            setArUnavailable(true);
+        }
+    };
 
     const handleSnapshot = () => {
-        const canvas = document.querySelector("canvas");
-        if (canvas) {
+        // Fix #10: target the specific canvas inside this model-viewer element
+        const el = mvRef.current;
+        if (!el) return;
+        const canvas = el.shadowRoot?.querySelector("canvas") ?? el.querySelector("canvas");
+        if (canvas instanceof HTMLCanvasElement) {
             const link = document.createElement("a");
             link.download = `ar-snapshot-${Date.now()}.png`;
             link.href = canvas.toDataURL("image/png");
             link.click();
-            // Feedback
             if (navigator.vibrate) navigator.vibrate([10, 50, 10]);
         }
     };
 
     return (
-        <div className="fixed inset-0 z-50 bg-black">
-            {/* Coaching Overlay */}
+        <div className="fixed inset-0 z-50 bg-black flex flex-col">
+            {/* Coaching overlay */}
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-2">
-                <div className="text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border border-white/10 animate-in fade-in slide-in-from-top-4">
-                    {hasPlaced ? "Tap to place another" : "Move phone to detect floor"}
+                <div className="text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border border-white/10 animate-in fade-in slide-in-from-top-4 text-center">
+                    {arUnavailable
+                        ? "AR not available on this browser"
+                        : hasLaunched
+                            ? "AR launched — check your camera"
+                            : "Tap below to place in your space"}
                 </div>
             </div>
 
-            {/* Snapshot Button */}
+            {/* Snapshot button */}
             <button
                 onClick={handleSnapshot}
                 className="absolute top-6 left-6 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white"
@@ -164,23 +122,59 @@ export function ArSession({ modelUrl, related3DProducts = [], onClose }: ArSessi
                 <Camera className="w-5 h-5" />
             </button>
 
-            <Canvas gl={{ preserveDrawingBuffer: true }}>
-                {/* @ts-ignore */}
-                <XR store={arStore}>
-                    <ArScene
-                        modelUrl={activeModelUrl}
-                        onPlaced={() => setHasPlaced(true)}
-                    />
-                </XR>
-            </Canvas>
+            {/* ---------- model-viewer (full-screen, NOT hidden) ----------
+                This is the primary AR surface. model-viewer renders the 3D
+                preview and delegates AR activation to the platform.
+            */}
+            <model-viewer
+                ref={mvRef}
+                src={activeModelUrl}
+                ios-src={activeUsdzUrl ?? undefined}
+                alt="3D model in AR"
+                ar
+                ar-modes="webxr scene-viewer quick-look"
+                ar-scale="auto"
+                ar-placement="floor"
+                camera-controls
+                auto-rotate
+                shadow-intensity="1"
+                shadow-softness="1"
+                exposure="1"
+                environment-image="neutral"
+                loading="eager"
+                reveal="auto"
+                style={{
+                    width: "100%",
+                    flex: 1,
+                    backgroundColor: "#000",
+                    ["--poster-color" as string]: "#000",
+                }}
+            >
+                {/* Slot: AR button rendered by model-viewer */}
+                <button
+                    slot="ar-button"
+                    onClick={launchAR}
+                    disabled={!modelReady}
+                    className="absolute bottom-28 left-1/2 -translate-x-1/2 px-8 py-4 bg-white text-black text-xs font-bold uppercase tracking-[0.2em] rounded-full shadow-xl disabled:opacity-40 transition-all active:scale-95"
+                    aria-label="Launch AR"
+                >
+                    {modelReady ? "View in your space →" : "Preparing…"}
+                </button>
+            </model-viewer>
 
-            {/* ... (Related Products Switcher remains same) ... */}
+            {/* Related products switcher */}
             {related3DProducts.length > 0 && (
-                <div className="absolute bottom-8 left-0 right-0 z-20 px-4">
-                    <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                <div className="absolute bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
+                    <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x pointer-events-auto">
+                        {/* Current product chip */}
                         <button
-                            onClick={() => setActiveModelUrl(modelUrl)}
-                            className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === modelUrl ? "border-amber-500 ring-2 ring-amber-500/50" : "border-white/20 opacity-80"
+                            onClick={() => {
+                                setActiveModelUrl(modelUrl);
+                                setActiveUsdzUrl(usdzUrl ?? null);
+                            }}
+                            className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === modelUrl
+                                    ? "border-amber-500 ring-2 ring-amber-500/50"
+                                    : "border-white/20 opacity-80"
                                 }`}
                         >
                             <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center text-[10px] text-white font-bold text-center p-1">
@@ -191,11 +185,22 @@ export function ArSession({ modelUrl, related3DProducts = [], onClose }: ArSessi
                         {related3DProducts.map((prod) => (
                             <button
                                 key={prod.id}
-                                onClick={() => setActiveModelUrl(prod.modelUrl)}
-                                className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === prod.modelUrl ? "border-amber-500 ring-2 ring-amber-500/50" : "border-white/20 opacity-80"
+                                onClick={() => {
+                                    setActiveModelUrl(prod.modelUrl);
+                                    setActiveUsdzUrl(null);
+                                }}
+                                className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === prod.modelUrl
+                                        ? "border-amber-500 ring-2 ring-amber-500/50"
+                                        : "border-white/20 opacity-80"
                                     }`}
                             >
-                                <Image src={prod.image} alt={prod.name} fill unoptimized className="object-cover" />
+                                <Image
+                                    src={prod.image}
+                                    alt={prod.name}
+                                    fill
+                                    unoptimized
+                                    className="object-cover"
+                                />
                                 <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] text-white truncate px-1 py-0.5">
                                     {prod.name}
                                 </div>

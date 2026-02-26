@@ -22,7 +22,11 @@ interface MobileARViewerProps {
     allProducts: ARProduct[];
 }
 
-type ModelViewerEl = HTMLElement & { activateAR(): void };
+// Fix #7: model-viewer element type that exposes AR methods
+type ModelViewerEl = HTMLElement & {
+    activateAR(): void;
+    canActivateAR: boolean;
+};
 
 /** Returns true if the device is iOS */
 function isIOS() {
@@ -34,18 +38,28 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
     const [selected, setSelected] = useState<ARProduct | null>(initialProduct);
     const [showPicker, setShowPicker] = useState(!initialProduct);
     const [iOSWarning, setIoSWarning] = useState(false);
+    // Fix #8: separate state for when device is iOS but no USDZ available
+    const [iOSNoUsdz, setIOSNoUsdz] = useState(false);
     const [arLaunched, setArLaunched] = useState(false);
+    const [arUnavailable, setArUnavailable] = useState(false);
     const [modelReady, setModelReady] = useState(false);
     const mvRef = useRef<ModelViewerEl>(null);
 
-    // Show iOS caveat once
+    // Show iOS caveat once (only when USDZ is present)
     useEffect(() => {
         if (isIOS() && selected) {
-            const seen = sessionStorage.getItem("ar-ios-warn");
-            if (!seen) {
-                setIoSWarning(true);
-                sessionStorage.setItem("ar-ios-warn", "1");
+            if (selected.usdzUrl) {
+                const seen = sessionStorage.getItem("ar-ios-warn");
+                if (!seen) {
+                    setIoSWarning(true);
+                    sessionStorage.setItem("ar-ios-warn", "1");
+                }
+            } else {
+                // Fix #8: iOS user, but no USDZ — warn them explicitly
+                setIOSNoUsdz(true);
             }
+        } else {
+            setIOSNoUsdz(false);
         }
     }, [selected]);
 
@@ -53,9 +67,10 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
     useEffect(() => {
         setModelReady(false);
         setArLaunched(false);
+        setArUnavailable(false);
     }, [selected?.id]);
 
-    // Attach model-viewer load event
+    // Fix #7: Attach model-viewer load event
     useEffect(() => {
         const el = mvRef.current;
         if (!el) return;
@@ -67,9 +82,13 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
     const launchAR = () => {
         const el = mvRef.current;
         if (!el) return;
-        if (typeof el.activateAR === "function") {
+
+        // Fix #6: guard with canActivateAR before calling activateAR
+        if (typeof el.activateAR === "function" && el.canActivateAR) {
             el.activateAR();
             setArLaunched(true);
+        } else {
+            setArUnavailable(true);
         }
     };
 
@@ -110,6 +129,9 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                             <Box className="w-10 h-10" style={{ color: "#57412A" }} />
                             <p className="text-sm" style={{ color: "#9A7A5C" }}>
                                 No 3D models available yet.
+                            </p>
+                            <p className="text-xs font-mono" style={{ color: "#57412A" }}>
+                                Upload a .glb model in the admin dashboard to enable AR.
                             </p>
                         </div>
                     ) : (
@@ -176,7 +198,7 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                 </p>
             </header>
 
-            {/* iOS caveat */}
+            {/* iOS caveat (only when USDZ exists) */}
             {iOSWarning && (
                 <div
                     className="mx-5 mt-4 px-4 py-3 flex items-start gap-3 text-xs"
@@ -188,6 +210,33 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                         <button onClick={() => setIoSWarning(false)} className="underline" style={{ color: "#AB7E22" }}>
                             Dismiss
                         </button>
+                    </span>
+                </div>
+            )}
+
+            {/* Fix #8: iOS with no USDZ model */}
+            {iOSNoUsdz && (
+                <div
+                    className="mx-5 mt-4 px-4 py-3 flex items-start gap-3 text-xs"
+                    style={{ border: "1px solid #57412A", background: "#1C1510", color: "#9A7A5C" }}
+                >
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#AB7E22" }} />
+                    <span>
+                        iOS AR requires a USDZ model — not yet available for this piece.
+                        Try on an Android device for the full AR experience.
+                    </span>
+                </div>
+            )}
+
+            {/* AR unavailable notice */}
+            {arUnavailable && (
+                <div
+                    className="mx-5 mt-4 px-4 py-3 flex items-start gap-3 text-xs"
+                    style={{ border: "1px solid #57412A", background: "#1C1510", color: "#9A7A5C" }}
+                >
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#AB7E22" }} />
+                    <span>
+                        AR is not supported on this browser. Try Chrome on Android or Safari on iOS.
                     </span>
                 </div>
             )}
@@ -224,7 +273,6 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                         {selected.name}
                     </h2>
 
-                    {/* Dots: loading state */}
                     {!modelReady && (
                         <p className="text-xs font-mono mt-2" style={{ color: "#57412A" }}>
                             Loading 3D model…
@@ -233,7 +281,7 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                 </div>
 
                 {/* Instructions */}
-                {!arLaunched && (
+                {!arLaunched && !arUnavailable && (
                     <ol className="text-sm font-light space-y-2 text-center max-w-xs" style={{ color: "#9A7A5C" }}>
                         <li>1 · Tap the button below</li>
                         <li>2 · Point your camera at the floor</li>
@@ -250,18 +298,19 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
 
             {/* CTA */}
             <div className="px-6 pb-10 flex flex-col gap-3 flex-shrink-0">
+                {/* Fix #8: disable button on iOS without USDZ */}
                 <button
                     onClick={launchAR}
-                    disabled={!modelReady}
+                    disabled={!modelReady || iOSNoUsdz}
                     className="w-full py-5 text-[11px] font-mono uppercase tracking-[0.25em] transition-all duration-300 disabled:opacity-40 flex items-center justify-center gap-3"
                     style={{
-                        border: `1px solid ${modelReady ? "#AB7E22" : "#2A1E14"}`,
-                        background: modelReady ? "#AB7E22" : "transparent",
-                        color: modelReady ? "#0A0805" : "#57412A",
+                        border: `1px solid ${modelReady && !iOSNoUsdz ? "#AB7E22" : "#2A1E14"}`,
+                        background: modelReady && !iOSNoUsdz ? "#AB7E22" : "transparent",
+                        color: modelReady && !iOSNoUsdz ? "#0A0805" : "#57412A",
                     }}
                     aria-label="Launch AR experience"
                 >
-                    {modelReady ? "View in your space →" : "Preparing model…"}
+                    {iOSNoUsdz ? "iOS AR not available for this piece" : modelReady ? "View in your space →" : "Preparing model…"}
                 </button>
 
                 <Link
@@ -273,8 +322,9 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                 </Link>
             </div>
 
-            {/* Hidden model-viewer — loaded in background, activateAR() on demand */}
-
+            {/* Fix #7: Hidden model-viewer with all required AR attributes.
+                camera-controls is required for model-viewer to fully initialize
+                and report canActivateAR correctly. */}
             <model-viewer
                 ref={mvRef}
                 src={selected.modelUrl}
@@ -283,10 +333,11 @@ export function MobileARViewer({ product: initialProduct, allProducts }: MobileA
                 ar-modes="webxr scene-viewer quick-look"
                 ar-scale="auto"
                 ar-placement="floor"
+                camera-controls
+                shadow-intensity="1"
                 loading="eager"
                 reveal="auto"
                 style={{ position: "absolute", width: "1px", height: "1px", opacity: 0, pointerEvents: "none" }}
-
             />
         </div>
     );

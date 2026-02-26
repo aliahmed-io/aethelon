@@ -21,7 +21,6 @@ import {
 import "@google/model-viewer";
 import { formatPrice } from "@/lib/utils";
 import { useCapabilities } from "@/components/ar/useCapabilities";
-import { arStore } from "@/components/ar/ArSession";
 import type { VisualizerSharedProps } from "@/components/visualizer/shared-props";
 import type { LightingMode, VisualizerProduct } from "@/components/visualizer/types";
 import { ROOM_PRESETS } from "@/components/visualizer/types";
@@ -75,7 +74,9 @@ export function MobileVisualizer({
     onApplyAiSettings,
     isAnalyzing,
 }: VisualizerSharedProps) {
-    const { isWebXrSupported } = useCapabilities();
+    // Fix #3: gate on isMobile broadly, not WebXR flag — model-viewer handles
+    // per-platform AR capability (Scene Viewer / Quick Look / WebXR) internally.
+    const { isMobile } = useCapabilities();
     const [isArOpen, setIsArOpen] = useState(false);
     const [isCatalogOpen, setIsCatalogOpen] = useState(false);
     const [isRoomPickerOpen, setIsRoomPickerOpen] = useState(false);
@@ -153,6 +154,7 @@ export function MobileVisualizer({
                     </button>
                     <ArSessionLazy
                         modelUrl={selectedProduct.modelUrl}
+                        usdzUrl={selectedProduct.usdzUrl}
                         related3DProducts={related3DProducts}
                         onClose={() => setIsArOpen(false)}
                     />
@@ -424,13 +426,12 @@ export function MobileVisualizer({
                             </p>
                         </div>
 
-                        {/* AR Button */}
-                        {isWebXrSupported && (
+                        {/* AR Button — shown on all mobile devices.
+                            model-viewer handles Scene Viewer / Quick Look / WebXR internally.
+                            Fix #3: no longer gated behind isWebXrSupported. */}
+                        {isMobile && (
                             <button
-                                onClick={() => {
-                                    setIsArOpen(true);
-                                    arStore.enterAR();
-                                }}
+                                onClick={() => setIsArOpen(true)}
                                 className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest"
                             >
                                 <Smartphone className="w-3.5 h-3.5" />

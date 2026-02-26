@@ -1,19 +1,26 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCapabilities } from "@/components/ar/useCapabilities";
-import { Smartphone, Loader2, X } from "lucide-react";
-import { arStore } from "@/components/ar/ArSession";
+import { Smartphone, X } from "lucide-react";
+import "@google/model-viewer";
 
-// Lazy load the heavy AR session
+// Lazy load the ArSession for the model-viewer AR path
 const ArSessionLazy = dynamic(
     () => import("@/components/ar/ArSession").then((m) => m.ArSession),
     { ssr: false }
 );
 
+// model-viewer element type
+type ModelViewerEl = HTMLElement & {
+    activateAR(): void;
+    canActivateAR: boolean;
+};
+
 interface ArWrapperProps {
     modelUrl: string;
+    usdzUrl?: string | null;
     productName: string;
     related3DProducts?: {
         id: string;
@@ -23,29 +30,22 @@ interface ArWrapperProps {
     }[];
 }
 
-export function ArWrapper({ modelUrl, productName, related3DProducts }: ArWrapperProps) {
-    const { isMobile, isWebXrSupported, loading } = useCapabilities();
+export function ArWrapper({ modelUrl, usdzUrl, productName, related3DProducts }: ArWrapperProps) {
+    const { isMobile, loading } = useCapabilities();
     const [isOpen, setIsOpen] = useState(false);
-
-    // In this simplified architecture without redux/global state for AR,
-    // we use the store to trigger the session directly.
 
     if (loading) return null;
 
-    // Strict: Mobile Only
+    // Fix #5: show on all mobile devices, not just WebXR-capable ones.
+    // model-viewer delegates to Scene Viewer (Android) or Quick Look (iOS).
     if (!isMobile) return null;
-
-    // Strict: WebXR Support
-    if (!isWebXrSupported) return null;
 
     return (
         <div className="fixed bottom-24 right-6 z-40">
             <button
-                onClick={() => {
-                    setIsOpen(true);
-                    arStore.enterAR();
-                }}
+                onClick={() => setIsOpen(true)}
                 className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full shadow-xl hover:scale-105 transition-transform font-medium"
+                aria-label={`View ${productName} in your room`}
             >
                 <Smartphone className="w-5 h-5" />
                 <span>View in Room</span>
@@ -62,6 +62,7 @@ export function ArWrapper({ modelUrl, productName, related3DProducts }: ArWrappe
                     </button>
                     <ArSessionLazy
                         modelUrl={modelUrl}
+                        usdzUrl={usdzUrl}
                         related3DProducts={related3DProducts}
                         onClose={() => setIsOpen(false)}
                     />
