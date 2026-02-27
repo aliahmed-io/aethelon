@@ -2,30 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-import { useCapabilities } from "@/components/ar/useCapabilities";
 import "@google/model-viewer";
-import { useGLTF } from "@react-three/drei";
-import { Matrix4 } from "three";
-import { Interactive, useXRHitTest } from "@react-three/xr";
-
-const xrStore = typeof window !== "undefined"
-    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
-    (require("@react-three/xr") as typeof import("@react-three/xr")).createXRStore({
-        // @ts-ignore
-        sessionInit: {
-            requiredFeatures: ["hit-test"],
-            optionalFeatures: ["dom-overlay", "light-estimation"],
-            // @ts-ignore
-            domOverlay: typeof document !== "undefined" ? { root: document.body } : undefined,
-        },
-    })
-    : null;
-
-const ARButton = dynamic(
-    () => import("@react-three/xr").then((m) => m.ARButton),
-    { ssr: false }
-);
+import { Camera } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // arStore stub — kept for backwards-compat with any remaining import sites.
@@ -71,9 +49,12 @@ export function ArSession({
 }: ArSessionProps) {
     const [activeModelUrl, setActiveModelUrl] = useState(modelUrl);
     const [activeUsdzUrl, setActiveUsdzUrl] = useState(usdzUrl ?? null);
-    const { isWebXrSupported, isSecureContext } = useCapabilities();
+    const [hasLaunched, setHasLaunched] = useState(false);
+    const [modelReady, setModelReady] = useState(false);
+    const [arUnavailable, setArUnavailable] = useState(false);
+    const [arStatus, setArStatus] = useState<string | null>(null);
 
-    const isWebXrReady = isWebXrSupported && isSecureContext;
+    const mvRef = useRef<ModelViewerEl>(null);
 
     const models = useMemo(() => {
         const main = { id: "__main__", name: "Main", modelUrl, usdzUrl: usdzUrl ?? null, image: "" };
@@ -87,88 +68,88 @@ export function ArSession({
         return [main, ...rest];
     }, [modelUrl, related3DProducts, usdzUrl]);
 
-    if (isWebXrReady) {
-        return (
-            <div className="fixed inset-0 z-50 bg-black">
-                <div className="absolute inset-0">
-                    <ArWebXRScene modelUrl={activeModelUrl} />
-                </div>
+    // Reset on model swap
+    useEffect(() => {
+        setModelReady(false);
+        setHasLaunched(false);
+        setArUnavailable(false);
+        setArStatus(null);
+    }, [activeModelUrl]);
 
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-2">
-                    <div className="text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border border-white/10 text-center">
-                        Tap “Enter AR” and allow camera
-                    </div>
-                </div>
+    // Track model-viewer load
+    useEffect(() => {
+        const el = mvRef.current;
+        if (!el) return;
+        const onLoad = () => setModelReady(true);
+        el.addEventListener("load", onLoad);
+        return () => el.removeEventListener("load", onLoad);
+    }, [activeModelUrl]);
 
-                <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20">
-                    <ARButton
-                        // WebXR-first flow (matches reference project)
-                        // @ts-ignore - API differences across @react-three/xr versions
-                        store={xrStore}
-                        // @ts-ignore
-                        mode="immersive-ar"
-                        className="px-8 py-4 bg-white text-black text-xs font-bold uppercase tracking-[0.2em] rounded-full shadow-xl transition-all active:scale-95"
-                    >
-                        Enter AR
-                    </ARButton>
-                </div>
+    // Track AR status/errors from model-viewer
+    useEffect(() => {
+        const el = mvRef.current as any;
+        if (!el) return;
 
-                {related3DProducts.length > 0 && (
-                    <div className="absolute bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
-                        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x pointer-events-auto">
-                            {models.map((m) => (
-                                <button
-                                    key={m.id}
-                                    onClick={() => {
-                                        setActiveModelUrl(m.modelUrl);
-                                        setActiveUsdzUrl(m.usdzUrl);
-                                    }}
-                                    className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === m.modelUrl
-                                        ? "border-amber-500 ring-2 ring-amber-500/50"
-                                        : "border-white/20 opacity-80"
-                                        }`}
-                                >
-                                    {m.id === "__main__" ? (
-                                        <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center text-[10px] text-white font-bold text-center p-1">
-                                            Main
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <Image
-                                                src={m.image}
-                                                alt={m.name}
-                                                fill
-                                                unoptimized
-                                                className="object-cover"
-                                            />
-                                            <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] text-white truncate px-1 py-0.5">
-                                                {m.name}
-                                            </div>
-                                        </>
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
-    }
+        const onArStatus = (e: any) => {
+            const status = e?.detail?.status as string | undefined;
+            if (status) setArStatus(status);
+            if (status === "failed") setArUnavailable(true);
+            if (status === "session-started") setHasLaunched(true);
+        };
+
+        const onError = () => {
+            setArUnavailable(true);
+        };
+
+        el.addEventListener("ar-status", onArStatus);
+        el.addEventListener("error", onError);
+        return () => {
+            el.removeEventListener("ar-status", onArStatus);
+            el.removeEventListener("error", onError);
+        };
+    }, [activeModelUrl]);
+
+    const handleSnapshot = () => {
+        const el = mvRef.current;
+        if (!el) return;
+        const canvas = el.shadowRoot?.querySelector("canvas") ?? el.querySelector("canvas");
+        if (canvas instanceof HTMLCanvasElement) {
+            const link = document.createElement("a");
+            link.download = `ar-snapshot-${Date.now()}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50 bg-black flex flex-col">
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-2">
                 <div className="text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border border-white/10 text-center">
-                    {isSecureContext ? "WebXR not supported on this device" : "AR requires HTTPS"}
+                    {arUnavailable
+                        ? "AR not available on this device"
+                        : arStatus
+                            ? `AR status: ${arStatus}`
+                            : hasLaunched
+                                ? "AR launched — check your camera"
+                                : "Tap below to place in your space"}
                 </div>
             </div>
 
+            <button
+                onClick={handleSnapshot}
+                className="absolute top-6 left-6 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white"
+                aria-label="Take Snapshot"
+            >
+                <Camera className="w-5 h-5" />
+            </button>
+
             <model-viewer
+                ref={mvRef}
                 src={activeModelUrl}
                 ios-src={activeUsdzUrl ?? undefined}
                 alt="3D model in AR"
                 ar
-                ar-modes="scene-viewer quick-look"
+                ar-modes="scene-viewer webxr quick-look"
                 ar-scale="auto"
                 ar-placement="floor"
                 camera-controls
@@ -185,7 +166,16 @@ export function ArSession({
                     backgroundColor: "#000",
                     ["--poster-color" as string]: "#000",
                 }}
-            />
+            >
+                <button
+                    slot="ar-button"
+                    disabled={!modelReady}
+                    className="absolute bottom-28 left-1/2 -translate-x-1/2 px-8 py-4 bg-white text-black text-xs font-bold uppercase tracking-[0.2em] rounded-full shadow-xl disabled:opacity-40 transition-all active:scale-95"
+                    aria-label="Launch AR"
+                >
+                    {modelReady ? "View in your space →" : "Preparing…"}
+                </button>
+            </model-viewer>
 
             {related3DProducts.length > 0 && (
                 <div className="absolute bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
@@ -226,121 +216,5 @@ export function ArSession({
                 </div>
             )}
         </div>
-    );
-}
-
-function ArWebXRScene({ modelUrl }: { modelUrl: string }) {
-    const Canvas = useMemo(
-        () =>
-            dynamic(() => import("@react-three/fiber").then((m) => m.Canvas), {
-                ssr: false,
-            }),
-        []
-    );
-    const XR = useMemo(
-        () =>
-            dynamic(() => import("@react-three/xr").then((m) => m.XR), {
-                ssr: false,
-            }),
-        []
-    );
-
-    return (
-        <Canvas
-            gl={{ antialias: true, alpha: true }}
-            camera={{ position: [0, 1.6, 0], fov: 60 }}
-            style={{ width: "100%", height: "100%", background: "transparent" }}
-        >
-            {/* @ts-ignore - XR requires a store prop in this version */}
-            <XR store={xrStore ?? undefined}>
-                <ambientLight intensity={1.2} />
-                <directionalLight position={[3, 5, 2]} intensity={1.2} />
-                <ARPlacement modelUrl={modelUrl} />
-            </XR>
-        </Canvas>
-    );
-}
-
-function ARPlacement({ modelUrl }: { modelUrl: string }) {
-    const reticleRef = useRef<any>(null);
-
-    const [placed, setPlaced] = useState<{ position: [number, number, number]; quaternion: [number, number, number, number] }[]>([]);
-
-    useEffect(() => {
-        setPlaced([]);
-    }, [modelUrl]);
-
-    const mat = useMemo(() => new Matrix4(), []);
-    const tmpPos = useMemo(() => new (require("three").Vector3)(), []);
-    const tmpQuat = useMemo(() => new (require("three").Quaternion)(), []);
-    const tmpScale = useMemo(() => new (require("three").Vector3)(), []);
-
-    // Update reticle pose from hit test
-    // @ts-ignore - hook signature differs across @react-three/xr versions
-    useXRHitTest(reticleRef, (hitMatrix: Float32Array) => {
-        const r = reticleRef.current;
-        if (!r) return;
-        mat.fromArray(hitMatrix);
-        r.matrixAutoUpdate = false;
-        r.matrix.fromArray(hitMatrix);
-        r.visible = true;
-    });
-
-    const place = () => {
-        const r = reticleRef.current;
-        if (!r || !r.visible) return;
-
-        // Reticle is driven by a matrix (matrixAutoUpdate=false) so we must decompose
-        // to get correct position/quaternion.
-        r.matrix.decompose(tmpPos, tmpQuat, tmpScale);
-
-        setPlaced((prev) => [
-            ...prev,
-            {
-                position: [tmpPos.x, tmpPos.y, tmpPos.z],
-                quaternion: [tmpQuat.x, tmpQuat.y, tmpQuat.z, tmpQuat.w],
-            },
-        ]);
-    };
-
-    return (
-        <>
-            <Interactive onSelect={place}>
-                <mesh ref={reticleRef} visible={false} rotation={[-Math.PI / 2, 0, 0]}>
-                    <ringGeometry args={[0.08, 0.1, 32]} />
-                    <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
-                </mesh>
-            </Interactive>
-
-            {placed.map((p, idx) => (
-                <ARModel
-                    key={idx}
-                    url={modelUrl}
-                    position={p.position}
-                    quaternion={p.quaternion}
-                />
-            ))}
-        </>
-    );
-}
-
-function ARModel({
-    url,
-    position,
-    quaternion,
-}: {
-    url: string;
-    position: [number, number, number];
-    quaternion: [number, number, number, number];
-}) {
-    const gltf = useGLTF(url);
-    const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
-    return (
-        <primitive
-            object={scene}
-            position={position}
-            quaternion={quaternion as any}
-            scale={1}
-        />
     );
 }

@@ -5,31 +5,6 @@ import { useCapabilities } from "@/components/ar/useCapabilities";
 import { Smartphone } from "lucide-react";
 import "@google/model-viewer";
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            "model-viewer": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-                src?: string;
-                "ios-src"?: string;
-                ar?: boolean | "";
-                "ar-modes"?: string;
-                "ar-scale"?: string;
-                "ar-placement"?: string;
-                "camera-controls"?: boolean | "";
-                "auto-rotate"?: boolean | "";
-                "shadow-intensity"?: string;
-                "shadow-softness"?: string;
-                exposure?: string;
-                "environment-image"?: string;
-                loading?: string;
-                reveal?: string;
-                poster?: string;
-                slot?: string;
-            };
-        }
-    }
-}
-
 // model-viewer element type
 type ModelViewerEl = HTMLElement & {
     activateAR(): void;
@@ -65,7 +40,15 @@ export function ArWrapper({ modelUrl, usdzUrl, productName }: ArWrapperProps) {
                 ar
                 ar-modes="scene-viewer webxr quick-look"
                 camera-controls
-                style={{ width: 0, height: 0, position: "absolute" }} // invisible
+                loading="eager"
+                reveal="auto"
+                style={{
+                    width: 1,
+                    height: 1,
+                    position: "absolute",
+                    opacity: 0,
+                    pointerEvents: "none",
+                }}
             >
                 <button
                     slot="ar-button"
