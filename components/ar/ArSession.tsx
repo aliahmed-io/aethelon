@@ -52,6 +52,7 @@ export function ArSession({
     const [hasLaunched, setHasLaunched] = useState(false);
     const [modelReady, setModelReady] = useState(false);
     const [arUnavailable, setArUnavailable] = useState(false);
+    const [arStatus, setArStatus] = useState<string | null>(null);
 
     // Use a dedicated canvas ref for snapshot (avoids querySelector ambiguity: fix #10)
     const mvRef = useRef<ModelViewerEl>(null);
@@ -72,15 +73,43 @@ export function ArSession({
         return () => el.removeEventListener("load", onLoad);
     }, [activeModelUrl]);
 
-    const launchAR = () => {
-        const el = mvRef.current;
+    // Track AR status/errors from model-viewer
+    useEffect(() => {
+        const el = mvRef.current as any;
         if (!el) return;
 
-        // Fix #6 + #10: check canActivateAR before calling activateAR
-        if (typeof el.activateAR === "function" && el.canActivateAR) {
-            el.activateAR();
-            setHasLaunched(true);
-            if (navigator.vibrate) navigator.vibrate(20);
+        const onArStatus = (e: any) => {
+            const status = e?.detail?.status as string | undefined;
+            if (status) setArStatus(status);
+            if (status === "failed") setArUnavailable(true);
+            if (status === "session-started") setHasLaunched(true);
+        };
+
+        const onError = () => {
+            setArUnavailable(true);
+        };
+
+        el.addEventListener("ar-status", onArStatus);
+        el.addEventListener("error", onError);
+        return () => {
+            el.removeEventListener("ar-status", onArStatus);
+            el.removeEventListener("error", onError);
+        };
+    }, [activeModelUrl]);
+
+    const launchAR = () => {
+        const el = mvRef.current as any;
+        if (!el) return;
+
+        // Prefer letting model-viewer handle the native handoff. On some devices
+        // `canActivateAR` may be false until a user gesture is fully processed.
+        if (typeof el.activateAR === "function") {
+            try {
+                el.activateAR();
+                if (navigator.vibrate) navigator.vibrate(20);
+            } catch {
+                setArUnavailable(true);
+            }
         } else {
             setArUnavailable(true);
         }
@@ -106,10 +135,12 @@ export function ArSession({
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-2">
                 <div className="text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border border-white/10 animate-in fade-in slide-in-from-top-4 text-center">
                     {arUnavailable
-                        ? "AR not available on this browser"
-                        : hasLaunched
-                            ? "AR launched — check your camera"
-                            : "Tap below to place in your space"}
+                        ? "AR not available on this device"
+                        : arStatus
+                            ? `AR status: ${arStatus}`
+                            : hasLaunched
+                                ? "AR launched — check your camera"
+                                : "Tap below to place in your space"}
                 </div>
             </div>
 
