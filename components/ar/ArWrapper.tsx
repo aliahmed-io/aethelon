@@ -1,12 +1,34 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useCapabilities } from "@/components/ar/useCapabilities";
-import { Smartphone, X } from "lucide-react";
+import { Smartphone } from "lucide-react";
 import "@google/model-viewer";
 
-// ArSession is no longer needed since model-viewer handles AR via its slot.
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            "model-viewer": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+                src?: string;
+                "ios-src"?: string;
+                ar?: boolean | "";
+                "ar-modes"?: string;
+                "ar-scale"?: string;
+                "ar-placement"?: string;
+                "camera-controls"?: boolean | "";
+                "auto-rotate"?: boolean | "";
+                "shadow-intensity"?: string;
+                "shadow-softness"?: string;
+                exposure?: string;
+                "environment-image"?: string;
+                loading?: string;
+                reveal?: string;
+                poster?: string;
+                slot?: string;
+            };
+        }
+    }
+}
 
 // model-viewer element type
 type ModelViewerEl = HTMLElement & {
