@@ -2,6 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -14,6 +15,8 @@ interface CollectionHeroProps {
 }
 
 export function CollectionHero({ title, description, image, breadcrumbs }: CollectionHeroProps) {
+    const shouldReduceMotion = useReducedMotion();
+
     return (
         <section className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden flex items-end">
             {/* Background Image with Parallax-like feel (simple fixed for now) */}
@@ -32,9 +35,9 @@ export function CollectionHero({ title, description, image, breadcrumbs }: Colle
             {/* Content */}
             <div className="relative z-10 container mx-auto px-4 md:px-8 pb-12">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
+                    transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.45 }}
                     className="max-w-3xl"
                 >
                     {/* Breadcrumbs */}

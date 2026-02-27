@@ -155,6 +155,7 @@ export function CampaignClient({ campaign, products, footer }: CampaignClientPro
                                 total={products.length}
                                 scrollYProgress={scrollYProgress}
                                 isActive={idx === activeIndex}
+                                activeIndex={activeIndex}
                             />
                         ))}
                     </div>
@@ -190,12 +191,13 @@ export function CampaignClient({ campaign, products, footer }: CampaignClientPro
     );
 }
 
-function LoomCard({ product, index, total, scrollYProgress, isActive }: {
+function LoomCard({ product, index, total, scrollYProgress, isActive, activeIndex }: {
     product: Product;
     index: number;
     total: number;
     scrollYProgress: any;
     isActive: boolean;
+    activeIndex: number;
 }) {
     const start = index / total;
     const end = (index + 1) / total;
@@ -223,6 +225,8 @@ function LoomCard({ product, index, total, scrollYProgress, isActive }: {
         [0, 1, 1, 0]
     );
 
+    const zIndex = isActive ? 30 : 10 - Math.min(9, Math.abs(index - activeIndex));
+
     return (
         <motion.div
             className="absolute inset-0 flex items-center justify-center p-8 md:p-12"
@@ -230,6 +234,7 @@ function LoomCard({ product, index, total, scrollYProgress, isActive }: {
                 x,
                 scale,
                 opacity,
+                zIndex,
                 pointerEvents: isActive ? "auto" : "none"
             }}
         >

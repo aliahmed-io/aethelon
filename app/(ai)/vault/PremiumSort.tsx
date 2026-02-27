@@ -37,20 +37,20 @@ export function PremiumSort() {
             </span>
             <Select value={sort} onValueChange={handleChange}>
                 <SelectTrigger
-                    className="w-[190px] h-8 text-[10px] uppercase tracking-wider font-mono rounded-none border"
+                    className="w-[190px] h-8 text-[10px] uppercase tracking-wider font-mono rounded-none border shadow-sm"
                     style={{
                         background: "var(--vault-surface)",
-                        borderColor: "var(--vault-border)",
+                        borderColor: "var(--vault-gold)",
                         color: "var(--vault-fg)",
                     }}
                 >
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent
-                    className="rounded-none border"
+                    className="rounded-none border z-[200]"
                     style={{
                         background: "var(--vault-surface)",
-                        borderColor: "var(--vault-border)",
+                        borderColor: "var(--vault-gold)",
                         color: "var(--vault-fg)",
                     }}
                 >

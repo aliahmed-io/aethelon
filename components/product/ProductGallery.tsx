@@ -19,6 +19,7 @@ interface ProductGalleryProps {
     images: string[];
     productName: string;
     modelUrl?: string | null;
+    usdzUrl?: string | null;
     related3DProducts?: {
         id: string;
         name: string;
@@ -27,7 +28,7 @@ interface ProductGalleryProps {
     }[];
 }
 
-export function ProductGallery({ images, productName, modelUrl, related3DProducts }: ProductGalleryProps) {
+export function ProductGallery({ images, productName, modelUrl, usdzUrl, related3DProducts }: ProductGalleryProps) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [is3DOpen, setIs3DOpen] = useState(false);
     const [isZoomOpen, setIsZoomOpen] = useState(false);
@@ -198,7 +199,14 @@ export function ProductGallery({ images, productName, modelUrl, related3DProduct
             </div>
 
             {/* Mobile AR Wrapper Injection */}
-            {modelUrl && <ArWrapper modelUrl={modelUrl} productName={productName} related3DProducts={related3DProducts} />}
+            {modelUrl && (
+                <ArWrapper
+                    modelUrl={modelUrl}
+                    usdzUrl={usdzUrl}
+                    productName={productName}
+                    related3DProducts={related3DProducts}
+                />
+            )}
         </div>
     );
 }

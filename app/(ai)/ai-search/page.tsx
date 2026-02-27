@@ -89,7 +89,7 @@ function AISearchContent() {
     };
 
     return (
-        <div className="min-h-screen bg-background pt-32 pb-12 px-6">
+        <div className="min-h-screen bg-background pt-24 md:pt-32 pb-12 px-4 md:px-6">
             <div className="container mx-auto max-w-6xl">
 
                 {/* Search Header */}
@@ -110,7 +110,7 @@ function AISearchContent() {
                 </div>
 
                 {/* Search Input Area */}
-                <div className="max-w-3xl mx-auto relative mb-16 z-20">
+                <div className="max-w-3xl mx-auto relative mb-12 md:mb-16 z-20">
                     <div className="absolute inset-0 bg-accent/20 blur-3xl rounded-full opacity-50 pointer-events-none" />
                     <div className="relative bg-white/50 backdrop-blur-xl border border-white/40 shadow-xl rounded-2xl p-4 flex flex-col gap-4">
 
@@ -137,7 +137,7 @@ function AISearchContent() {
                             )}
                         </AnimatePresence>
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-col md:flex-row md:items-center gap-4">
                             <Search className="w-6 h-6 text-muted-foreground ml-2 flex-shrink-0" />
                             <input
                                 type="text"
@@ -145,9 +145,9 @@ function AISearchContent() {
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Ask anything... e.g. 'Velvet sofa for a small apartment in Paris'"
-                                className="flex-1 bg-transparent border-none outline-none text-lg text-foreground placeholder:text-muted-foreground/60 w-full"
+                                className="flex-1 bg-transparent border-none outline-none text-base md:text-lg text-foreground placeholder:text-muted-foreground/60 w-full"
                             />
-                            <div className="flex items-center gap-2 border-l border-muted pl-4">
+                            <div className="flex items-center justify-between md:justify-start gap-2 md:border-l md:border-muted md:pl-4 w-full md:w-auto">
                                 <input
                                     type="file"
                                     ref={fileInputRef}
@@ -155,25 +155,28 @@ function AISearchContent() {
                                     accept="image/*"
                                     onChange={handleImageSelect}
                                 />
-                                <button
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className={`p-2 rounded-full transition-colors ${selectedImage ? 'text-accent bg-accent/10' : 'text-muted-foreground hover:bg-black/5 hover:text-foreground'}`}
-                                    title="Upload Image Context"
-                                >
-                                    <Camera className="w-5 h-5" />
-                                </button>
-                                <button
-                                    onClick={() => { alert('Voice search activated.'); }}
-                                    className="p-2 rounded-full transition-colors text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                                    title="Voice Search"
-                                    type="button"
-                                >
-                                    <Mic className="w-5 h-5" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className={`p-2 rounded-full transition-colors ${selectedImage ? 'text-accent bg-accent/10' : 'text-muted-foreground hover:bg-black/5 hover:text-foreground'}`}
+                                        title="Upload Image Context"
+                                        type="button"
+                                    >
+                                        <Camera className="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        onClick={() => { alert('Voice search activated.'); }}
+                                        className="p-2 rounded-full transition-colors text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                                        title="Voice Search"
+                                        type="button"
+                                    >
+                                        <Mic className="w-5 h-5" />
+                                    </button>
+                                </div>
                                 <button
                                     onClick={() => handleSearch()}
                                     disabled={isLoading || (!query && !selectedImage)}
-                                    className="bg-accent text-accent-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    className="bg-accent text-accent-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full md:w-auto"
                                 >
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
                                 </button>
@@ -263,7 +266,7 @@ function AISearchContent() {
 
                         {/* AI Insights Sidebar */}
                         <div className="md:col-span-4 space-y-6">
-                            <div className="bg-white/50 backdrop-blur border border-white/40 rounded-xl p-6 shadow-sm sticky top-32">
+                            <div className="bg-white/50 backdrop-blur border border-white/40 rounded-xl p-5 md:p-6 shadow-sm md:sticky md:top-32">
                                 <div className="flex items-center gap-2 mb-4 text-accent">
                                     <Sparkles className="w-5 h-5" />
                                     <h3 className="font-display text-xl">Design Insights</h3>

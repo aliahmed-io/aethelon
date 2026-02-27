@@ -131,11 +131,16 @@ export default async function VaultPage({
 
         {/* ── Grid / Empty state ───────────────────────────────────── */}
         {!isEmpty ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px"
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px"
             style={{ background: "var(--vault-border)" }}
           >
             {products.map((item, idx) => (
-              <div key={item.id} style={{ background: "var(--vault-bg)" }}>
+              <div
+                key={item.id}
+                style={{ background: "var(--vault-bg)" }}
+                className="min-h-[420px]"
+              >
                 <PremiumProductCard item={item} priority={idx < 4} index={idx} />
               </div>
             ))}

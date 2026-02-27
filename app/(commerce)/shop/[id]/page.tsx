@@ -63,10 +63,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const currentCurrency = await CurrencyService.getCurrency();
     const product = await Prisma.product.findUnique({
         where: { id },
-        include: { categories: true }
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            images: true,
+            price: true,
+            stockQuantity: true,
+            averageRating: true,
+            reviewCount: true,
+            modelUrl: true,
+            usdzUrl: true,
+            categories: true,
+        }
     });
 
     if (!product) return notFound();
+
+    const productForComponents = product as any;
 
     // Fetch related products with 3D models for AR switcher
     const related3DProducts = await Prisma.product.findMany({
@@ -145,7 +159,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     {/* Left: Info & Actions (Desktop Order: Info -> Actions) */}
                     {/* On Mobile: Order 2 */}
                     <div className="order-2 lg:order-1 flex flex-col gap-10 lg:sticky lg:top-32 h-fit">
-                        <ProductInfo product={product} />
+                        <ProductInfo product={productForComponents} />
                         <ProductActions
                             productId={product.id}
                             price={product.price}
@@ -173,6 +187,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             images={product.images}
                             productName={product.name}
                             modelUrl={product.modelUrl}
+                            usdzUrl={product.usdzUrl}
                             related3DProducts={related3DProducts.map((p: { id: string; name: string; modelUrl: string | null; images: string[] }) => ({
                                 id: p.id,
                                 name: p.name,

@@ -34,7 +34,7 @@ export default function ArModelViewer({ src, iosSrc, poster, alt }: ArModelViewe
                 camera-controls
                 auto-rotate
                 ar
-                ar-modes="webxr scene-viewer quick-look"
+                ar-modes="scene-viewer quick-look"
                 ar-scale="auto"
                 ar-placement="floor"
                 reveal="auto"

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ProductCard } from "@/components/storefront/ProductCard";
+import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getSmartCollection } from "@/actions/get-collection";
 import { CollectionHero } from "@/components/collections/CollectionHero";
 import { CollectionFilterBar } from "@/components/collections/CollectionFilterBar";
@@ -78,11 +78,7 @@ export default async function CategoryPage({
                         <p className="text-muted-foreground text-lg">No products found in this category.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-                        {data.products.map((product) => (
-                            <ProductCard key={product.id} item={product} />
-                        ))}
-                    </div>
+                    <ProductGrid products={data.products as any} />
                 )}
             </div>
         </main>

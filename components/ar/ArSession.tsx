@@ -173,8 +173,8 @@ export function ArSession({
                                 setActiveUsdzUrl(usdzUrl ?? null);
                             }}
                             className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === modelUrl
-                                    ? "border-amber-500 ring-2 ring-amber-500/50"
-                                    : "border-white/20 opacity-80"
+                                ? "border-amber-500 ring-2 ring-amber-500/50"
+                                : "border-white/20 opacity-80"
                                 }`}
                         >
                             <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center text-[10px] text-white font-bold text-center p-1">
@@ -190,8 +190,8 @@ export function ArSession({
                                     setActiveUsdzUrl(null);
                                 }}
                                 className={`flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all snap-start ${activeModelUrl === prod.modelUrl
-                                        ? "border-amber-500 ring-2 ring-amber-500/50"
-                                        : "border-white/20 opacity-80"
+                                    ? "border-amber-500 ring-2 ring-amber-500/50"
+                                    : "border-white/20 opacity-80"
                                     }`}
                             >
                                 <Image
