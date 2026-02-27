@@ -5,6 +5,31 @@ import Image from "next/image";
 import { Camera } from "lucide-react";
 import "@google/model-viewer";
 
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            "model-viewer": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+                src?: string;
+                "ios-src"?: string;
+                ar?: boolean | "";
+                "ar-modes"?: string;
+                "ar-scale"?: string;
+                "ar-placement"?: string;
+                "camera-controls"?: boolean | "";
+                "auto-rotate"?: boolean | "";
+                "shadow-intensity"?: string;
+                "shadow-softness"?: string;
+                exposure?: string;
+                "environment-image"?: string;
+                loading?: string;
+                reveal?: string;
+                poster?: string;
+                slot?: string;
+            };
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // arStore stub — kept for backwards-compat with any remaining import sites.
 // The WebXR createXRStore approach has been replaced with model-viewer AR.
@@ -97,24 +122,6 @@ export function ArSession({
         };
     }, [activeModelUrl]);
 
-    const launchAR = () => {
-        const el = mvRef.current as any;
-        if (!el) return;
-
-        // Prefer letting model-viewer handle the native handoff. On some devices
-        // `canActivateAR` may be false until a user gesture is fully processed.
-        if (typeof el.activateAR === "function") {
-            try {
-                el.activateAR();
-                if (navigator.vibrate) navigator.vibrate(20);
-            } catch {
-                setArUnavailable(true);
-            }
-        } else {
-            setArUnavailable(true);
-        }
-    };
-
     const handleSnapshot = () => {
         // Fix #10: target the specific canvas inside this model-viewer element
         const el = mvRef.current;
@@ -163,7 +170,7 @@ export function ArSession({
                 ios-src={activeUsdzUrl ?? undefined}
                 alt="3D model in AR"
                 ar
-                ar-modes="webxr scene-viewer quick-look"
+                ar-modes="scene-viewer webxr quick-look"
                 ar-scale="auto"
                 ar-placement="floor"
                 camera-controls
@@ -184,7 +191,6 @@ export function ArSession({
                 {/* Slot: AR button rendered by model-viewer */}
                 <button
                     slot="ar-button"
-                    onClick={launchAR}
                     disabled={!modelReady}
                     className="absolute bottom-28 left-1/2 -translate-x-1/2 px-8 py-4 bg-white text-black text-xs font-bold uppercase tracking-[0.2em] rounded-full shadow-xl disabled:opacity-40 transition-all active:scale-95"
                     aria-label="Launch AR"

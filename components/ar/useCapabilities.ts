@@ -20,8 +20,22 @@ export function useCapabilities() {
     useEffect(() => {
         const checkCapabilities = async () => {
             const isSecure = window.isSecureContext;
-            const ua = navigator.userAgent;
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+
+            function detectMobile(): boolean {
+                if (typeof window === "undefined") return false;
+
+                // Check touch + screen width (most reliable combo)
+                const hasTouch = navigator.maxTouchPoints > 0;
+                const isNarrow = window.innerWidth <= 1024;
+
+                // UA fallback for edge cases
+                const ua = navigator.userAgent;
+                const uaMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+
+                return (hasTouch && isNarrow) || uaMobile;
+            }
+
+            const isMobile = detectMobile();
 
             let isWebXr = false;
             // @ts-ignore - navigator.xr is not fully typed in standard lib yet
