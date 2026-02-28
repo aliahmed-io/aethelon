@@ -203,15 +203,16 @@ function LoomCard({ product, index, total, scrollYProgress, isActive, activeInde
     const end = (index + 1) / total;
     const mid = (start + end) / 2;
 
-    // Dead-zone padding prevents two cards from both appearing "active" at the same time,
-    // which is a common cause of jitter/overlap on mobile browsers.
-    const pad = Math.min(0.03, 0.5 / total);
+    // Tighter dead-zone constraints. We need cards to fully leave
+    // before the next one enters to avoid overlapping on mobile.
+    const pad = Math.min(0.01, 0.5 / total);
     const safeStart = start + pad;
     const safeEnd = end - pad;
     const safeMid = (safeStart + safeEnd) / 2;
 
+    // Sharper x transition: exit quickly over 5% of scroll (0.05) instead of 12%
     const x = useTransform(scrollYProgress,
-        [safeStart - 0.12, safeStart, safeMid, safeEnd, safeEnd + 0.12],
+        [safeStart - 0.05, safeStart, safeMid, safeEnd, safeEnd + 0.05],
         ["100%", "0%", "0%", "0%", "-100%"]
     );
 
@@ -220,16 +221,19 @@ function LoomCard({ product, index, total, scrollYProgress, isActive, activeInde
         [0.85, 1, 0.95]
     );
 
+    // Sharper opacity transition: fade quickly over 5% of scroll
     const opacity = useTransform(scrollYProgress,
-        [safeStart - 0.18, safeStart, safeEnd, safeEnd + 0.18],
+        [safeStart - 0.05, safeStart, safeEnd, safeEnd + 0.05],
         [0, 1, 1, 0]
     );
 
-    const zIndex = isActive ? 30 : 10 - Math.min(9, Math.abs(index - activeIndex));
+    // We ensure the active card is always fully on top.
+    // When leaving, it immediately drops strictly below the incoming card.
+    const zIndex = isActive ? 30 : 0;
 
     return (
         <motion.div
-            className="absolute inset-0 flex items-center justify-center p-8 md:p-12"
+            className="absolute inset-0 flex items-center justify-center p-4 md:p-12 overflow-hidden"
             style={{
                 x,
                 scale,
@@ -238,9 +242,10 @@ function LoomCard({ product, index, total, scrollYProgress, isActive, activeInde
                 pointerEvents: isActive ? "auto" : "none"
             }}
         >
-            <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center pointer-events-auto">
+            <div className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 items-center pointer-events-auto">
                 {/* IMAGE LAYER */}
-                <div className="relative aspect-[4/5] md:aspect-square overflow-hidden border border-[#2A1E14] bg-[#1C1510] group">
+                {/* Made smaller on mobile: height 40vh instead of aspect-[4/5] to leave room for text below */}
+                <div className="relative h-[40vh] md:h-auto md:aspect-square overflow-hidden border border-[#2A1E14] bg-[#1C1510] group rounded-sm shadow-xl mt-8 md:mt-0">
                     {product.images[0] && (
                         <Image
                             src={product.images[0]}
@@ -251,29 +256,30 @@ function LoomCard({ product, index, total, scrollYProgress, isActive, activeInde
                     )}
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#131009] to-transparent" />
 
-                    <div className="absolute bottom-6 right-6 font-serif italic text-6xl text-[#AB7E22]/20">
+                    <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 font-serif italic text-4xl md:text-6xl text-[#AB7E22]/30">
                         {index + 1}
                     </div>
                 </div>
 
                 {/* CONTENT LAYER */}
-                <div className="flex flex-col gap-6 md:gap-10">
-                    <div className="space-y-4">
-                        <span className="text-[10px] font-mono tracking-[0.4em] uppercase text-[#AB7E22]">
+                {/* Centered on mobile with smaller text */}
+                <div className="flex flex-col gap-4 md:gap-10 text-center md:text-left items-center md:items-start px-2">
+                    <div className="space-y-2 md:space-y-4">
+                        <span className="text-[9px] md:text-[10px] font-mono tracking-[0.4em] uppercase text-[#AB7E22]">
                             Featured Piece
                         </span>
-                        <h2 className="text-4xl md:text-7xl font-serif uppercase tracking-tight leading-[0.9]">
+                        <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif uppercase tracking-tight leading-[0.9] text-balance">
                             {product.name}
                         </h2>
                     </div>
 
-                    <p className="text-[#9A7A5C] text-sm md:text-lg leading-relaxed font-light max-w-md uppercase tracking-wide">
+                    <p className="text-[#9A7A5C] text-xs sm:text-sm md:text-lg leading-relaxed font-light max-w-sm md:max-w-md uppercase tracking-wide">
                         {product.description || "An exceptional example of horological mastery, curated from our private collections for this limited session."}
                     </p>
 
-                    <div className="flex items-center gap-8">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] font-mono uppercase text-[#57412A] tracking-widest mb-1">Valuation</span>
+                    <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 mt-2 md:mt-0">
+                        <div className="flex flex-col items-center md:items-start">
+                            <span className="text-[9px] md:text-[10px] font-mono uppercase text-[#57412A] tracking-widest mb-1">Valuation</span>
                             <span className="text-2xl md:text-3xl font-serif text-[#EDE0CC]">
                                 ${product.price.toLocaleString()}
                             </span>
@@ -281,7 +287,7 @@ function LoomCard({ product, index, total, scrollYProgress, isActive, activeInde
 
                         <Link
                             href={`/shop/${product.id}`}
-                            className="h-14 px-8 border border-[#AB7E22] text-[#AB7E22] uppercase font-mono text-[10px] tracking-[0.3em] flex items-center justify-center transition-all duration-300 hover:bg-[#AB7E22] hover:text-[#131009] group"
+                            className="h-12 md:h-14 px-6 md:px-8 border border-[#AB7E22] text-[#AB7E22] uppercase font-mono text-[9px] md:text-[10px] tracking-[0.3em] flex items-center justify-center transition-all duration-300 hover:bg-[#AB7E22] hover:text-[#131009] group w-full md:w-auto"
                         >
                             View Details
                             <ArrowRight className="w-3 h-3 ml-4 transition-transform group-hover:translate-x-1" />
@@ -290,7 +296,7 @@ function LoomCard({ product, index, total, scrollYProgress, isActive, activeInde
                 </div>
             </div>
 
-            <h3 className="absolute bottom-[-5%] left-[-5%] text-[15vw] font-serif italic text-[#2A1E14]/10 pointer-events-none select-none -z-10 uppercase whitespace-nowrap">
+            <h3 className="absolute bottom-[-2%] left-[-5%] text-[15vw] md:text-[15vw] font-serif italic text-[#2A1E14]/10 pointer-events-none select-none -z-10 uppercase whitespace-nowrap overflow-hidden max-w-[110vw]">
                 {product.name}
             </h3>
         </motion.div>

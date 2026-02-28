@@ -110,44 +110,49 @@ function AISearchContent() {
                 </div>
 
                 {/* Search Input Area */}
-                <div className="max-w-3xl mx-auto relative mb-12 md:mb-16 z-20">
-                    <div className="absolute inset-0 bg-accent/20 blur-3xl rounded-full opacity-50 pointer-events-none" />
-                    <div className="relative bg-white/50 backdrop-blur-xl border border-white/40 shadow-xl rounded-2xl p-4 flex flex-col gap-4">
+                <div className="max-w-4xl mx-auto relative mb-12 md:mb-16 z-20">
+                    <div className="absolute inset-0 bg-accent/10 blur-3xl rounded-full opacity-40 pointer-events-none" />
+                    {/* Make container a continuous sleek pill on desktop */}
+                    <div className="relative bg-white/50 backdrop-blur-2xl border border-white/60 shadow-lg rounded-[2rem] md:rounded-[3rem] p-3 md:p-3 flex flex-col md:flex-row gap-3 transition-all duration-300 hover:shadow-xl hover:border-white/80">
 
                         {/* Image Preview */}
                         <AnimatePresence>
                             {selectedImage && (
                                 <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    className="relative w-fit"
+                                    initial={{ opacity: 0, width: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, width: 'auto', scale: 1 }}
+                                    exit={{ opacity: 0, width: 0, scale: 0.9 }}
+                                    className="relative flex-shrink-0 mr-2"
                                 >
-                                    <div className="h-20 w-20 relative rounded-lg overflow-hidden border border-border">
+                                    <div className="h-12 w-12 md:h-14 md:w-14 relative rounded-xl overflow-hidden border border-black/10 shadow-sm">
                                         <Image src={selectedImage} alt="Context" fill className="object-cover" />
                                         <button
                                             onClick={clearImage}
-                                            className="absolute top-0.5 right-0.5 bg-black/50 text-white rounded-full p-0.5 hover:bg-black/70 transition-colors"
+                                            className="absolute top-0.5 right-0.5 bg-black/50 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors backdrop-blur-md"
                                         >
-                                            <X className="w-3 h-3" />
+                                            <X className="w-3 h-3 md:w-2.5 md:h-2.5" />
                                         </button>
                                     </div>
-                                    <p className="text-xs text-muted-foreground mt-1">Image Context Added</p>
                                 </motion.div>
                             )}
                         </AnimatePresence>
 
-                        <div className="flex flex-col md:flex-row md:items-center gap-4">
-                            <Search className="w-6 h-6 text-muted-foreground ml-2 flex-shrink-0" />
+                        {/* Main Search Row */}
+                        <div className="flex flex-col md:flex-row md:items-center flex-1 gap-3 md:gap-4 md:px-4">
+                            {/* Smaller Search Icon */}
+                            <Search className="w-5 h-5 text-muted-foreground/50 hidden md:block flex-shrink-0" />
+
                             <input
                                 type="text"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={handleKeyDown}
-                                placeholder="Ask anything... e.g. 'Velvet sofa for a small apartment in Paris'"
-                                className="flex-1 bg-transparent border-none outline-none text-base md:text-lg text-foreground placeholder:text-muted-foreground/60 w-full"
+                                placeholder="Describe your space, style, or needs... e.g. 'Velvet sofa for a small apartment'"
+                                className="flex-1 bg-transparent border-none outline-none text-base md:text-[17px] font-light text-foreground placeholder:text-muted-foreground/50 w-full md:py-3 px-2 md:px-0"
                             />
-                            <div className="flex items-center justify-between md:justify-start gap-2 md:border-l md:border-muted md:pl-4 w-full md:w-auto">
+
+                            {/* Action Buttons Row */}
+                            <div className="flex items-center justify-between md:justify-end gap-2 md:pl-4 md:border-l md:border-black/5 w-full md:w-auto mt-2 md:mt-0 pt-2 md:pt-0 border-t border-black/5 md:border-t-0">
                                 <input
                                     type="file"
                                     ref={fileInputRef}
@@ -155,30 +160,33 @@ function AISearchContent() {
                                     accept="image/*"
                                     onChange={handleImageSelect}
                                 />
-                                <div className="flex items-center gap-2">
+
+                                <div className="flex items-center gap-1">
                                     <button
                                         onClick={() => fileInputRef.current?.click()}
-                                        className={`p-2 rounded-full transition-colors ${selectedImage ? 'text-accent bg-accent/10' : 'text-muted-foreground hover:bg-black/5 hover:text-foreground'}`}
-                                        title="Upload Image Context"
+                                        className={`p-2.5 rounded-full transition-all duration-300 ${selectedImage ? 'text-accent bg-accent/10 shadow-sm' : 'text-muted-foreground/70 hover:bg-black/5 hover:text-foreground'}`}
+                                        title="Attach context image"
                                         type="button"
                                     >
-                                        <Camera className="w-5 h-5" />
+                                        <Camera className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={1.5} />
                                     </button>
                                     <button
                                         onClick={() => { alert('Voice search activated.'); }}
-                                        className="p-2 rounded-full transition-colors text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                                        className="p-2.5 rounded-full transition-colors text-muted-foreground/70 hover:bg-black/5 hover:text-foreground"
                                         title="Voice Search"
                                         type="button"
                                     >
-                                        <Mic className="w-5 h-5" />
+                                        <Mic className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={1.5} />
                                     </button>
                                 </div>
+
                                 <button
                                     onClick={() => handleSearch()}
                                     disabled={isLoading || (!query && !selectedImage)}
-                                    className="bg-accent text-accent-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full md:w-auto"
+                                    // Make the button sleek and uniformly rounded on desktop
+                                    className="bg-[#131009] text-white px-6 py-2.5 md:py-3 rounded-xl md:rounded-full text-sm font-medium hover:bg-black hover:shadow-md disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none transition-all flex items-center justify-center min-w-[100px]"
                                 >
-                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
+                                    {isLoading ? <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" /> : 'Search'}
                                 </button>
                             </div>
                         </div>
@@ -215,10 +223,19 @@ function AISearchContent() {
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-20 space-y-6">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-accent/20 blur-xl rounded-full animate-pulse" />
-                            <Sparkles className="w-12 h-12 text-accent relative z-10 animate-bounce" />
+                            <div className="absolute inset-0 bg-[#AB7E22]/10 blur-xl rounded-full animate-pulse" />
+                            {/* Replaced Sparkles with a more professional scanning/searching aesthetic */}
+                            <div className="w-16 h-16 rounded-full border border-[#AB7E22]/20 flex items-center justify-center bg-white/50 backdrop-blur-sm relative z-10">
+                                <Search className="w-6 h-6 text-[#AB7E22] animate-pulse" strokeWidth={1.5} />
+                                {/* Scanning line effect */}
+                                <motion.div
+                                    className="absolute inset-x-0 h-[1px] bg-[#AB7E22]/40"
+                                    animate={{ top: ['10%', '90%', '10%'] }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                />
+                            </div>
                         </div>
-                        <p className="text-muted-foreground text-lg animate-pulse font-light">Analyzing your request & styling context...</p>
+                        <p className="text-[#9A7A5C] text-sm md:text-base animate-pulse font-light tracking-wide uppercase">Analyzing Context...</p>
                     </div>
                 ) : hasSearched && (
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
