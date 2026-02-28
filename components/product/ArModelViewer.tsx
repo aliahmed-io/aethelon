@@ -17,7 +17,9 @@ export default function ArModelViewer({ src, iosSrc, poster, alt }: ArModelViewe
 
     useEffect(() => {
         setIsMounted(true);
-    }, []);
+        if (src) console.log("[ArModelViewer] Rendering model:", src);
+        if (iosSrc) console.log("[ArModelViewer] iOS Source:", iosSrc);
+    }, [src, iosSrc]);
 
     if (!isMounted) {
         return <div className="w-full h-full bg-muted/20 animate-pulse rounded-sm" />;
@@ -27,8 +29,8 @@ export default function ArModelViewer({ src, iosSrc, poster, alt }: ArModelViewe
         <div className="w-full h-full relative group">
             <model-viewer
                 src={src}
-                ios-src={iosSrc}
-                poster={poster}
+                {...(iosSrc ? { "ios-src": iosSrc } : {})}
+                {...(poster ? { poster } : {})}
                 alt={alt || "A 3D model of the product"}
                 shadow-intensity="1"
                 camera-controls
@@ -42,6 +44,7 @@ export default function ArModelViewer({ src, iosSrc, poster, alt }: ArModelViewe
                 exposure="1"
                 shadow-softness="1"
                 environment-image="neutral"
+                crossorigin="anonymous"
                 style={{ width: "100%", height: "100%", backgroundColor: "#0A0A0C" }}
             >
                 {/* Custom AR Button */}

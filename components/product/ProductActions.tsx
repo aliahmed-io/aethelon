@@ -6,6 +6,8 @@ import { Minus, Plus, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addItem } from "@/app/store/actions";
 import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ProductVariant } from "@prisma/client";
 
 interface ProductActionsProps {
     productId: string;
@@ -15,18 +17,20 @@ interface ProductActionsProps {
     initialColor?: string;
     currencyCode: string;
     exchangeRate: number;
+    variants?: ProductVariant[];
 }
 
-// Mock Colors for Visual Demo - In real app, these would come from props/DB
-const MOCK_COLORS = [
-    { name: "Cream White", hex: "#F5F5F0", id: "white" },
-    { name: "Deep Espresso", hex: "#3E2723", id: "espresso" },
-    { name: "Charcoal", hex: "#37474F", id: "charcoal" },
-];
+export function ProductActions({ productId, price, stock, currencyCode = "USD", exchangeRate = 1, variants = [] }: ProductActionsProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const colorParam = searchParams.get('color');
 
-export function ProductActions({ productId, price, stock, initialColor, currencyCode = "USD", exchangeRate = 1 }: ProductActionsProps) {
     const [quantity, setQuantity] = useState(1);
-    const [selectedColor, setSelectedColor] = useState(MOCK_COLORS[0]);
+
+    // Determine initial color
+    const initialMatched = variants.find(v => v.colorName === colorParam) || variants[0];
+    const [selectedColor, setSelectedColor] = useState<ProductVariant | undefined>(initialMatched);
+
     const [isPending, startTransition] = useTransition();
 
     const isOutOfStock = stock <= 0;
@@ -35,19 +39,28 @@ export function ProductActions({ productId, price, stock, initialColor, currency
         setQuantity(prev => Math.max(1, Math.min(stock, prev + delta)));
     };
 
+    const handleColorSelect = (v: ProductVariant) => {
+        setSelectedColor(v);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('color', v.colorName);
+        router.replace(`?${params.toString()}`, { scroll: false });
+    };
+
     const handleAddToCart = () => {
         if (isOutOfStock) return;
 
         const formData = new FormData();
         formData.append("quantity", quantity.toString());
-        formData.append("color", selectedColor.name);
+        if (selectedColor) {
+            formData.append("color", selectedColor.colorName);
+        }
         formData.append("size", ""); // Ensure size is always present for furniture items
 
         startTransition(async () => {
             try {
                 await addItem(productId, formData);
                 toast.success("Added to cart", {
-                    description: `${quantity}x ${selectedColor.name} added.`,
+                    description: `${quantity}x ${selectedColor?.colorName || "Item"} added.`,
                     icon: <ShoppingBag className="w-4 h-4 text-emerald-500" />,
                 });
             } catch (err) {
@@ -73,26 +86,28 @@ export function ProductActions({ productId, price, stock, initialColor, currency
             <div className="flex flex-col sm:flex-row gap-8 justify-between">
 
                 {/* Color Selector */}
-                <div className="space-y-3">
-                    <span className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Color</span>
-                    <div className="flex gap-3">
-                        {MOCK_COLORS.map((color) => (
-                            <button
-                                key={color.id}
-                                onClick={() => setSelectedColor(color)}
-                                className={cn(
-                                    "w-10 h-10 rounded-full shadow-sm transition-all border-2",
-                                    selectedColor.id === color.id
-                                        ? "scale-110 border-amber-500 ring-2 ring-amber-500/20"
-                                        : "border-transparent hover:scale-105"
-                                )}
-                                style={{ backgroundColor: color.hex }}
-                                aria-label={`Select ${color.name}`}
-                                title={color.name}
-                            />
-                        ))}
+                {variants.length > 0 && (
+                    <div className="space-y-3">
+                        <span className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Color</span>
+                        <div className="flex gap-3">
+                            {variants.map((color) => (
+                                <button
+                                    key={color.id}
+                                    onClick={() => handleColorSelect(color)}
+                                    className={cn(
+                                        "w-10 h-10 rounded-full shadow-sm transition-all border-2",
+                                        selectedColor?.id === color.id
+                                            ? "scale-110 border-amber-500 ring-2 ring-amber-500/20"
+                                            : "border-transparent hover:scale-105"
+                                    )}
+                                    style={{ backgroundColor: color.colorHex }}
+                                    aria-label={`Select ${color.colorName}`}
+                                    title={color.colorName}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Quantity Selector */}
                 <div className="space-y-3">

@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Paperclip, XCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { chatWithConcierge } from '@/app/store/concierge-actions';
 import { Product } from '@/lib/assistantTypes';
 import { formatPrice } from '@/lib/utils';
@@ -252,7 +254,15 @@ export default function Chatbot() {
                                                 : 'bg-muted text-foreground border border-border rounded-bl-none'
                                                 }`}
                                         >
-                                            <p className="whitespace-pre-wrap">{msg.text}</p>
+                                            {msg.type === 'user' ? (
+                                                <p className="whitespace-pre-wrap">{msg.text}</p>
+                                            ) : (
+                                                <div className="prose prose-sm prose-p:leading-snug prose-a:text-accent prose-strong:text-foreground max-w-none text-foreground prose-invert">
+                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                        {msg.text}
+                                                    </ReactMarkdown>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Product Cards — horizontally scrollable carousel */}

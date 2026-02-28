@@ -1,6 +1,11 @@
 import { PrismaClient } from '@prisma/client';
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-const prisma = new PrismaClient();
+require('dotenv').config();
+
+const prisma = new PrismaClient({
+    accelerateUrl: process.env.DATABASE_URL
+}).$extends(withAccelerate());
 
 async function main() {
     console.log('🔄 Repairing 3D model paths in database...');

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Box, Smartphone, Sparkles, ScanFace, X, ZoomIn } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -16,6 +17,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/
 import { Button } from "@/components/ui/button";
 
 interface ProductGalleryProps {
+    productId: string;
     images: string[];
     productName: string;
     modelUrl?: string | null;
@@ -28,7 +30,7 @@ interface ProductGalleryProps {
     }[];
 }
 
-export function ProductGallery({ images, productName, modelUrl, usdzUrl, related3DProducts }: ProductGalleryProps) {
+export function ProductGallery({ productId, images, productName, modelUrl, usdzUrl, related3DProducts }: ProductGalleryProps) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [is3DOpen, setIs3DOpen] = useState(false);
     const [isZoomOpen, setIsZoomOpen] = useState(false);
@@ -113,15 +115,18 @@ export function ProductGallery({ images, productName, modelUrl, usdzUrl, related
                                 )}
 
                                 {modelUrl && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-9 px-4 rounded-full bg-zinc-800/80 hover:bg-zinc-700/80 text-white border border-white/5 gap-2"
-                                        onClick={(e) => e.stopPropagation()} // Placeholder action
-                                    >
-                                        <ScanFace size={16} className="text-amber-500" />
-                                        <span>Try On</span>
-                                    </Button>
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                        <Link href={`/ar?id=${productId}`}>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-9 px-4 rounded-full bg-zinc-800/80 hover:bg-zinc-700/80 text-white border border-white/5 gap-2"
+                                            >
+                                                <ScanFace size={16} className="text-amber-500" />
+                                                <span>Try On</span>
+                                            </Button>
+                                        </Link>
+                                    </div>
                                 )}
                             </div>
                         </div>

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import "@google/model-viewer";
 import { Camera } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -55,6 +54,11 @@ export function ArSession({
     const [arStatus, setArStatus] = useState<string | null>(null);
 
     const mvRef = useRef<ModelViewerEl>(null);
+
+    // Ensure model-viewer is loaded dynamically to avoid SSR crash.
+    useEffect(() => {
+        import("@google/model-viewer").catch(() => null);
+    }, []);
 
     const models = useMemo(() => {
         const main = { id: "__main__", name: "Main", modelUrl, usdzUrl: usdzUrl ?? null, image: "" };

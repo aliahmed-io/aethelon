@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Cuboid } from "lucide-react";
 
 interface PremiumProductCardProps {
   item: {
@@ -14,6 +15,7 @@ interface PremiumProductCardProps {
     discountPercentage?: number;
     brand?: string | null;
     tags?: string[];
+    modelUrl?: string | null;
   };
   priority?: boolean;
   index?: number;
@@ -91,6 +93,21 @@ export function PremiumProductCard({ item, priority = false, index = 0 }: Premiu
               style={{ color: "var(--vault-gold)", border: "1px solid var(--vault-gold)", background: "var(--vault-bg)" }}
             >
               Limited
+            </div>
+          )}
+
+          {/* Vault 3D Badge */}
+          {item.modelUrl && (
+            <div
+              className="absolute bottom-4 left-4 px-2 py-1 text-[9px] font-mono uppercase tracking-[0.2em] flex items-center gap-1.5 backdrop-blur-md pointer-events-none"
+              style={{
+                color: "var(--vault-gold)",
+                border: "1px solid rgba(171,126,34,0.3)", // gold with opacity
+                background: "rgba(28,21,16,0.8)" // matching vault bg
+              }}
+            >
+              <Cuboid className="w-3 h-3" strokeWidth={1.5} />
+              <span>3D</span>
             </div>
           )}
         </div>

@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Sparkles, Box } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles, Box, Move } from "lucide-react";
+import { motion, useDragControls } from "framer-motion";
 // Dynamically imported in useEffect — @google/model-viewer uses browser globals
 // (self, customElements) at module-eval time which crashes SSR.
 import { ProductCatalog } from "@/components/visualizer/ProductCatalog";
@@ -77,6 +78,8 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
 
     const viewerRef = useRef<HTMLElement>(null);
     const [isModelLoading, setIsModelLoading] = useState(false);
+    const [interactionMode, setInteractionMode] = useState<"rotate" | "move">("move");
+    const dragConstraintsRef = useRef<HTMLDivElement>(null);
 
     // ── model-viewer attributes update ──────────────────────────────────
     useEffect(() => {
@@ -151,7 +154,7 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
                 {/* Center: 3D Canvas */}
                 <main className="flex-1 relative overflow-hidden">
                     {/* Room Background */}
-                    <div className="absolute inset-0">
+                    <div className="absolute inset-0" ref={dragConstraintsRef}>
                         <Image
                             src={activeRoomUrl}
                             alt={roomBackground.alt}
@@ -173,54 +176,97 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
 
                     {/* model-viewer */}
                     {selectedProduct ? (
-                        <div className="absolute inset-0 z-10">
-                            {/* Loading Overlay */}
-                            {isModelLoading && (
-                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
-                                    <div className="flex flex-col items-center gap-3 bg-background/90 backdrop-blur px-6 py-4 rounded-sm border border-border">
-                                        <Loader2 className="w-6 h-6 animate-spin text-accent" />
-                                        <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                                            Loading 3D Model
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-
-                            <model-viewer
-                                ref={viewerRef}
-                                src={selectedProduct.modelUrl}
-                                ios-src={selectedProduct.usdzUrl ?? undefined}
-                                alt={`3D model of ${selectedProduct.name}`}
-                                camera-controls
-                                auto-rotate
-                                shadow-intensity={getShadowIntensityForMode(lightingMode)}
-                                shadow-softness="1"
-                                exposure={getExposureForMode(lightingMode)}
-                                environment-image={getEnvironmentForMode(lightingMode)}
-                                scale={`${modelScale} ${modelScale} ${modelScale}`}
-                                reveal="auto"
-                                loading="eager"
-                                interaction-prompt="auto"
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: "transparent",
-                                    ["--poster-color" as string]: "transparent",
-                                }}
-                            >
-                                {/* Progress Bar */}
-                                <div
-                                    slot="progress-bar"
-                                    className="absolute bottom-0 left-0 right-0 h-1 bg-muted"
+                        <>
+                            {/* Mode Toggle */}
+                            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 flex bg-background/80 backdrop-blur border border-border p-1 rounded-full shadow-md">
+                                <button
+                                    onClick={() => setInteractionMode("move")}
+                                    className={`px-5 py-2 rounded-full text-xs font-mono uppercase tracking-widest transition-all ${interactionMode === "move"
+                                        ? "bg-accent text-accent-foreground shadow-sm"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                        }`}
                                 >
-                                    <div className="h-full bg-accent transition-all duration-300" />
-                                </div>
-                            </model-viewer>
-                        </div>
+                                    Move Pos
+                                </button>
+                                <button
+                                    onClick={() => setInteractionMode("rotate")}
+                                    className={`px-5 py-2 rounded-full text-xs font-mono uppercase tracking-widest transition-all ${interactionMode === "rotate"
+                                        ? "bg-accent text-accent-foreground shadow-sm"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                        }`}
+                                >
+                                    Rotate
+                                </button>
+                            </div>
+
+                            <motion.div
+                                drag={interactionMode === "move"}
+                                dragConstraints={{ top: -2000, left: -2000, right: 2000, bottom: 2000 }}
+                                dragElastic={0}
+                                dragMomentum={false}
+                                className={`absolute z-10 w-full h-full top-0 left-0 group ${interactionMode === "move" ? "cursor-grab active:cursor-grabbing" : ""
+                                    }`}
+                            >
+                                {/* Drag Helper Text */}
+                                {interactionMode === "move" && (
+                                    <div
+                                        className="absolute top-20 left-1/2 -translate-x-1/2 bg-transparent text-muted-foreground pointer-events-none flex items-center gap-2 z-20"
+                                    >
+                                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] font-medium bg-background/50 backdrop-blur-sm px-2 py-1 rounded">
+                                            Drag Model to Reposition
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Loading Overlay */}
+                                {isModelLoading && (
+                                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/5 backdrop-blur-[2px] rounded-xl">
+                                        <div className="flex flex-col items-center gap-3 bg-background/90 backdrop-blur px-6 py-4 rounded-sm border border-border shadow-lg">
+                                            <Loader2 className="w-6 h-6 animate-spin text-accent" />
+                                            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                                                Loading 3D Model
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <model-viewer
+                                    ref={viewerRef}
+                                    src={selectedProduct.modelUrl}
+                                    ios-src={selectedProduct.usdzUrl ?? undefined}
+                                    alt={`3D model of ${selectedProduct.name}`}
+                                    camera-controls
+                                    disable-pan
+                                    shadow-intensity={getShadowIntensityForMode(lightingMode)}
+                                    shadow-softness="1"
+                                    exposure={getExposureForMode(lightingMode)}
+                                    environment-image={getEnvironmentForMode(lightingMode)}
+                                    scale={`${modelScale} ${modelScale} ${modelScale}`}
+                                    reveal="auto"
+                                    loading="eager"
+                                    interaction-prompt="none"
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        backgroundColor: "transparent",
+                                        ["--poster-color" as string]: "transparent",
+                                        pointerEvents: interactionMode === "move" ? "none" : "auto",
+                                    }}
+                                >
+                                    {/* Progress Bar */}
+                                    <div
+                                        slot="progress-bar"
+                                        className="absolute bottom-0 left-0 right-0 h-1 bg-muted rounded-full overflow-hidden"
+                                    >
+                                        <div className="h-full bg-accent transition-all duration-300" />
+                                    </div>
+                                </model-viewer>
+                            </motion.div>
+                        </>
                     ) : (
                         /* Empty State */
-                        <div className="absolute inset-0 z-10 flex items-center justify-center">
-                            <div className="text-center bg-background/80 backdrop-blur-xl border border-border p-12 rounded-sm max-w-md">
+                        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                            <div className="text-center bg-background/80 backdrop-blur-xl border border-border p-12 rounded-sm max-w-md pointer-events-auto shadow-xl">
                                 <Box className="w-12 h-12 text-accent mx-auto mb-4 opacity-60" />
                                 <h2 className="font-display text-2xl mb-2 uppercase tracking-tight">
                                     Select a Product

@@ -51,6 +51,12 @@ interface ProductFormProps {
         allowBackorder?: boolean;
         backorderLimit?: number;
         mainCategory?: string;
+        variants?: {
+            id: string;
+            colorName: string;
+            colorHex: string;
+            images: string[];
+        }[];
     } | null;
 }
 
@@ -70,6 +76,7 @@ function SubmitButton({ isEdit }: { isEdit: boolean }) {
 
 export function ProductForm({ categories, initialData }: ProductFormProps) {
     const [images, setImages] = useState<string[]>(initialData?.images || []);
+    const [variants, setVariants] = useState<{ id: string; colorName: string; colorHex: string; images: string[] }[]>(initialData?.variants?.map(v => ({ ...v, id: v.id || crypto.randomUUID() })) || []);
     const [isFeatured, setIsFeatured] = useState<boolean>(initialData?.isFeatured || false);
     const [allowBackorder, setAllowBackorder] = useState<boolean>(initialData?.allowBackorder ?? false);
 
@@ -137,6 +144,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     return (
         <form action={dispatch} className="relative z-0">
             <input type="hidden" name="productId" value={initialData?.id} />
+            <input type="hidden" name="variants" value={JSON.stringify(variants)} />
 
             <div className="flex items-center gap-4 mb-8">
                 <Link href="/dashboard/products" className="p-2 border border-border rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
@@ -205,6 +213,116 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                                     )}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-card border border-border p-8 rounded-sm space-y-8 relative overflow-hidden shadow-sm">
+                        <div className="relative z-10 space-y-6">
+                            <div className="flex items-center justify-between border-b border-border pb-4">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/70">Color Variants</h3>
+                                <button
+                                    type="button"
+                                    onClick={() => setVariants([...variants, { id: crypto.randomUUID(), colorName: "", colorHex: "#000000", images: [] }])}
+                                    className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors"
+                                >
+                                    + Add Variant
+                                </button>
+                            </div>
+
+                            {variants.map((v, idx) => (
+                                <div key={v.id} className="p-4 border border-border rounded-sm bg-muted/20 space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70">Variant {idx + 1}</h4>
+                                        <button
+                                            type="button"
+                                            onClick={() => setVariants(variants.filter((_, i) => i !== idx))}
+                                            className="text-xs text-red-500 hover:text-red-700"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Color Name</Label>
+                                            <Input
+                                                value={v.colorName}
+                                                onChange={(e) => {
+                                                    const newVariants = [...variants];
+                                                    newVariants[idx].colorName = e.target.value;
+                                                    setVariants(newVariants);
+                                                }}
+                                                placeholder="e.g. Midnight Blue"
+                                                className="h-10 border-border"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="uppercase text-xs tracking-widest text-muted-foreground">Hex Code</Label>
+                                            <div className="flex gap-2 items-center">
+                                                <input
+                                                    type="color"
+                                                    value={v.colorHex}
+                                                    onChange={(e) => {
+                                                        const newVariants = [...variants];
+                                                        newVariants[idx].colorHex = e.target.value;
+                                                        setVariants(newVariants);
+                                                    }}
+                                                    className="w-10 h-10 border-0 p-0 rounded-sm cursor-pointer"
+                                                />
+                                                <Input
+                                                    value={v.colorHex}
+                                                    onChange={(e) => {
+                                                        const newVariants = [...variants];
+                                                        newVariants[idx].colorHex = e.target.value;
+                                                        setVariants(newVariants);
+                                                    }}
+                                                    placeholder="#000000"
+                                                    className="h-10 border-border uppercase"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="uppercase text-xs tracking-widest text-muted-foreground">Images (URLs)</Label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {v.images.map((img, iIndex) => (
+                                                <div key={iIndex} className="relative aspect-square w-16 bg-muted rounded-sm border border-border overflow-hidden group">
+                                                    <Image src={img} alt="Variant" fill className="object-cover" />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const newVariants = [...variants];
+                                                            newVariants[idx].images = newVariants[idx].images.filter((_, i) => i !== iIndex);
+                                                            setVariants(newVariants);
+                                                        }}
+                                                        className="absolute top-0 right-0 p-0.5 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            <Input
+                                                placeholder="Paste image URL and enter"
+                                                className="h-8 text-xs border-border flex-1 min-w-[200px]"
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        const val = (e.currentTarget as HTMLInputElement).value;
+                                                        if (val) {
+                                                            const newVariants = [...variants];
+                                                            newVariants[idx].images.push(val);
+                                                            setVariants(newVariants);
+                                                            (e.currentTarget as HTMLInputElement).value = '';
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {variants.length === 0 && (
+                                <p className="text-xs text-muted-foreground italic">No variants added. Product will just use the default media assets below.</p>
+                            )}
                         </div>
                     </div>
 

@@ -59,6 +59,11 @@ export async function generateTryOn(formData: FormData) {
 
             // Wrap External API Call
             await tryOnBreaker.execute(async () => {
+                const productName = formData.get("product") as string;
+                const prompt = productName
+                    ? `Analyze this image. Is it a clear room shot suitable for placing a "${productName}"? Answer briefly.`
+                    : "Analyze this image. Is it a clear room shot suitable for furniture visualization? Answer briefly.";
+
                 const result = await model.generateContent([
                     {
                         inlineData: {
@@ -66,7 +71,7 @@ export async function generateTryOn(formData: FormData) {
                             mimeType: imageFile.type
                         }
                     },
-                    "Analyze this image. Is it a clear room shot suitable for furniture visualization? Answer briefly."
+                    prompt
                 ]);
                 console.log("Gemini Analysis:", result.response.text());
             });

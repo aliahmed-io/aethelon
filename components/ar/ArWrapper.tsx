@@ -36,12 +36,13 @@ export function ArWrapper({ modelUrl, usdzUrl, productName }: ArWrapperProps) {
         <div className="fixed bottom-24 right-6 z-[60]">
             <model-viewer
                 src={modelUrl}
-                ios-src={usdzUrl ?? undefined}
+                {...(usdzUrl ? { "ios-src": usdzUrl } : {})}
                 ar
                 ar-modes="scene-viewer webxr quick-look"
                 camera-controls
                 loading="eager"
                 reveal="auto"
+                crossorigin="anonymous"
                 style={{
                     width: 1,
                     height: 1,

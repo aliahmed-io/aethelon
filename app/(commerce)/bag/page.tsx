@@ -79,7 +79,10 @@ export default async function BagPage() {
                                         <div className="flex justify-between items-start">
                                             <div>
                                                 <h3 className="font-light text-lg">{item.name}</h3>
-                                                <p className="text-xs text-muted-foreground font-mono mt-1 uppercase">Size: {item.size}</p>
+                                                <div className="flex flex-col gap-0.5 mt-1 text-xs text-muted-foreground font-mono uppercase">
+                                                    {item.color && <span>Color: {item.color}</span>}
+                                                    {item.size && <span>Size: {item.size}</span>}
+                                                </div>
                                             </div>
                                             <p className="font-mono text-sm">{fmt(item.price)}</p>
                                         </div>
@@ -88,6 +91,8 @@ export default async function BagPage() {
                                             <div className="text-sm text-muted-foreground">Qty: {item.quantity}</div>
                                             <form action={delItem}>
                                                 <input type="hidden" name="productId" value={item.id} />
+                                                <input type="hidden" name="color" value={item.color || ""} />
+                                                <input type="hidden" name="size" value={item.size || ""} />
                                                 <button type="submit" className="text-xs text-red-600 hover:text-red-500 uppercase tracking-widest flex items-center gap-2">
                                                     <Trash2 className="w-3 h-3" /> Remove
                                                 </button>

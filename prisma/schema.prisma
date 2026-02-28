@@ -119,6 +119,7 @@ model Product {
   mainCategory MainCategory @default(MEN)
   staticScore  Float        @default(0) // Precomputed: Pop + Rat + Rec
 
+  variants              ProductVariant[]
   reviews               Review[]
   tryOnSessions         TryOnSession[]
   orderItems            OrderItem[]
@@ -133,6 +134,19 @@ model Product {
   @@index([reviewCount])
   @@index([isFeatured])
   @@index([staticScore])
+}
+
+model ProductVariant {
+  id        String   @id @default(uuid())
+  productId String
+  colorName String
+  colorHex  String
+  images    String[]
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
 }
 
 model InventoryTransaction {
@@ -320,6 +334,8 @@ model OrderItem {
   name          String
   size          String?
   image         String?
+  colorName     String?
+  colorHex      String?
   createdAt     DateTime       @default(now())
   order         Order          @relation(fields: [orderId], references: [id])
   product       Product?       @relation(fields: [productId], references: [id], onDelete: SetNull)

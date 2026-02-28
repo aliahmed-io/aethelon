@@ -194,7 +194,7 @@ export function FooterClient({ currentCurrency }: FooterClientProps) {
                     <div className="flex flex-col gap-4">
                         <span className="text-foreground font-bold uppercase tracking-widest text-xs mb-2">Explore</span>
                         {[
-                            ["/shop", "Collection"], ["/about", "Our Story"], ["/atelier", "AI Try-On"],
+                            ["/shop", "Collection"], ["/about", "Our Story"], ["/ar", "AR Try-On"],
                             ["/blog", "Blog"], ["/faq", "FAQ"], ["/contact", "Contact"], ["/wholesale", "Wholesale"],
                         ].map(([href, label]) => (
                             <Link key={href} href={href} className="hover:text-foreground transition-colors">{label}</Link>

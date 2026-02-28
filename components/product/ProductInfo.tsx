@@ -5,10 +5,10 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/Accordion";
-import { Product } from "@prisma/client";
+import { Product, Category } from "@prisma/client";
 
 interface ProductInfoProps {
-    product: Product;
+    product: Product & { categories?: Category[] };
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
@@ -18,7 +18,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="space-y-4">
                 <div className="flex items-center gap-4">
                     <span className="px-3 py-1 text-xs font-bold tracking-[0.2em] uppercase bg-amber-500/10 text-amber-600 rounded-full ring-1 ring-amber-500/20">
-                        {product.mainCategory || "Collection"}
+                        {product.categories?.[0]?.name || product.mainCategory || "Collection"}
                     </span>
                     {product.stockQuantity < 5 && product.stockQuantity > 0 && (
                         <span className="text-xs font-medium text-red-500 animate-pulse">

@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useCapabilities } from "@/components/ar/useCapabilities";
 import { DesktopVisualizer } from "@/components/visualizer/DesktopVisualizer";
-import { MobileVisualizer } from "@/components/visualizer/MobileVisualizer";
 import type {
     VisualizerProduct,
     LightingMode,
@@ -171,27 +170,6 @@ export function RoomVisualizerClient({
         onApplyAiSettings: applyAiSettings,
     };
 
-    if (isMobile) {
-        // On mobile, hand off to the dedicated AR camera experience
-        const arHref = selectedProduct ? `/ar?id=${selectedProduct.id}` : "/ar";
-        // Use a client-side redirect via window.location for immediacy,
-        // or render a redirect component that fires on mount
-        return <MobileARRedirect href={arHref} />;
-    }
-
     return <DesktopVisualizer {...sharedProps} />;
-}
-
-/** Immediate redirect to the mobile AR page. Separate component so hooks above still run. */
-function MobileARRedirect({ href }: { href: string }) {
-    useEffect(() => {
-        window.location.replace(href);
-    }, [href]);
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-            <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-        </div>
-    );
 }
 

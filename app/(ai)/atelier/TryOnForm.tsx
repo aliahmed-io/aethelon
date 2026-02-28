@@ -1,14 +1,17 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Camera, Sparkles, RefreshCw, Check } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { generateTryOn } from "./actions";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
 export function TryOnForm() {
+    const searchParams = useSearchParams();
+    const productParam = searchParams.get("product");
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [resultUrl, setResultUrl] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -29,6 +32,9 @@ export function TryOnForm() {
         setIsProcessing(true);
         const formData = new FormData();
         formData.append("image", fileInputRef.current.files[0]);
+        if (productParam) {
+            formData.append("product", productParam);
+        }
 
         const result = await generateTryOn(formData);
 
@@ -116,7 +122,9 @@ export function TryOnForm() {
                                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-foreground/70 to-transparent flex items-center justify-between">
                                     <div>
                                         <p className="text-white font-medium text-lg">Fitting Complete</p>
-                                        <p className="text-white/70 text-xs uppercase tracking-wide">Aethelon Signature Lounge Chair</p>
+                                        <p className="text-white/70 text-xs uppercase tracking-wide">
+                                            {productParam || "Aethelon Signature Lounge Chair"}
+                                        </p>
                                     </div>
                                     <div className="flex gap-3">
                                         <button onClick={reset} className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">

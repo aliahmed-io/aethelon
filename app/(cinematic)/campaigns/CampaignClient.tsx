@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import Navbar from "@/components/ui/Navbar";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowDown } from "lucide-react";
+import { ArrowRight, ArrowDown, Cuboid } from "lucide-react";
 
 interface Product {
     id: string;
@@ -13,6 +13,7 @@ interface Product {
     description: string | null;
     price: number;
     images: string[];
+    modelUrl?: string | null;
 }
 
 interface Campaign {
@@ -255,6 +256,14 @@ function LoomCard({ product, index, total, scrollYProgress, isActive, activeInde
                         />
                     )}
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#131009] to-transparent" />
+
+                    {/* Campaign 3D Badge */}
+                    {product.modelUrl && (
+                        <div className="absolute top-4 left-4 bg-black/40 border border-white/10 text-[#EDE0CC] backdrop-blur-xl px-2.5 py-1 text-[9px] font-mono uppercase tracking-[0.2em] flex items-center gap-1.5 rounded-full shadow-sm">
+                            <Cuboid className="w-3 h-3" strokeWidth={1.5} />
+                            <span>3D Experience</span>
+                        </div>
+                    )}
 
                     <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 font-serif italic text-4xl md:text-6xl text-[#AB7E22]/30">
                         {index + 1}

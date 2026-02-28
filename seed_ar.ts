@@ -6,28 +6,28 @@ const prisma = new PrismaClient({
     accelerateUrl: process.env.DATABASE_URL!,
 }).$extends(withAccelerate());
 
-const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://aethelon.com';
+
 
 const AR_UPDATES = [
     {
         name: 'Atelier Writing Desk',
-        modelUrl: `${BASE_URL}/models/sofa_velvet.glb`,
-        usdzUrl: `${BASE_URL}/models/sofa_velvet.usdz`,
+        modelUrl: `/models/sofa_velvet.glb`,
+        usdzUrl: `/models/sofa_velvet.usdz`,
     },
     {
         name: 'Arc Floor Lamp',
-        modelUrl: `${BASE_URL}/models/floor_lamp.glb`,
-        usdzUrl: `${BASE_URL}/models/floor_lamp.usdz`,
+        modelUrl: `/models/floor_lamp.glb`,
+        usdzUrl: `/models/floor_lamp.usdz`,
     },
     {
         name: 'Aethelon Grand Armchair',
-        modelUrl: `${BASE_URL}/models/chair_damask.glb`,
-        usdzUrl: `${BASE_URL}/models/chair_damask.usdz`,
+        modelUrl: `/models/chair_damask.glb`,
+        usdzUrl: `/models/chair_damask.usdz`,
     },
     {
         name: 'Velvet Accent Chair',
-        modelUrl: `${BASE_URL}/models/sofa_velvet.glb`,
-        usdzUrl: `${BASE_URL}/models/sofa_velvet.usdz`,
+        modelUrl: `/models/sofa_velvet.glb`,
+        usdzUrl: `/models/sofa_velvet.usdz`,
     },
 ];
 

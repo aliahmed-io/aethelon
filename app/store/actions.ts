@@ -254,7 +254,9 @@ export async function checkOut(formData: FormData) {
 export async function delItem(formData: FormData) {
     const user = await requireUser();
 
-    const productId = formData.get("productId");
+    const productId = formData.get("productId") as string;
+    const color = formData.get("color") as string || "";
+    const size = formData.get("size") as string || "";
 
     let cart: Cart | null = null;
 
@@ -268,7 +270,14 @@ export async function delItem(formData: FormData) {
     if (cart && cart.items) {
         const updateCart: Cart = {
             userId: user.id,
-            items: cart.items.filter((item) => item.id !== productId),
+            items: cart.items.filter((item) => {
+                const isExactMatch =
+                    item.id === productId &&
+                    (item.color || "") === color &&
+                    (item.size || "") === size;
+
+                return !isExactMatch;
+            }),
             discountCode: cart.discountCode,
             discountPercentage: cart.discountPercentage,
         };
@@ -328,6 +337,23 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
     const mainCategory = (formData.get("mainCategory") as string) || "MEN";
     const allowBackorder = formData.get("allowBackorder") === "on";
 
+    const variantsRaw = formData.get("variants") as string;
+    let newVariants: { colorName: string; colorHex: string; images: string[] }[] = [];
+    if (variantsRaw) {
+        try {
+            const parsed = JSON.parse(variantsRaw);
+            if (Array.isArray(parsed)) {
+                newVariants = parsed.map(v => ({
+                    colorName: v.colorName || "Default",
+                    colorHex: v.colorHex || "#000000",
+                    images: Array.isArray(v.images) ? v.images : []
+                }));
+            }
+        } catch (e: any) {
+            logger.error(e, "Failed to parse variants");
+        }
+    }
+
     // Rate Limit: 20 creations per min (Admin)
     const { success } = await rateLimit(`create-product-${user.id}`, 20, "60 s");
     if (!success) {
@@ -340,6 +366,9 @@ export async function createProduct(_prevState: unknown, formData: FormData) {
             description,
             price,
             images: imageArray,
+            variants: {
+                create: newVariants
+            },
             categories: categoryId ? { connect: { id: categoryId } } : undefined,
             status,
             isFeatured,
@@ -389,11 +418,31 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
     const mainCategory = (formData.get("mainCategory") as string) || "MEN";
     const allowBackorder = formData.get("allowBackorder") === "on";
 
+    const variantsRaw = formData.get("variants") as string;
+    let newVariants: { colorName: string; colorHex: string; images: string[] }[] = [];
+    if (variantsRaw) {
+        try {
+            const parsed = JSON.parse(variantsRaw);
+            if (Array.isArray(parsed)) {
+                newVariants = parsed.map(v => ({
+                    colorName: v.colorName || "Default",
+                    colorHex: v.colorHex || "#000000",
+                    images: Array.isArray(v.images) ? v.images : []
+                }));
+            }
+        } catch (e) {
+            logger.error("Failed to parse variants");
+        }
+    }
+
     // Rate Limit: 20 edits per min (Admin)
     const { success } = await rateLimit(`edit-product-${user.id}`, 20, "60 s");
     if (!success) {
         return redirect("/dashboard/products?error=Rate limit exceeded");
     }
+
+    // Clear existing variants first since we are doing a full replacement
+    await prisma.productVariant.deleteMany({ where: { productId } });
 
     await prisma.product.update({
         where: {
@@ -404,6 +453,9 @@ export async function editProduct(_prevState: unknown, formData: FormData) {
             description,
             price,
             images: imageArray,
+            variants: {
+                create: newVariants
+            },
             categories: categoryId ? { set: [{ id: categoryId }] } : { set: [] },
             status,
             isFeatured,

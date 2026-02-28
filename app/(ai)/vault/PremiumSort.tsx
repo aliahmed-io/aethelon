@@ -47,10 +47,10 @@ export function PremiumSort() {
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent
-                    className="rounded-none border z-[200]"
+                    className="vault rounded-none border z-[200]"
                     style={{
                         background: "var(--vault-surface)",
-                        borderColor: "var(--vault-gold)",
+                        borderColor: "var(--vault-border)",
                         color: "var(--vault-fg)",
                     }}
                 >
@@ -58,7 +58,7 @@ export function PremiumSort() {
                         <SelectItem
                             key={opt.value}
                             value={opt.value}
-                            className="text-[10px] uppercase tracking-wider font-mono focus:bg-[var(--vault-surface-2)] focus:text-[var(--vault-gold)]"
+                            className="text-[10px] uppercase tracking-wider font-mono text-[var(--vault-fg)] focus:bg-[var(--vault-surface-2)] focus:text-[var(--vault-gold)]"
                         >
                             {opt.label}
                         </SelectItem>

@@ -2,6 +2,7 @@
 
 import { WishlistButton } from "./WishlistButton";
 import { Badge } from "@/components/ui/badge";
+import { Cuboid } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -80,6 +81,14 @@ export function ProductCard({ item, priority = false }: iAppProps) {
             <Badge className="absolute top-3 left-3 bg-red-600 text-white hover:bg-red-700 border-none px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm">
               -{item.discountPercentage}%
             </Badge>
+          )}
+
+          {/* 3D Model Available Badge */}
+          {item.modelUrl && (
+            <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[9px] font-mono uppercase tracking-[0.2em] px-2 py-1 rounded-sm flex items-center gap-1.5 shadow-sm border border-white/10 pointer-events-none">
+              <Cuboid className="w-3 h-3" strokeWidth={1.5} />
+              <span>3D</span>
+            </div>
           )}
 
           {/* Wishlist */}

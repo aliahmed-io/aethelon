@@ -19,6 +19,7 @@ const RecentlyViewed = dynamic(
 
 interface ProductPageProps {
     params: Promise<{ id: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata(
@@ -58,8 +59,13 @@ export async function generateMetadata(
     };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
     const { id } = await params;
+
+    // Resolve search parameters for color selection
+    const resolvedSearchParams = await searchParams;
+    const colorParam = typeof resolvedSearchParams?.color === 'string' ? resolvedSearchParams.color : undefined;
+
     const currentCurrency = await CurrencyService.getCurrency();
     const product = await Prisma.product.findUnique({
         where: { id },
@@ -75,12 +81,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
             modelUrl: true,
             usdzUrl: true,
             categories: true,
+            variants: true,
         }
     });
 
     if (!product) return notFound();
 
     const productForComponents = product as any;
+
+    let displayImages = product.images;
+    if (product.variants && product.variants.length > 0) {
+        const activeVariant = product.variants.find(v => v.colorName === colorParam) || product.variants[0];
+        if (activeVariant && activeVariant.images && activeVariant.images.length > 0) {
+            displayImages = activeVariant.images;
+        }
+    }
 
     // Fetch related products with 3D models for AR switcher
     const related3DProducts = await Prisma.product.findMany({
@@ -149,7 +164,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <div className="mb-8">
                     <Link href="/categories" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">
                         <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                        Back to Collection
+                        Back to Categories
                     </Link>
                 </div>
 
@@ -166,6 +181,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                             stock={product.stockQuantity}
                             currencyCode={currentCurrency}
                             exchangeRate={SUPPORTED_CURRENCIES[currentCurrency].rate}
+                            variants={product.variants}
                         />
                         {/* Try in AR — shown only when a 3D model exists */}
                         {product.modelUrl && (
@@ -184,7 +200,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     {/* On Mobile: Order 1 (Visuals First) */}
                     <div className="order-1 lg:order-2">
                         <ProductGallery
-                            images={product.images}
+                            productId={product.id}
+                            images={displayImages}
                             productName={product.name}
                             modelUrl={product.modelUrl}
                             usdzUrl={product.usdzUrl}

@@ -123,7 +123,11 @@ export function ShippingForm({ initialAddress, savedAddresses, cartItems: _cartI
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="font-medium line-clamp-1 max-w-[150px]">{item.name}</span>
-                                            <span className="text-muted-foreground text-xs uppercase">Qty: {item.quantity}</span>
+                                            <div className="flex flex-col text-[10px] text-muted-foreground uppercase opacity-80 mt-0.5 mb-1 leading-tight">
+                                                {item.color && <span>Color: {item.color}</span>}
+                                                {item.size && <span>Size: {item.size}</span>}
+                                            </div>
+                                            <span className="text-muted-foreground text-xs uppercase font-medium">Qty: {item.quantity}</span>
                                         </div>
                                     </div>
                                     <span className="font-mono">{formatPrice(item.price * item.quantity)}</span>

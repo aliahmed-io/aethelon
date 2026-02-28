@@ -113,14 +113,14 @@ export async function chatWithConcierge(
                     where.OR = [
                         { name: { contains: criteria.search_term, mode: 'insensitive' } },
                         { description: { contains: criteria.search_term, mode: 'insensitive' } },
-                        { category: { name: { contains: criteria.search_term, mode: 'insensitive' } } } // Adjusted for relation
+                        { categories: { some: { name: { contains: criteria.search_term, mode: 'insensitive' } } } }
                     ];
                 }
 
                 if (criteria.category && !criteria.search_term) {
                     where.OR = [
-                        { category: { name: { contains: criteria.category, mode: 'insensitive' } } },
-                        { mainCategory: { equals: criteria.category, mode: 'insensitive' } }, // Check enum/string
+                        { categories: { some: { name: { contains: criteria.category, mode: 'insensitive' } } } },
+                        // Assume mainCategory (enum) matches won't cleanly map to arbitrary strings without complex casting overhead in this fast path
                     ];
                 }
 
@@ -134,7 +134,7 @@ export async function chatWithConcierge(
                     where,
                     take: 6,
                     orderBy: { price: 'desc' },
-                    include: { category: true } // Include category relation content
+                    include: { categories: true } // Include category relation content
                 });
 
             } catch (e) {
