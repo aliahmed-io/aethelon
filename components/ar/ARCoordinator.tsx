@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useCapabilities } from "@/components/ar/useCapabilities";
 import { ArSession } from "@/components/ar/ArSession";
 import { RoomVisualizerClient } from "@/components/visualizer/RoomVisualizerClient";
@@ -12,6 +13,7 @@ interface ARCoordinatorProps {
 
 export function ARCoordinator({ products, preselectedProductId }: ARCoordinatorProps) {
     const { isMobile, loading } = useCapabilities();
+    const [forceManualMode, setForceManualMode] = useState(false);
 
     if (loading) {
         return (
@@ -21,7 +23,8 @@ export function ARCoordinator({ products, preselectedProductId }: ARCoordinatorP
         );
     }
 
-    if (isMobile) {
+    // If mobile AND user hasn't opted to use manual photo mode
+    if (isMobile && !forceManualMode) {
         // Find the selected product, fallback to the first one available
         const selected = preselectedProductId
             ? products.find((p) => p.id === preselectedProductId) ?? products[0]
@@ -47,6 +50,7 @@ export function ARCoordinator({ products, preselectedProductId }: ARCoordinatorP
                         modelUrl: p.modelUrl,
                         image: p.images[0] ?? "",
                     }))}
+                onTriggerFallback={() => setForceManualMode(true)}
             />
         );
     }

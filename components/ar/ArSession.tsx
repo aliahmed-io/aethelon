@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { Camera } from "lucide-react";
+import { Camera, AlertCircle, RefreshCcw, Smartphone } from "lucide-react";
+import { toast } from "sonner";
 
 // ---------------------------------------------------------------------------
 // arStore stub — kept for backwards-compat with any remaining import sites.
@@ -23,6 +24,7 @@ interface ArSessionProps {
         image: string;
     }[];
     onClose?: () => void;
+    onTriggerFallback?: () => void; // New prop to switch to RoomVisualizerClient
 }
 
 type ModelViewerEl = HTMLElement & {
@@ -45,12 +47,14 @@ export function ArSession({
     usdzUrl,
     related3DProducts = [],
     onClose,
+    onTriggerFallback,
 }: ArSessionProps) {
     const [activeModelUrl, setActiveModelUrl] = useState(modelUrl);
     const [activeUsdzUrl, setActiveUsdzUrl] = useState(usdzUrl ?? null);
     const [hasLaunched, setHasLaunched] = useState(false);
     const [modelReady, setModelReady] = useState(false);
     const [arUnavailable, setArUnavailable] = useState(false);
+    const [arErrorDetail, setArErrorDetail] = useState<string | null>(null);
     const [arStatus, setArStatus] = useState<string | null>(null);
 
     const mvRef = useRef<ModelViewerEl>(null);
@@ -77,6 +81,7 @@ export function ArSession({
         setModelReady(false);
         setHasLaunched(false);
         setArUnavailable(false);
+        setArErrorDetail(null);
         setArStatus(null);
     }, [activeModelUrl]);
 
@@ -96,13 +101,37 @@ export function ArSession({
 
         const onArStatus = (e: any) => {
             const status = e?.detail?.status as string | undefined;
-            if (status) setArStatus(status);
-            if (status === "failed") setArUnavailable(true);
-            if (status === "session-started") setHasLaunched(true);
+            if (status) {
+                setArStatus(status);
+                // Trigger professional toasts based on status changes
+                if (status === "session-started") {
+                    setHasLaunched(true);
+                    toast.success("AR Session Started", {
+                        description: "Point your camera at a flat, well-lit surface.",
+                        duration: 4000
+                    });
+                } else if (status === "failed") {
+                    setArUnavailable(true);
+                    setArErrorDetail("Your device or browser does not support the required AR services.");
+                    toast.error("AR Launch Failed", {
+                        description: "Could not initialize AR engine.",
+                    });
+                } else if (status === "not-presenting") {
+                    // User closed the AR view
+                    if (hasLaunched) {
+                        toast.info("AR Session Ended", {
+                            description: "Returned to 3D preview."
+                        });
+                        setHasLaunched(false);
+                    }
+                }
+            }
         };
 
-        const onError = () => {
+        const onError = (e: any) => {
+            console.error("Model-viewer error:", e);
             setArUnavailable(true);
+            setArErrorDetail("Failed to load 3D model resources. Ensure your connection is stable.");
         };
 
         el.addEventListener("ar-status", onArStatus);
@@ -111,7 +140,7 @@ export function ArSession({
             el.removeEventListener("ar-status", onArStatus);
             el.removeEventListener("error", onError);
         };
-    }, [activeModelUrl]);
+    }, [activeModelUrl, hasLaunched]);
 
     const handleSnapshot = () => {
         const el = mvRef.current;
@@ -127,17 +156,64 @@ export function ArSession({
 
     return (
         <div className="fixed inset-0 z-50 bg-black flex flex-col">
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-2">
-                <div className="text-white bg-black/50 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md border border-white/10 text-center">
-                    {arUnavailable
-                        ? "AR not available on this device"
-                        : arStatus
-                            ? `AR status: ${arStatus}`
+            {/* Minimal Header Stats Layer */}
+            {!arUnavailable && (
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-2">
+                    <div className="text-white bg-black/50 px-4 py-2 rounded-full text-xs tracking-wider uppercase font-medium backdrop-blur-md border border-white/10 text-center">
+                        {arStatus === "presenting"
+                            ? "AR Active"
                             : hasLaunched
-                                ? "AR launched — check your camera"
-                                : "Tap below to place in your space"}
+                                ? "Waiting for surface..."
+                                : "Interactive 3D Preview"}
+                    </div>
                 </div>
-            </div>
+            )}
+
+            {/* Critical AR Error Overlay */}
+            {arUnavailable && (
+                <div className="absolute inset-0 z-[60] bg-zinc-950/90 backdrop-blur-xl flex items-center justify-center p-6">
+                    <div className="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+                        <div className="p-8 text-center flex flex-col items-center">
+                            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
+                                <AlertCircle className="w-8 h-8 text-red-500" />
+                            </div>
+                            <h3 className="text-2xl font-light tracking-tight text-white mb-3">
+                                AR Unsupported
+                            </h3>
+                            <p className="text-zinc-400 text-sm leading-relaxed mb-8">
+                                {arErrorDetail || "We couldn't launch the augmented reality experience. Your device may lack the necessary sensors or software updates."}
+                            </p>
+
+                            <div className="flex flex-col gap-3 w-full">
+                                {onTriggerFallback && (
+                                    <button
+                                        onClick={onTriggerFallback}
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-white text-black font-bold text-xs uppercase tracking-widest rounded-sm hover:bg-zinc-200 transition-colors"
+                                    >
+                                        <RefreshCcw className="w-4 h-4" />
+                                        Switch to Photo Mode
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => setArUnavailable(false)}
+                                    className="w-full flex items-center justify-center gap-2 px-6 py-4 border border-zinc-700 text-white font-bold text-xs uppercase tracking-widest rounded-sm hover:bg-zinc-800 transition-colors"
+                                >
+                                    <Smartphone className="w-4 h-4" />
+                                    Return to 3D Preview
+                                </button>
+                                {onClose && (
+                                    <button
+                                        onClick={onClose}
+                                        className="w-full mt-2 text-zinc-500 text-xs uppercase tracking-widest hover:text-white transition-colors"
+                                    >
+                                        Dismiss
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <button
                 onClick={handleSnapshot}

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 
 export interface DeviceCapabilities {
-    isWebXrSupported: boolean;
     isSecureContext: boolean;
     isMobile: boolean;
     loading: boolean;
@@ -11,7 +10,6 @@ export interface DeviceCapabilities {
 
 export function useCapabilities() {
     const [caps, setCaps] = useState<DeviceCapabilities>({
-        isWebXrSupported: false,
         isSecureContext: false,
         isMobile: false,
         loading: true,
@@ -37,19 +35,7 @@ export function useCapabilities() {
 
             const isMobile = detectMobile();
 
-            let isWebXr = false;
-            // @ts-ignore - navigator.xr is not fully typed in standard lib yet
-            if (navigator.xr && navigator.xr.isSessionSupported) {
-                try {
-                    // @ts-ignore
-                    isWebXr = await navigator.xr.isSessionSupported("immersive-ar");
-                } catch (e) {
-                    console.warn("WebXR check failed", e);
-                }
-            }
-
             setCaps({
-                isWebXrSupported: isWebXr,
                 isSecureContext: isSecure,
                 isMobile,
                 loading: false,
