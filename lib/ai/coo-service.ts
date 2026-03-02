@@ -11,7 +11,7 @@ import logger from "@/lib/logger";
 // Gemini-powered executive assistant with data-only insights
 // ============================================================
 
-const MODEL_NAME = "gemini-3-flash-preview";
+const MODEL_NAME = "gemini-3.0-flash";
 
 const SYSTEM_PROMPT = `You are the AI Chief Operating Officer (COO) for Aethelon, a luxury watch e-commerce store.
 *** ADMIN ACCESS ONLY ***

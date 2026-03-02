@@ -162,6 +162,9 @@ export async function getSmartCollection({ slugs, searchParams }: CollectionPara
         include: {
             categories: true,
             inventoryTransactions: false,
+            variants: {
+                select: { colorHex: true }
+            }
         },
         orderBy: orderBy
     });

@@ -16,6 +16,7 @@ interface iAppProps {
     images: string[];
     discountPercentage: number;
     modelUrl?: string | null;
+    variants?: { colorHex: string }[];
   };
   priority?: boolean;
 }
@@ -26,22 +27,23 @@ export function ProductCard({ item, priority = false }: iAppProps) {
   const [locale, setLocale] = useState("en-US");
 
   useEffect(() => {
-    const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
-    const curr = match ? match[2] : "USD";
-    setCurrency(curr);
-
-    const rates: Record<string, { rate: number, locale: string }> = {
-      USD: { rate: 1, locale: "en-US" },
-      EUR: { rate: 0.92, locale: "de-DE" },
-      GBP: { rate: 0.79, locale: "en-GB" },
-      JPY: { rate: 150.5, locale: "ja-JP" },
-      CAD: { rate: 1.35, locale: "en-CA" },
+    const handleCurrencyChange = () => {
+      const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
+      const curr = match ? match[2] : "USD";
+      setCurrency(curr);
+      const rates: Record<string, { rate: number; locale: string }> = {
+        USD: { rate: 1, locale: "en-US" },
+        EUR: { rate: 0.92, locale: "de-DE" },
+        GBP: { rate: 0.79, locale: "en-GB" },
+        JPY: { rate: 150.5, locale: "ja-JP" },
+        CAD: { rate: 1.35, locale: "en-CA" },
+      };
+      if (rates[curr]) { setRate(rates[curr].rate); setLocale(rates[curr].locale); }
     };
 
-    if (rates[curr]) {
-      setRate(rates[curr].rate);
-      setLocale(rates[curr].locale);
-    }
+    handleCurrencyChange();
+    window.addEventListener("currency_changed", handleCurrencyChange);
+    return () => window.removeEventListener("currency_changed", handleCurrencyChange);
   }, []);
 
   const discountedPriceCents = item.discountPercentage > 0
@@ -73,7 +75,7 @@ export function ProductCard({ item, priority = false }: iAppProps) {
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 50vw"
             className="object-contain p-4 transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
             priority={priority}
-            quality={60}
+            quality={70}
           />
 
           {/* Discount Badge */}
@@ -120,6 +122,23 @@ export function ProductCard({ item, priority = false }: iAppProps) {
               </span>
             )}
           </div>
+
+          {/* Color Variant Indicators */}
+          {item.variants && item.variants.length > 0 && (
+            <div className="flex items-center gap-1.5 pt-1.5">
+              {item.variants.slice(0, 4).map((variant, idx) => (
+                <div
+                  key={idx}
+                  className="w-2.5 h-2.5 rounded-full border border-border/50 shadow-sm"
+                  style={{ backgroundColor: variant.colorHex }}
+                  aria-label={`Color variant: ${variant.colorHex}`}
+                />
+              ))}
+              {item.variants.length > 4 && (
+                <span className="text-[9px] text-muted-foreground ml-0.5">+{item.variants.length - 4}</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Link>

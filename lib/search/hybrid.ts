@@ -45,11 +45,52 @@ export async function searchProductsHybrid(options: SearchOptions): Promise<Hybr
     const embedding = await generateEmbedding(query);
 
     if (!embedding) {
-        console.warn("Hybrid Search: Embedding generation failed, falling back to text-only.");
-        return [];
+        console.warn("Hybrid Search: Embedding generation failed, executing Advanced Lexical Fallback.");
+
+        // Advanced Lexical Search (Postgres Native)
+        // Uses websearch_to_tsquery to handle complex operators "or", "and", and phrases automatically.
+        const fallbackResults = await prisma.$queryRawUnsafe<any[]>(`
+            SELECT 
+                p.id,
+                p.name,
+                p.description,
+                p.price,
+                p.images,
+                p."mainCategory",
+                p."stockQuantity",
+                p."averageRating",
+                p."reviewCount",
+                c.name as "categoryName",
+                0 as vector_score,
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), websearch_to_tsquery('english', $1)) as text_score
+            FROM "Product" p
+            LEFT JOIN "_CategoryToProduct" cp ON p.id = cp."B"
+            LEFT JOIN "Category" c ON cp."A" = c.id
+            WHERE 
+                p.status = 'published'
+                ${category && category !== 'all' ? `AND c.name ILIKE '%${category}%'` : ''}
+                ${minPrice !== undefined ? `AND p.price >= ${minPrice}` : ''}
+                ${maxPrice !== undefined ? `AND p.price <= ${maxPrice}` : ''}
+                ${inStock ? `AND p."stockQuantity" > 0` : ''}
+                AND to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')) @@ websearch_to_tsquery('english', $1)
+            ORDER BY (
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), websearch_to_tsquery('english', $1)) +
+                (log(p."reviewCount" + 1) * 0.05) + 
+                (CASE WHEN p."stockQuantity" > 0 THEN 0.1 ELSE 0 END) 
+            ) DESC
+            LIMIT $2;
+        `, query, limit);
+
+        return fallbackResults.map((r: any) => ({
+            ...r,
+            categoryName: r.categoryName,
+            relevance: r.text_score,
+            vectorScore: 0,
+            textScore: r.text_score
+        }));
     }
 
-    // 2. Construct Raw SQL with Safe Parameters
+    // 2. Construct Raw SQL with Safe Parameters for Hybrid Search
     const vectorString = `[${embedding.join(',')}]`;
 
     // Params: $1=vector, $2=query, $3=limit
@@ -103,19 +144,20 @@ export async function searchProductsHybrid(options: SearchOptions): Promise<Hybr
                 p."reviewCount",
                 c.name as "categoryName",
                 1 - (p.embedding <=> $1::vector) as vector_score,
-                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), plainto_tsquery('english', $2)) as text_score
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), websearch_to_tsquery('english', $2)) as text_score
             FROM "Product" p
-            LEFT JOIN "Category" c ON p."categoryId" = c.id
+            LEFT JOIN "_CategoryToProduct" cp ON p.id = cp."B"
+            LEFT JOIN "Category" c ON cp."A" = c.id
             WHERE 
                 ${whereSql.replace(/"/g, 'p."').replace(/status/g, 'p.status').replace(/price/g, 'p.price').replace(/stockQuantity/g, 'p."stockQuantity"')}
                 AND (
                     (1 - (p.embedding <=> $1::vector)) > 0.5 -- Semantic Threshold
                     OR
-                    to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')) @@ plainto_tsquery('english', $2)
+                    to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')) @@ websearch_to_tsquery('english', $2)
                 )
             ORDER BY (
                 (1 - (p.embedding <=> $1::vector)) * ${VECTOR_WEIGHT} + 
-                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), plainto_tsquery('english', $2)) * ${TEXT_WEIGHT} +
+                ts_rank_cd(to_tsvector('english', p.name || ' ' || p.description || ' ' || coalesce(p.style, '') || ' ' || array_to_string(p.tags, ' ')), websearch_to_tsquery('english', $2)) * ${TEXT_WEIGHT} +
                 (log(p."reviewCount" + 1) * 0.05) + 
                 (CASE WHEN p."stockQuantity" > 0 THEN 0.1 ELSE 0 END) 
             ) DESC

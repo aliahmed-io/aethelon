@@ -10,10 +10,11 @@ export function About() {
                     <div className="relative h-[400px] lg:h-[600px] rounded-3xl overflow-hidden group">
                         <Image
                             src="/men.jpeg"
-                            alt="About Aethelona"
+                            alt="Aethelon craftsmanship"
                             fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            quality={60}
+                            className="object-cover object-center"
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                            quality={70}
                         />
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
                     </div>

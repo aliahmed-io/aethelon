@@ -103,7 +103,7 @@ export async function runGeminiTest(): Promise<TestResult> {
 
     try {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
         const result = await model.generateContent("Reply with one word: Online");
         const response = result.response.text();
 
@@ -114,7 +114,7 @@ export async function runGeminiTest(): Promise<TestResult> {
             message: "Generation Operational",
             duration: Date.now() - start,
             details: {
-                "Model": "gemini-2.5-flash",
+                "Model": "gemini-3.0-flash",
                 "Response Test": response.trim()
             }
         };

@@ -122,6 +122,11 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         prisma.product.findMany({
             where,
             orderBy,
+            include: {
+                variants: {
+                    select: { colorHex: true }
+                }
+            }
         }),
         prisma.category.findMany({
             where: {

@@ -64,11 +64,11 @@ export function RecentlyViewed() {
     if (products.length === 0) return null;
 
     return (
-        <section className="py-16 px-6 lg:px-12 border-t border-white/10">
+        <section className="py-16 px-6 lg:px-12 border-t border-border/30">
             <div className="container mx-auto max-w-6xl">
                 <div className="flex items-center gap-3 mb-8">
-                    <Clock className="w-4 h-4 text-white/40" />
-                    <h2 className="text-xs uppercase tracking-widest text-white/40">Recently Viewed</h2>
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <h2 className="text-xs uppercase tracking-widest text-muted-foreground">Recently Viewed</h2>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -78,7 +78,7 @@ export function RecentlyViewed() {
                             href={`/shop/${product.id}`}
                             className="group"
                         >
-                            <div className="aspect-square bg-white/5 relative overflow-hidden mb-3">
+                            <div className="aspect-square bg-secondary relative overflow-hidden mb-3">
                                 {product.image && (
                                     <Image
                                         src={product.image}
@@ -88,10 +88,10 @@ export function RecentlyViewed() {
                                     />
                                 )}
                             </div>
-                            <h3 className="text-sm text-white/70 group-hover:text-white transition-colors truncate">
+                            <h3 className="text-sm text-muted-foreground group-hover:text-foreground transition-colors truncate">
                                 {product.name}
                             </h3>
-                            <p className="text-xs text-white/40">{formatPrice(product.price)}</p>
+                            <p className="text-xs text-muted-foreground">{formatPrice(product.price)}</p>
                         </Link>
                     ))}
                 </div>

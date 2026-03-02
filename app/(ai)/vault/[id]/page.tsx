@@ -6,6 +6,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import prisma from "@/lib/db";
 import { CurrencyService } from "@/modules/currency/currency.service";
 import { VaultActions } from "./VaultActions";
+import { VaultGallery } from "./VaultGallery";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -83,8 +84,8 @@ export default async function VaultProductPage({ params }: Props) {
         >
             {/* ── Back navigation ─────────────────────────────────────── */}
             <div
-                className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 lg:px-12 py-6"
-                style={{ background: "var(--vault-bg)", borderBottom: "1px solid var(--vault-border)" }}
+                className="w-full flex items-center justify-between px-6 lg:px-12 py-6 pt-24 md:pt-32"
+                style={{ background: "transparent", borderBottom: "1px solid var(--vault-border)" }}
             >
                 <Link
                     href="/vault"
@@ -103,36 +104,21 @@ export default async function VaultProductPage({ params }: Props) {
                 </p>
             </div>
 
-            <div className="pt-24 pb-32">
+            <div className="pb-32">
                 {/* ── Two-column layout ────────────────────────────────────── */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[80vh]">
 
                     {/* Left — Image (sticky on desktop) */}
                     <div
-                        className="lg:sticky lg:top-0 lg:h-screen flex items-center justify-center p-12 lg:p-16"
+                        className="lg:sticky lg:top-0 lg:h-screen w-full flex items-center justify-center p-6 lg:p-16"
                         style={{ background: "var(--vault-surface)" }}
                     >
-                        <div className="relative w-full aspect-[3/4] max-w-md">
-                            <Image
-                                src={product.images[0] ?? ""}
-                                alt={product.name}
-                                fill
-                                priority
-                                sizes="(min-width: 1024px) 50vw, 100vw"
-                                className="object-contain"
-                            />
-
-                            {/* Secondary image on hover (if available) */}
-                            {product.images[1] && (
-                                <Image
-                                    src={product.images[1]}
-                                    alt={`${product.name} — detail`}
-                                    fill
-                                    sizes="(min-width: 1024px) 50vw, 100vw"
-                                    className="object-contain opacity-0 hover:opacity-100 transition-opacity duration-700 absolute inset-0"
-                                />
-                            )}
-                        </div>
+                        <VaultGallery
+                            productId={product.id}
+                            images={product.images}
+                            productName={product.name}
+                            modelUrl={product.modelUrl}
+                        />
                     </div>
 
                     {/* Right — Product detail */}

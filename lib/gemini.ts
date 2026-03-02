@@ -16,7 +16,7 @@ export async function checkModelQuality(thumbnailUrl: string) {
             return null;
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
 
         // Fetch image
         const imageResp = await fetch(thumbnailUrl);
@@ -52,7 +52,7 @@ export async function expandSearchQuery(userQuery: string) {
     try {
         if (!process.env.GEMINI_API_KEY) return { keywords: [userQuery], category: null };
 
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
         const prompt = `Act as an e-commerce search engine. Analyze this user query: "${userQuery}". 
         Extract key search terms (synonyms, related vibes) and a potential product category.
         Return ONLY valid JSON in this format: { "keywords": string[], "category": string | null }

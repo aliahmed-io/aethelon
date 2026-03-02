@@ -26,19 +26,36 @@ export function PremiumProductCard({ item, priority = false, index = 0 }: Premiu
   const [currency, setCurrency] = useState("USD");
   const [rate, setRate] = useState(1);
   const [locale, setLocale] = useState("en-US");
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
 
   useEffect(() => {
-    const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
-    const curr = match ? match[2] : "USD";
-    setCurrency(curr);
-    const rates: Record<string, { rate: number; locale: string }> = {
-      USD: { rate: 1, locale: "en-US" },
-      EUR: { rate: 0.92, locale: "de-DE" },
-      GBP: { rate: 0.79, locale: "en-GB" },
-      JPY: { rate: 150.5, locale: "ja-JP" },
-      CAD: { rate: 1.35, locale: "en-CA" },
+    if (!item.images || item.images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIdx(prev => (prev + 1) % item.images.length);
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [item.images]);
+
+  useEffect(() => {
+    const handleCurrencyChange = () => {
+      const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
+      const curr = match ? match[2] : "USD";
+      setCurrency(curr);
+      const rates: Record<string, { rate: number; locale: string }> = {
+        USD: { rate: 1, locale: "en-US" },
+        EUR: { rate: 0.92, locale: "de-DE" },
+        GBP: { rate: 0.79, locale: "en-GB" },
+        JPY: { rate: 150.5, locale: "ja-JP" },
+        CAD: { rate: 1.35, locale: "en-CA" },
+      };
+      if (rates[curr]) { setRate(rates[curr].rate); setLocale(rates[curr].locale); }
     };
-    if (rates[curr]) { setRate(rates[curr].rate); setLocale(rates[curr].locale); }
+
+    handleCurrencyChange();
+    window.addEventListener("currency_changed", handleCurrencyChange);
+    return () => window.removeEventListener("currency_changed", handleCurrencyChange);
   }, []);
 
   const displayPrice = (cents: number) =>
@@ -48,7 +65,8 @@ export function PremiumProductCard({ item, priority = false, index = 0 }: Premiu
       minimumFractionDigits: currency === "JPY" ? 0 : 2,
     }).format((cents * rate) / 100);
 
-  const isLimited = item.tags?.some((t) => ["limited", "rare", "numbered"].includes(t));
+  // Vault items are inherently limited edition
+  const isLimited = true;
   const edition = item.tags?.find((t) => /^\d+\s*\/\s*\d+$/.test(t)); // e.g. "01 / 24"
 
   return (
@@ -67,14 +85,22 @@ export function PremiumProductCard({ item, priority = false, index = 0 }: Premiu
       >
         {/* ── Image ─────────────────────────────────────────────────── */}
         <div className="relative aspect-[3/4] overflow-hidden">
-          <Image
-            src={item.images[0] ?? ""}
-            alt={item.name}
-            fill
-            sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-            className="object-contain p-6 transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
-            priority={priority}
-          />
+          {item.images.slice(0, 5).map((img, idx) => {
+            const isActive = idx === currentImageIdx;
+            const isFirst = idx === 0;
+            return (
+              <Image
+                key={idx}
+                src={img}
+                alt={`${item.name} view ${idx + 1}`}
+                fill
+                sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                className={`object-contain p-6 transition-all duration-1000 ease-in-out will-change-transform ${isActive ? "opacity-100 scale-100 group-hover:scale-105" : "opacity-0 scale-95"
+                  }`}
+                priority={priority && isFirst}
+              />
+            );
+          })}
 
           {/* Gold shimmer on hover */}
           <div

@@ -12,7 +12,7 @@ import { getMemoryContext, addMessage } from "./coo-memory"; // We might want se
 // I will implement a restricted context function here.
 
 // I'll assume environment is set
-const MODEL_NAME = "gemini-3-flash-preview";
+const MODEL_NAME = "gemini-3.0-flash";
 
 function getAI() {
     const apiKey = process.env.GEMINI_API_KEY;

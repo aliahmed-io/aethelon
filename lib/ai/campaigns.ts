@@ -39,7 +39,7 @@ export async function generateCampaignDraft(context: string): Promise<CampaignDr
     `;
 
     const genAI = new GoogleGenerativeAI(GEN_AI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash", generationConfig: { responseMimeType: "application/json" } });
 
     try {
         const result = await model.generateContent(prompt);

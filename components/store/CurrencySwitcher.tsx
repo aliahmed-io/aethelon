@@ -10,6 +10,7 @@ import {
 import { setCurrency } from "@/app/actions/currency";
 import { useTransition } from "react";
 import { Globe } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface CurrencySwitcherProps {
     currentCurrency: string;
@@ -17,10 +18,13 @@ interface CurrencySwitcherProps {
 
 export function CurrencySwitcher({ currentCurrency }: CurrencySwitcherProps) {
     const [isPending, startTransition] = useTransition();
+    const router = useRouter();
 
     const handleChange = (value: string) => {
         startTransition(async () => {
             await setCurrency(value);
+            window.dispatchEvent(new CustomEvent("currency_changed", { detail: value }));
+            router.refresh();
         });
     };
 

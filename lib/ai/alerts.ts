@@ -56,7 +56,7 @@ export async function runFraudScan() {
 
     if (GEN_AI_API_KEY && recentReviews.length > 0) {
         const genAI = new GoogleGenerativeAI(GEN_AI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash", generationConfig: { responseMimeType: "application/json" } });
 
         const prompt = `
             Analyze these recent reviews for spam, hate speech, or detailed security threats.

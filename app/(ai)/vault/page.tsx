@@ -36,16 +36,13 @@ export default async function VaultPage({
     prisma.product.findMany({
       where: {
         status: "published",
-        OR: [
-          { isFeatured: true },
-          { tags: { has: "premium" } },
-          { tags: { has: "rare" } },
-        ],
+        isVaultExclusive: true,
       },
       orderBy,
       select: {
         id: true, name: true, description: true, price: true,
         images: true, discountPercentage: true, brand: true, tags: true,
+        modelUrl: true,
       },
     }),
     []

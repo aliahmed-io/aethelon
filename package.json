@@ -49,6 +49,7 @@
     "@types/pg": "^8.16.0",
     "@uploadthing/react": "^7.3.3",
     "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.36.3",
     "@vercel/otel": "^2.1.1",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",

@@ -311,6 +311,13 @@ async function main() {
                             quantity: p.stock,
                             unitCost: Math.round(p.price * 0.4)
                         }
+                    },
+                    variants: {
+                        create: [
+                            { colorName: "Oatmeal", colorHex: "#d7d0c0", images: p.images },
+                            { colorName: "Charcoal", colorHex: "#36454F", images: p.images },
+                            { colorName: "Navy", colorHex: "#000080", images: p.images }
+                        ]
                     }
                 }
             });

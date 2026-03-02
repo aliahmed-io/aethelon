@@ -22,7 +22,7 @@ function getClientIp(request: NextRequest): string {
 export async function GET(request: NextRequest) {
     // Rate Limit: 60 requests per minute by IP
     const ip = getClientIp(request);
-    const { success } = await rateLimit(`search-get-${ip}`, 60, "60 s");
+    const { success } = ip === "127.0.0.1" || ip === "::1" ? { success: true } : await rateLimit(`search-get-${ip}`, 60, "60 s");
 
     if (!success) {
         return NextResponse.json({ error: "Too many requests" }, { status: 429 });
@@ -97,10 +97,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ results: [] });
         }
 
-        const { products } = await searchProducts({ query, limit: 20 });
+        // Try Hybrid Search first, will inherently fallback to Lexical if embeddings fail
+        const products = await searchProductsHybrid({ query, limit: 12 });
 
-        // For AI search, we could add ranking logic here
-        // For now, both types return the same results
         return NextResponse.json(
             { results: products, searchType },
             { headers: { 'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=60' } }
