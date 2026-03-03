@@ -33,13 +33,39 @@ The valuation for a corporate buyer or private equity investor looking for a tur
 
 Aethelon is built on a **Server-First, Zero-Trust** architecture designed for maximal performance and operational resilience.
 
-### 🔢 The Codebase in Numbers (Audit 2026)
-*   **Total Source Files**: 422
-*   **Lines of Pure Logic**: 42,568
-*   **Dynamic Client/Server Routes**: 70
-*   **Global Components**: 192+
-*   **Database Models**: 33 relational entities (Including `ProductVariant` sub-architecture)
+### 🔢 The Codebase in Numbers (Audit March 2026)
+*   **Total Source Files**: 514 (excluding modules, builds, un-tracked assets)
+*   **Lines of Pure Logic**: 42,093 (TypeScript, TSX, CSS, Prisma Schema)
+*   **Dynamic Client/Server Routes**: 71 Active Endpoints
+*   **Global Components**: 192+ Custom UI Nodes
+*   **Database Models**: 33 Relational Entities (Including `ProductVariant` sub-architecture)
 *   **API Coverage**: 58+ Server Actions and RPC endpoints
+
+### 🗺️ Application Topography (Exhaustive 71 Route Matrix)
+Aethelon utilizes Next.js App Router for maximal SEO and layout persistence. The entire ecosystem spans multiple distinct domains:
+
+**1. Storefront & Commerce (22 Routes)**
+*   **Browse**: `/shop`, `/shop/[id]`, `/categories`, `/categories/[slug]`
+*   **Cart & Checkout**: `/bag`, `/checkout`, `/checkout/success`, `/store/checkout/cancel`
+*   **Customer User Portal**: `/account`, `/account/profile`, `/account/addresses`, `/account/wishlist`, `/tracking`
+*   **Legal Compliance**: `/legal/terms`, `/legal/privacy`, `/legal/returns`, `/legal/cookies`, `/legal/shipping`
+
+**2. Cinematic Content & Marketing (9 Routes)**
+*   **Brand**: `/` (Home), `/about`, `/contact`, `/faq`, `/wholesale`
+*   **Editorial**: `/blog`, `/blog/[slug]`
+*   **Marketing Sequences**: `/campaigns`, `/campaigns/[slug]`
+
+**3. The Premium Vault & Spatial Computing (6 Routes)**
+*   **Gated High-Value Commerce**: `/vault`, `/vault/[id]`
+*   **AR / 3D Visualization**: `/ar` (Universal Hybrid Visualizer), `/atelier` (Legacy Visualizer)
+*   **Deep Intelligence**: `/ai-search` (Vector Matcher), `/ai-vision` (Workspace Analysis)
+
+**4. Enterprise Admin Tower (34 Operational Routes)**
+*   **Core Management**: `/dashboard` (Hub), `/dashboard/audit`, `/dashboard/health-hub`, `/dashboard/ai-coo`, `/dashboard/settings`
+*   **Logistics & Fulfillment**: `/dashboard/orders`, `/dashboard/orders/[id]`, `/dashboard/inventory`, `/dashboard/tax`, `/dashboard/returns`
+*   **Catalog CMS**: `/dashboard/products`, `/dashboard/products/create`, `/dashboard/products/[id]`, `/dashboard/variants`, `/dashboard/attributes`, `/dashboard/size-guides`, `/dashboard/categories`, `/dashboard/categories/new`
+*   **Growth & Customer Ops**: `/dashboard/campaigns`, `/dashboard/campaigns/create`, `/dashboard/campaigns/[id]`, `/dashboard/banner`, `/dashboard/banner/create`, `/dashboard/banner/[id]`, `/dashboard/blog`, `/dashboard/blog/create`, `/dashboard/blog/[id]`, `/dashboard/cart-recovery`, `/dashboard/contact`, `/dashboard/reviews`, `/dashboard/subscribers`
+*   **Promotional Rules**: `/dashboard/discounts`, `/dashboard/discounts/create`
 
 ### 🌩️ Cloud Architecture & DevOps
 *   **Runtime**: Next.js 16 (Turbopack) hosted on Vercel Edge.
@@ -50,7 +76,7 @@ Aethelon is built on a **Server-First, Zero-Trust** architecture designed for ma
 *   **ObservabilityStack**: 
     *   **Logging**: Structured JSON logging via `pino` (Production-grade).
     *   **Tracing**: OpenTelemetry (`otel`) hooks for deep-request tracing.
-    *   **Health Checks**: Dedicated `/dashboard/health` for real-time upstream status monitoring.
+    *   **Health Checks**: Dedicated `/dashboard/health-hub` for real-time upstream status monitoring.
 
 ---
 
@@ -88,6 +114,7 @@ Focuses on "Frictionless Luxury" across all devices.
 *   **Canvas Snapshots**: Advanced logic to capture high-res rendered composites from the AR session for marketing or social sharing.
 
 ### 🎬 C. The "Small" Premium Touches
+*   **3D InstancedMesh Particle Engine**: High-performance WebGL Canvas rendering 10,000+ geometric particles at 60FPS. Seamlessly morphs between complex `.glb` models based on intersection scroll depth (Capable of handling up to 60,000 vertices before requiring frustum culling).
 *   **Audio Controller**: Global ambient sound manager with toggle fade transitions (utilizing `use-sound`).
 *   **Lenis Smooth Momentum**: Inertial scrolling across the entire storefront for a liquid-smooth browse experience.
 *   **Skeleton Shimmers**: Custom-built, zero-layout-shift loading states for all high-latency data.
@@ -214,7 +241,7 @@ Aethelon goes far beyond a traditional e-commerce template. It is a highly opera
 
 ---
 
-## 6. Resilience, Benchmarking & Rigor
+## 7. Resilience, Benchmarking & Rigor
 
 This project is not just a demo; it is a **stress-tested production vehicle**.
 
@@ -236,7 +263,7 @@ This project is not just a demo; it is a **stress-tested production vehicle**.
 
 ---
 
-## 7. Conclusion & Version Status
+## 8. Conclusion & Version Status
 
 Aethelon represents the **pinnacle of modern AI-Commerce engineering**. It solves the difficult problems—AR fragmentation, semantic relevance, and operational resilience—yielding a high-value asset ready for immediate deployment and scaling.
 

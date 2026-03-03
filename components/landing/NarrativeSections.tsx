@@ -6,9 +6,9 @@ import { ArrowRight } from 'lucide-react';
 
 export default function NarrativeSections() {
     return (
-        <div className="relative z-10 pointer-events-none"> {/* Allow clicks to pass through to canvas if needed, but text needs pointer-events-auto */}
+        <div className="pointer-events-none"> {/* Allow clicks to pass through to canvas if needed, but text needs pointer-events-auto */}
             {/* Section 1: Hero */}
-            <section className="h-screen flex items-center justify-center text-center px-4 pointer-events-auto">
+            <section className="h-screen flex items-center justify-center text-center px-4 pointer-events-auto relative z-[5]">
                 <div className="max-w-4xl">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -33,8 +33,8 @@ export default function NarrativeSections() {
                 </div>
             </section>
 
-            {/* Section 2: Story */}
-            <section className="min-h-screen flex items-center justify-center py-20 bg-background/50 backdrop-blur-sm pointer-events-auto">
+            {/* Section 2a: Story (Origin / Chair) */}
+            <section className="min-h-screen flex items-center justify-center py-20 bg-background/50 backdrop-blur-sm pointer-events-auto relative z-[3]">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-8">
                         <motion.span
@@ -66,13 +66,87 @@ export default function NarrativeSections() {
                         </Link>
                     </div>
                     <div className="hidden md:block">
-                        {/* Placeholder for Story Image - Particle effects handle visual interest here */}
+                        {/* Particle Chair occupies this space */}
+                    </div>
+                </div>
+            </section>
+
+            {/* Section 2b: Story (Design / Lamp) */}
+            <section className="min-h-screen flex items-center justify-center py-20 bg-background/50 backdrop-blur-sm pointer-events-auto relative z-[3]">
+                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-8">
+                        <motion.span
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            className="text-accent font-display text-xl tracking-widest"
+                        >
+                            TIMELESS DESIGN
+                        </motion.span>
+                        <motion.h2
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="font-display text-5xl md:text-6xl text-primary leading-tight"
+                        >
+                            Form Meets <br /> <span className="italic">Function.</span>
+                        </motion.h2>
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-lg text-muted-foreground leading-relaxed max-w-md"
+                        >
+                            Every curve and angle speaks to a heritage of meticulous design. We craft pieces that illuminate your spaces and your moments.
+                        </motion.p>
+                        <Link href="/about" className="inline-flex items-center text-primary font-medium hover:text-accent transition-colors group">
+                            Read our story <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </div>
+                    <div className="hidden md:block">
+                        {/* Particle Lamp occupies this space */}
+                    </div>
+                </div>
+            </section>
+
+            {/* Section 2c: Story (Sustainability / Decor) */}
+            <section className="min-h-screen flex items-center justify-center py-20 bg-background/50 backdrop-blur-sm pointer-events-auto relative z-[3]">
+                <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-8">
+                        <motion.span
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            className="text-accent font-display text-xl tracking-widest"
+                        >
+                            SUSTAINABLE LUXURY
+                        </motion.span>
+                        <motion.h2
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="font-display text-5xl md:text-6xl text-primary leading-tight"
+                        >
+                            Built for <br /> <span className="italic">Tomorrow.</span>
+                        </motion.h2>
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-lg text-muted-foreground leading-relaxed max-w-md"
+                        >
+                            Responsibly sourced materials crafted into enduring silhouettes. Bringing the finest elements of nature into the modern home.
+                        </motion.p>
+                        <Link href="/about" className="inline-flex items-center text-primary font-medium hover:text-accent transition-colors group">
+                            Read our story <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </div>
+                    <div className="hidden md:block">
+                        {/* Particle Decor occupies this space */}
                     </div>
                 </div>
             </section>
 
             {/* Section 3: Collections Preview */}
-            <section className="min-h-screen py-24 pointer-events-auto">
+            <section className="min-h-screen py-24 pointer-events-auto relative z-[5]">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
                         <h2 className="font-display text-4xl md:text-5xl mb-4">Curated Collections</h2>
@@ -111,7 +185,7 @@ export default function NarrativeSections() {
             </section>
 
             {/* Section 4: AI Teaser */}
-            <section className="h-[80vh] flex items-center justify-center bg-primary text-primary-foreground relative overflow-hidden pointer-events-auto">
+            <section className="h-[80vh] flex items-center justify-center bg-primary text-primary-foreground relative z-[5] overflow-hidden pointer-events-auto">
                 <div className="container mx-auto px-6 text-center z-10">
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
