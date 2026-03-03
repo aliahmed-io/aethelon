@@ -33,15 +33,20 @@ export function PremiumProductCard({ item, priority = false, index = 0 }: Premiu
 
     const interval = setInterval(() => {
       setCurrentImageIdx(prev => (prev + 1) % item.images.length);
-    }, 1500);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [item.images]);
 
   useEffect(() => {
-    const handleCurrencyChange = () => {
-      const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
-      const curr = match ? match[2] : "USD";
+    const handleCurrencyChange = (e?: Event) => {
+      let curr = "USD";
+      if (e && 'detail' in e && typeof e.detail === 'string') {
+        curr = e.detail;
+      } else {
+        const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
+        curr = match ? match[2] : "USD";
+      }
       setCurrency(curr);
       const rates: Record<string, { rate: number; locale: string }> = {
         USD: { rate: 1, locale: "en-US" },
@@ -85,22 +90,26 @@ export function PremiumProductCard({ item, priority = false, index = 0 }: Premiu
       >
         {/* ── Image ─────────────────────────────────────────────────── */}
         <div className="relative aspect-[3/4] overflow-hidden">
-          {item.images.slice(0, 5).map((img, idx) => {
-            const isActive = idx === currentImageIdx;
-            const isFirst = idx === 0;
-            return (
-              <Image
-                key={idx}
-                src={img}
-                alt={`${item.name} view ${idx + 1}`}
-                fill
-                sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                className={`object-contain p-6 transition-all duration-1000 ease-in-out will-change-transform ${isActive ? "opacity-100 scale-100 group-hover:scale-105" : "opacity-0 scale-95"
-                  }`}
-                priority={priority && isFirst}
-              />
-            );
-          })}
+          <div
+            className="absolute inset-0 flex h-full transition-transform duration-1000 ease-out will-change-transform"
+            style={{ transform: `translateX(-${currentImageIdx * 100}%)` }}
+          >
+            {item.images.slice(0, 5).map((img, idx) => {
+              const isFirst = idx === 0;
+              return (
+                <div key={idx} className="relative min-w-full h-full">
+                  <Image
+                    src={img}
+                    alt={`${item.name} view ${idx + 1}`}
+                    fill
+                    sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-contain p-6 transition-transform duration-1000 ease-in-out group-hover:scale-105 will-change-transform"
+                    priority={priority && isFirst}
+                  />
+                </div>
+              );
+            })}
+          </div>
 
           {/* Gold shimmer on hover */}
           <div

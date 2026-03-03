@@ -19,7 +19,7 @@ const TAXONOMY = [
         image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&q=80&w=1000',
         children: [
             { name: 'Sofas & Sectionals', slug: 'sofas', image: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&q=80&w=1000' },
-            { name: 'Coffee Tables', slug: 'coffee-tables', image: 'https://images.unsplash.com/photo-1533090481728-4660ebbc48f1?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Coffee Tables', slug: 'coffee-tables', image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&q=80&w=1000' },
             { name: 'Accent Chairs', slug: 'accent-chairs', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000' }
         ]
     },
@@ -38,7 +38,7 @@ const TAXONOMY = [
         slug: 'bedroom',
         image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&q=80&w=1000',
         children: [
-            { name: 'Beds', slug: 'beds', image: 'https://images.unsplash.com/photo-1505693416388-334340d269a9?auto=format&fit=crop&q=80&w=1000' },
+            { name: 'Beds', slug: 'beds', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000' },
             { name: 'Nightstands', slug: 'nightstands', image: 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&q=80&w=1000' },
             { name: 'Dressers', slug: 'dressers', image: 'https://images.unsplash.com/photo-1595514536733-1579717dfb11?auto=format&fit=crop&q=80&w=1000' }
         ]
@@ -59,7 +59,7 @@ const TAXONOMY = [
         children: [
             { name: 'Rugs', slug: 'rugs', image: 'https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&q=80&w=1000' },
             { name: 'Lighting', slug: 'lighting', image: 'https://images.unsplash.com/photo-1507643179773-3e975d7ac515?auto=format&fit=crop&q=80&w=1000' },
-            { name: 'Vases', slug: 'vases', image: 'https://images.unsplash.com/photo-1581539250439-c923cd226718?auto=format&fit=crop&q=80&w=1000' }
+            { name: 'Vases', slug: 'vases', image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&q=80&w=1000' }
         ]
     }
 ];
@@ -81,11 +81,16 @@ const PRODUCTS = [
         mainCat: 'living-room',
         subCat: 'sofas',
         extraCats: ['comfort', 'best-sellers'],
-        images: ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000'],
+        images: ['/variants/oatmeal_sofa.png', '/variants/charcoal_sofa.png', '/variants/navy_sofa.png'],
         features: ['Modular configuration', 'Stain-resistant', 'Feather-blend'],
         stock: 12,
         rating: 4.8,
-        reviews: 42
+        reviews: 42,
+        variants: [
+            { colorName: "Oatmeal", colorHex: "#d7d0c0", images: ['/variants/oatmeal_sofa.png'] },
+            { colorName: "Charcoal", colorHex: "#36454F", images: ['/variants/charcoal_sofa.png'] },
+            { colorName: "Navy", colorHex: "#000080", images: ['/variants/navy_sofa.png'] }
+        ]
     },
     {
         name: 'Velvet Tuxedo Sofa',
@@ -136,7 +141,7 @@ const PRODUCTS = [
         mainCat: 'bedroom',
         subCat: 'beds',
         extraCats: ['comfort'],
-        images: ['https://images.unsplash.com/photo-1505693416388-334340d269a9?auto=format&fit=crop&q=80&w=1000'],
+        images: ['https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000'],
         features: ['Solid oak', 'Low profile'],
         stock: 8,
         rating: 4.7,
@@ -164,11 +169,62 @@ const PRODUCTS = [
         mainCat: 'decor',
         subCat: 'vases',
         extraCats: ['new-arrivals'],
-        images: ['https://images.unsplash.com/photo-1581539250439-c923cd226718?auto=format&fit=crop&q=80&w=1000'],
+        images: ['https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&q=80&w=1000'],
         features: ['Hand-thrown', 'Watertight'],
         stock: 150,
         rating: 4.8,
         reviews: 45
+    },
+    // Injected AI Generated Variants
+    {
+        name: 'Lumina Accent Chair',
+        description: 'A modern velvet accent chair with a minimalist design.',
+        price: 49900,
+        mainCat: 'living-room',
+        subCat: 'accent-chairs',
+        extraCats: ['new-arrivals'],
+        images: ['/variants/emerald_chair_1.png', '/variants/emerald_chair_2.png', '/variants/emerald_chair_3.png'],
+        features: ['Velvet upholstery', 'Minimalist lines'],
+        stock: 50,
+        rating: 4.9,
+        reviews: 12,
+        variants: [
+            { colorName: "Emerald", colorHex: "#50C878", images: ["/variants/emerald_chair_1.png", "/variants/emerald_chair_2.png", "/variants/emerald_chair_3.png"] },
+            { colorName: "Ochre", colorHex: "#CC7722", images: ["/variants/ochre_chair_1.png", "/variants/ochre_chair_2.png", "/variants/ochre_chair_3.png"] }
+        ]
+    },
+    {
+        name: 'Aero Dining Table',
+        description: 'A sleek minimalist curved dining table crafted from wood.',
+        price: 129900,
+        mainCat: 'dining',
+        subCat: 'dining-tables',
+        extraCats: ['sustainable'],
+        images: ['/variants/walnut_table_1.png', '/variants/walnut_table_2.png', '/variants/walnut_table_3.png'],
+        features: ['Solid wood', 'Curved edges'],
+        stock: 20,
+        rating: 4.7,
+        reviews: 8,
+        variants: [
+            { colorName: "Walnut", colorHex: "#43270F", images: ["/variants/walnut_table_1.png", "/variants/walnut_table_2.png", "/variants/walnut_table_3.png"] },
+            { colorName: "Whitewash", colorHex: "#EAE6DF", images: ["/variants/whitewash_table_1.png", "/variants/whitewash_table_2.png", "/variants/whitewash_table_3.png"] }
+        ]
+    },
+    {
+        name: 'Nimbus Lounge Sofa',
+        description: 'A modern curvy lounge sofa in boucle fabric.',
+        price: 159900,
+        mainCat: 'living-room',
+        subCat: 'sofas',
+        extraCats: ['comfort'],
+        images: ['/variants/rust_sofa_1.png', '/variants/rust_sofa_2.png', '/variants/rust_sofa_2.png'],
+        features: ['Boucle fabric', 'Curvy design'],
+        stock: 15,
+        rating: 4.6,
+        reviews: 24,
+        variants: [
+            { colorName: "Rust", colorHex: "#8B4000", images: ["/variants/rust_sofa_1.png", "/variants/rust_sofa_2.png", "/variants/rust_sofa_2.png"] }
+        ]
     }
 ];
 
@@ -312,13 +368,9 @@ async function main() {
                             unitCost: Math.round(p.price * 0.4)
                         }
                     },
-                    variants: {
-                        create: [
-                            { colorName: "Oatmeal", colorHex: "#d7d0c0", images: p.images },
-                            { colorName: "Charcoal", colorHex: "#36454F", images: p.images },
-                            { colorName: "Navy", colorHex: "#000080", images: p.images }
-                        ]
-                    }
+                    variants: p.variants ? {
+                        create: p.variants
+                    } : undefined
                 }
             });
 

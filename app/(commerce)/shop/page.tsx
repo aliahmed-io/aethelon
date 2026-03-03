@@ -44,11 +44,30 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
     // Category Filter
     if (category && category !== "all") {
-        where.categories = {
-            some: {
-                slug: category as string,
-            },
-        };
+        const catRecord = await prisma.category.findFirst({
+            where: { slug: category as string }
+        });
+
+        if (catRecord) {
+            const children = await prisma.category.findMany({
+                where: { parentId: catRecord.id },
+                select: { id: true }
+            });
+            const catIds = [catRecord.id, ...children.map(c => c.id)];
+
+            where.categories = {
+                some: {
+                    id: { in: catIds }
+                },
+            };
+        } else {
+            // Fallback if category not found in db
+            where.categories = {
+                some: {
+                    slug: category as string,
+                },
+            };
+        }
     }
 
     // Price Filter (Cents)

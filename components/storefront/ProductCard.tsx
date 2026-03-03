@@ -27,9 +27,14 @@ export function ProductCard({ item, priority = false }: iAppProps) {
   const [locale, setLocale] = useState("en-US");
 
   useEffect(() => {
-    const handleCurrencyChange = () => {
-      const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
-      const curr = match ? match[2] : "USD";
+    const handleCurrencyChange = (e?: Event) => {
+      let curr = "USD";
+      if (e && 'detail' in e && typeof e.detail === 'string') {
+        curr = e.detail;
+      } else {
+        const match = document.cookie.match(/(^| )NEXT_CURRENCY=([^;]+)/);
+        curr = match ? match[2] : "USD";
+      }
       setCurrency(curr);
       const rates: Record<string, { rate: number; locale: string }> = {
         USD: { rate: 1, locale: "en-US" },

@@ -81,25 +81,26 @@ export default function NarrativeSections() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { title: 'Living', link: '/shop/living' },
-                            { title: 'Dining', link: '/shop/dining' },
-                            { title: 'Bedroom', link: '/shop/bedroom' },
+                            { title: 'Living', link: '/categories/living-room', image: '/collections/living.png' },
+                            { title: 'Dining', link: '/categories/dining', image: '/collections/dining.png' },
+                            { title: 'Bedroom', link: '/categories/bedroom', image: '/collections/bedroom.png' },
                         ].map((collection, idx) => (
                             <motion.div
                                 key={collection.title}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
-                                className="group relative overflow-hidden rounded-2xl aspect-[3/4] bg-muted shadow-lg hover:shadow-xl transition-shadow"
+                                className="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-lg hover:shadow-xl transition-shadow"
                             >
-                                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors z-10" />
+                                <img src={collection.image} alt={collection.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors z-10" />
                                 <div className="absolute inset-0 flex items-center justify-center z-20">
-                                    <h3 className="font-display text-3xl text-primary tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                    <h3 className="font-display text-3xl text-white tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500 shadow-sm">
                                         {collection.title}
                                     </h3>
                                 </div>
                                 <div className="absolute bottom-8 left-0 right-0 text-center z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-4 group-hover:translate-y-0">
-                                    <Link href={collection.link} className="text-primary text-sm tracking-widest border-b border-primary pb-1">
+                                    <Link href={collection.link} className="text-white text-sm tracking-widest border-b border-white pb-1 hover:text-accent hover:border-accent transition-colors">
                                         EXPLORE
                                     </Link>
                                 </div>
