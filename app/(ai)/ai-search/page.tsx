@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '../../../lib/utils';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { VoiceSearch } from '../../../components/search/VoiceSearch';
 
 function AISearchContent() {
     const searchParams = useSearchParams();
@@ -170,14 +171,13 @@ function AISearchContent() {
                                     >
                                         <Camera className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={1.5} />
                                     </button>
-                                    <button
-                                        onClick={() => { alert('Voice search activated.'); }}
-                                        className="p-2.5 rounded-full transition-colors text-muted-foreground/70 hover:bg-black/5 hover:text-foreground"
-                                        title="Voice Search"
-                                        type="button"
-                                    >
-                                        <Mic className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={1.5} />
-                                    </button>
+                                    <VoiceSearch
+                                        onResult={(text) => {
+                                            setQuery(text);
+                                            handleSearch(text);
+                                        }}
+                                        className="scale-90 md:scale-100"
+                                    />
                                 </div>
 
                                 <button
