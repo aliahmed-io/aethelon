@@ -5,6 +5,7 @@ export interface VisualizerProduct {
     images: string[];
     modelUrl: string;
     usdzUrl: string | null;
+    isVaultExclusive: boolean;
     categories: { id: string; name: string }[];
 }
 

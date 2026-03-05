@@ -25,6 +25,7 @@ async function getVisualizerProducts(): Promise<VisualizerProduct[]> {
         prisma.product.findMany({
             where: {
                 status: "published",
+                modelUrl: { not: null },
             },
             include: {
                 categories: {
@@ -40,17 +41,16 @@ async function getVisualizerProducts(): Promise<VisualizerProduct[]> {
         []
     )) as unknown as (Product & { categories: { id: string; name: string }[] })[];
 
-    return products
-        .filter((p) => p.modelUrl !== null)
-        .map((p) => ({
-            id: p.id,
-            name: p.name,
-            price: p.price,
-            images: p.images,
-            modelUrl: p.modelUrl!, // Assert non-null after filter
-            usdzUrl: p.usdzUrl,
-            categories: p.categories,
-        }));
+    return products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        images: p.images,
+        isVaultExclusive: p.isVaultExclusive,
+        modelUrl: p.modelUrl!, // Assert non-null after DB filter
+        usdzUrl: p.usdzUrl,
+        categories: p.categories,
+    }));
 }
 
 interface AIVisionPageProps {

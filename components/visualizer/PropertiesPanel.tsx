@@ -282,8 +282,8 @@ export function PropertiesPanel({
                     </div>
 
                     <Link
-                        href={`/shop/${selectedProduct.id}`}
-                        className="w-full flex items-center justify-center gap-2 bg-foreground text-background font-bold py-3.5 rounded-sm hover:bg-foreground/90 transition-colors uppercase tracking-widest text-sm"
+                        href={selectedProduct.isVaultExclusive ? `/vault/${selectedProduct.id}` : `/shop/${selectedProduct.id}`}
+                        className="w-full h-12 flex items-center justify-center gap-2 bg-accent text-accent-foreground hover:bg-accent/90 transition-colors uppercase tracking-[0.15em] text-xs font-bold"
                     >
                         <ShoppingCart className="w-4 h-4" />
                         View Product

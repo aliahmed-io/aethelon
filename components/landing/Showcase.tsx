@@ -54,7 +54,7 @@ export function Showcase() {
                                 alt={item.alt}
                                 fill
                                 className="object-cover absolute sm:relative w-full h-full sm:h-[400px] md:h-[500px]"
-                                priority
+                                loading="lazy"
                                 quality={70}
                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             />

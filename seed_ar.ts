@@ -9,11 +9,7 @@ const prisma = new PrismaClient({
 
 
 const AR_UPDATES = [
-    {
-        name: 'Atelier Writing Desk',
-        modelUrl: `/models/sofa_velvet.glb`,
-        usdzUrl: `/models/sofa_velvet.usdz`,
-    },
+
     {
         name: 'Arc Floor Lamp',
         modelUrl: `/models/floor_lamp.glb`,

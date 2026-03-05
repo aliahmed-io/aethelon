@@ -18,33 +18,28 @@ async function getVisualizerProducts(): Promise<VisualizerProduct[]> {
     const products = (await safeQuery(
         prisma.product.findMany({
             where: {
-                status: "published",
+                modelUrl: { not: null },
             },
             include: {
-                categories: {
-                    select: {
-                        id: true,
-                        name: true,
-                    },
-                },
+                categories: { select: { id: true, name: true } },
             },
-            orderBy: [{ isFeatured: "desc" }, { staticScore: "desc" }],
+            orderBy: { staticScore: "desc" },
             take: 24,
+            cacheStrategy: { swr: 60, ttl: 3600 },
         }),
         []
-    )) as unknown as (Product & { categories: { id: string; name: string }[] })[];
+    )) as unknown as any[];
 
-    return products
-        .filter((p) => p.modelUrl !== null)
-        .map((p) => ({
-            id: p.id,
-            name: p.name,
-            price: p.price,
-            images: p.images,
-            modelUrl: p.modelUrl!, // Assert non-null after filter
-            usdzUrl: p.usdzUrl,
-            categories: p.categories,
-        }));
+    return products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        images: p.images,
+        isVaultExclusive: p.isVaultExclusive,
+        modelUrl: p.modelUrl!, // Assert non-null after DB filter
+        usdzUrl: p.usdzUrl,
+        categories: p.categories,
+    }));
 }
 
 export default async function ARPage({

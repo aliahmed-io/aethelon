@@ -440,8 +440,8 @@ export function MobileVisualizer({
                         )}
 
                         <Link
-                            href={`/shop/${selectedProduct.id}`}
-                            className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest"
+                            href={selectedProduct.isVaultExclusive ? `/vault/${selectedProduct.id}` : `/shop/${selectedProduct.id}`}
+                            className="bg-accent text-accent-foreground px-6 py-3 rounded-full font-medium"
                         >
                             <ShoppingCart className="w-3.5 h-3.5" />
                             View

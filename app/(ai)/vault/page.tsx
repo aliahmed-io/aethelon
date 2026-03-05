@@ -44,6 +44,7 @@ export default async function VaultPage({
         images: true, discountPercentage: true, brand: true, tags: true,
         modelUrl: true,
       },
+      cacheStrategy: { swr: 60, ttl: 3600 },
     }),
     []
   );

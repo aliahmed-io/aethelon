@@ -145,7 +145,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 variants: {
                     select: { colorHex: true }
                 }
-            }
+            },
+            cacheStrategy: { swr: 60, ttl: 3600 },
         }),
         prisma.category.findMany({
             where: {

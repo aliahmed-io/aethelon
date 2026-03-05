@@ -8,6 +8,9 @@ import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL || "https://aethelon.com";
 
+export const revalidate = 3600; // Generates a static HTML shell every 1 hour, bypassing DB wakeups for first users
+
+
 export const metadata: Metadata = {
     title: "Aethelon — Furniture for the Soul",
     description:
