@@ -25,7 +25,7 @@ This codebase is an exhaustively tested, horizontally-scalable production vehicl
 
 ### 2. The Persistence & Cloud Intelligence Layer
 - **Relational Database**: Neon Serverless PostgreSQL
-- **ORM & Pooling**: Prisma ORM with `@prisma/extension-accelerate` (Edge Connection Pooling)
+- **ORM & Pooling**: Prisma ORM with `@prisma/extension-accelerate` (Edge Connection Pooling & Global SWR Caching)
 - **High-Speed KV**: Upstash Redis (For Sub-10ms Semantic Query Caching & Rate Limiting)
 - **Binary Cloud CDN**: UploadThing (Amazon S3 Wrapper) for high-res `.glb` 3D files and CMS grids
 
@@ -71,7 +71,7 @@ This architecture has been aggressively performance-tested. During a strict 10-m
 - **Error Rate**: 0.00% (Zero dropped connections or node crashes)
 - **Average Latency**: 492ms
 
-*Architecture ensures DB connection pooling via Prisma Accelerate handles massive concurrency, while UI blocks defer expensive payload execution via `next/dynamic` to ensure high TTI scores.*
+*Architecture ensures DB connection pooling via Prisma Accelerate handles massive concurrency, while UI blocks defer expensive WebGL payloads via `next/dynamic` and strict timeouts to ensure instant TTI scores during Cold Starts. Outer shell runs on Incremental Static Regeneration (ISR).*
 
 ---
 
