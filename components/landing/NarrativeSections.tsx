@@ -34,7 +34,7 @@ export default function NarrativeSections() {
             </section>
 
             {/* Section 2a: Story (Origin / Chair) */}
-            <section className="min-h-screen flex items-center justify-center py-20 bg-background/50 backdrop-blur-sm pointer-events-auto relative z-[3]">
+            <section className="min-h-screen flex items-center justify-center py-20 bg-background/30 backdrop-blur-[2px] pointer-events-auto relative z-[3]">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-8">
                         <motion.span
@@ -72,7 +72,7 @@ export default function NarrativeSections() {
             </section>
 
             {/* Section 2b: Story (Design / Lamp) */}
-            <section className="min-h-screen flex items-center justify-center py-20 bg-background/50 backdrop-blur-sm pointer-events-auto relative z-[3]">
+            <section className="min-h-screen flex items-center justify-center py-20 bg-background/30 backdrop-blur-[2px] pointer-events-auto relative z-[3]">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-8">
                         <motion.span
@@ -109,7 +109,7 @@ export default function NarrativeSections() {
             </section>
 
             {/* Section 2c: Story (Sustainability / Decor) */}
-            <section className="min-h-screen flex items-center justify-center py-20 bg-background/50 backdrop-blur-sm pointer-events-auto relative z-[3]">
+            <section className="min-h-screen flex items-center justify-center py-20 bg-background/30 backdrop-blur-[2px] pointer-events-auto relative z-[3]">
                 <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-8">
                         <motion.span

@@ -40,7 +40,7 @@ function Particles() {
     const { scene: lampScene } = useGLTF('/landing_lamp.glb');
     const { scene: decorScene } = useGLTF('/landing_decor.glb');
 
-    const buildTransform = (scene: THREE.Group, count: number, scaleFactor: number, xOffset: number, yOffset: number) => {
+    const buildTransform = (scene: THREE.Group, count: number, scaleFactor: number, xOffset: number, yOffset: number, jitterStrength: number = 0) => {
         const positions: THREE.Vector3[] = [];
         scene.traverse((child) => {
             if ((child as THREE.Mesh).isMesh) {
@@ -70,6 +70,14 @@ function Particles() {
             if (positions.length > 0) {
                 const p = positions[Math.floor(Math.random() * positions.length)].clone();
                 p.sub(center).multiplyScalar(scale);
+
+                if (jitterStrength > 0) {
+                    const jitter = scale * jitterStrength;
+                    p.x += (Math.random() - 0.5) * jitter;
+                    p.y += (Math.random() - 0.5) * jitter;
+                    p.z += (Math.random() - 0.5) * jitter;
+                }
+
                 p.x += xOffset;
                 p.y += yOffset;
                 sampled.push(p);
@@ -80,9 +88,9 @@ function Particles() {
         return sampled;
     };
 
-    const targetPositions1 = useMemo(() => buildTransform(chairScene, count, THREE.MathUtils.lerp(50, 85, responsiveT), THREE.MathUtils.lerp(0, 45, responsiveT), -5), [chairScene, count, responsiveT]);
-    const targetPositions2 = useMemo(() => buildTransform(lampScene, count, THREE.MathUtils.lerp(50, 85, responsiveT), THREE.MathUtils.lerp(0, 45, responsiveT), -5), [lampScene, count, responsiveT]);
-    const targetPositions3 = useMemo(() => buildTransform(decorScene, count, THREE.MathUtils.lerp(85, 160, responsiveT), THREE.MathUtils.lerp(0, 115, responsiveT), -5), [decorScene, count, responsiveT]);
+    const targetPositions1 = useMemo(() => buildTransform(chairScene, count, THREE.MathUtils.lerp(50, 85, responsiveT), THREE.MathUtils.lerp(0, 45, responsiveT), -5, 0), [chairScene, count, responsiveT]);
+    const targetPositions2 = useMemo(() => buildTransform(lampScene, count, THREE.MathUtils.lerp(60, 95, responsiveT), THREE.MathUtils.lerp(0, 45, responsiveT), -5, 0.05), [lampScene, count, responsiveT]);
+    const targetPositions3 = useMemo(() => buildTransform(decorScene, count, THREE.MathUtils.lerp(85, 160, responsiveT), THREE.MathUtils.lerp(0, 115, responsiveT), -5, 0), [decorScene, count, responsiveT]);
 
     // Generate random initial positions
     const particles = useMemo(() => {
@@ -188,12 +196,12 @@ function Particles() {
     return (
         <>
             <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-                <dodecahedronGeometry args={[0.2, 0]} />
+                <dodecahedronGeometry args={[0.35, 0]} />
                 <meshStandardMaterial
                     color="#C9912B"
                     emissive="#C9912B"
-                    emissiveIntensity={0.5}
-                    roughness={0.5}
+                    emissiveIntensity={0.6}
+                    roughness={0.4}
                     metalness={1}
                 />
             </instancedMesh>
