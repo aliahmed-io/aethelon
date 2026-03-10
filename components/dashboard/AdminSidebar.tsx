@@ -84,7 +84,7 @@ export function AdminSidebar() {
                 "flex flex-col h-full bg-muted/30 border-r border-border w-64 fixed left-0 top-0 bottom-0 z-50 backdrop-blur-xl transition-transform duration-300 ease-in-out md:translate-x-0 pt-16 md:pt-0",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="h-16 hidden md:flex items-center justify-between px-6 border-b border-border absolute top-0 left-0 w-full bg-transparent">
+                <div className="h-16 hidden md:flex shrink-0 items-center justify-between px-6 border-b border-border w-full bg-transparent relative z-10">
                     <h1 className="text-xl font-bold tracking-tighter uppercase text-foreground">Aethelon<span className="text-accent text-xs ml-1 font-normal tracking-widest">ADMIN</span></h1>
                     <Link
                         href="/"
@@ -96,7 +96,7 @@ export function AdminSidebar() {
                     </Link>
                 </div>
 
-                <div className="flex-1 overflow-y-auto w-full pt-4 md:pt-16">
+                <div className="flex-1 overflow-y-auto w-full pt-4">
                     <nav className="px-4 pb-8 space-y-1">
                         {links.map((link) => (
                             <Link
