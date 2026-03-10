@@ -42,17 +42,22 @@ export function DashboardChart({ data, forecast }: { data: ChartProps["data"], f
     const processedForecast = forecast ? aggregateData(forecast).map(d => ({ ...d, type: "Predicted", revenue: 0, predicted: d.revenue })) : [];
 
     // Combine for display
-    // We want a continuous line. The last point of actual should connect to first of predicted.
-    // For simplicity, let's just render them. 
-    // Wait, separate datasets might be better if we want different styling.
-    // Let's rely on Recharts ability to plot multiple keys.
-
-    // We need a unified array where historical pts have { revenue: X, predicted: null }
-    // and forecast pts have { revenue: null, predicted: Y }
-
+    // We seamlessly bridge the last actual data point into the predicted data set to avoid a visual gap
     const combinedData = [
-        ...processedHistorical.map(d => ({ date: d.date, actual: d.revenue, predicted: null })),
-        ...processedForecast.map(d => ({ date: d.date, actual: null, predicted: d.predicted }))
+        ...processedHistorical.map((d, index) => {
+            const isLast = index === processedHistorical.length - 1;
+            return {
+                date: d.date,
+                actual: d.revenue,
+                // The last historical point serves as the start of the prediction
+                predicted: isLast ? d.revenue : null
+            };
+        }),
+        ...processedForecast.map(d => ({
+            date: d.date,
+            actual: null,
+            predicted: d.predicted
+        }))
     ];
 
     const CustomTooltip = ({ active, payload, label }: any) => {
