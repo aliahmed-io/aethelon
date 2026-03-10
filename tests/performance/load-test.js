@@ -43,10 +43,10 @@ export const options = {
         },
     },
     thresholds: {
-        // Success Criteria
-        'http_req_duration{type:browsing}': ['p(95)<3000'],   // Browsing < 3s
-        'http_req_duration{type:filtering}': ['p(95)<4000'], // Complex queries < 4s
-        'http_req_duration{type:checkout}': ['p(95)<5000'],  // Writes < 5s
+        // Strict Business Prospectus SLA: Sub-500ms Page Loads
+        'http_req_duration{type:browsing}': ['p(95)<500'],   // Cinematic static load < 500ms
+        'http_req_duration{type:filtering}': ['p(95)<1000'], // Dynamic queries < 1s
+        'http_req_duration{type:checkout}': ['p(95)<1500'],  // Write/Checkout < 1.5s
         http_req_failed: ['rate<0.01'],                      // < 1% errors
     },
 };
