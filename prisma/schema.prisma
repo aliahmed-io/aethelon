@@ -644,3 +644,54 @@ model BlogPost {
   @@index([slug])
   @@index([publishedAt])
 }
+
+model StoreMetrics {
+  id String @id @default("singleton")
+
+  // Spatial Commerce (AR)
+  arCheckoutRate       Float @default(6.2)
+  standardCheckoutRate Float @default(1.1)
+
+  // Vault Velocity
+  vaultAov    Int @default(4850)
+  standardAov Int @default(1240)
+
+  // Reverse Logistics
+  arReturnRate       Float @default(2.4)
+  standardReturnRate Float @default(18.5)
+  estimatedSavings   Int   @default(12450)
+
+  // Semantic Search
+  semanticQueries Json?
+
+  // Cart Recovery
+  abandonedValue Int @default(45000)
+  recovered1Hr   Int @default(4200)
+  recovered24Hr  Int @default(2100)
+
+  // Conversion Funnel
+  funnelAddedToCart     Float @default(7.04)
+  funnelReachedCheckout Float @default(7.04)
+  funnelPurchased       Float @default(5.63)
+
+  // Repeat Customer
+  repeatCustomerRate  Float @default(5.43)
+  firstTimePercentage Float @default(85)
+  returningPercentage Float @default(15)
+
+  // Landing Pages
+  topLandingPages Json?
+
+  // Devices
+  deviceDesktop Int @default(267)
+  deviceMobile  Int @default(184)
+  deviceTablet  Int @default(0)
+
+  // Traffic Sources
+  trafficSources Json?
+
+  // Social Sources
+  socialSources Json?
+
+  updatedAt DateTime @updatedAt
+}
