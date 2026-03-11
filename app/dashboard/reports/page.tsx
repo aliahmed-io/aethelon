@@ -82,7 +82,30 @@ export default async function ReportsPage() {
     }) || {
         arCheckoutRate: 6.2, standardCheckoutRate: 1.1, vaultAov: 4850, standardAov: 1240,
         arReturnRate: 2.4, standardReturnRate: 18.5, estimatedSavings: 12450,
-        semanticQueries: [], abandonedValue: 45000, recovered1Hr: 4200, recovered24Hr: 2100
+        semanticQueries: [
+            { query: "dark modern reading chair apartment", path: "Routed to Executive Chair", color: "emerald", status: "CONVERTED (0.92)" },
+            { query: "huge living room centerpiece minimal", path: "Routed to Atelier Sofa", color: "amber", status: "CLICKED (0.88)" },
+            { query: "velvet blue ottoman lounge", path: "0 Results Found", color: "rose", status: "MISS" }
+        ],
+        abandonedValue: 45000, recovered1Hr: 4200, recovered24Hr: 2100,
+        funnelAddedToCart: 12.4, funnelReachedCheckout: 8.1, funnelPurchased: 4.2,
+        repeatCustomerRate: 18.5, firstTimePercentage: 81.5, returningPercentage: 18.5,
+        topLandingPages: [
+            { path: "/", visits: 12450, trend: "up", val: "12%" },
+            { path: "/products/atelier-sofa", visits: 8240, trend: "up", val: "8%" },
+            { path: "/products/executive-chair", visits: 6120, trend: "down", val: "3%" }
+        ],
+        deviceDesktop: "42%", deviceMobile: "54%", deviceTablet: "4%",
+        trafficSources: [
+            { source: "Direct", visits: 15200, trend: "up", val: "5%" },
+            { source: "Organic Search", visits: 8400, trend: "up", val: "12%" },
+            { source: "Referral", visits: 3200, trend: "down", val: "2%" }
+        ],
+        socialSources: [
+            { source: "Instagram", visits: 6400, trend: "up", val: "18%" },
+            { source: "TikTok", visits: 4200, trend: "up", val: "24%" },
+            { source: "Pinterest", visits: 1800, trend: "down", val: "4%" }
+        ]
     } as any;
 
     // Mock counts for display
@@ -90,6 +113,7 @@ export default async function ReportsPage() {
         orders: data.orders,
         revenue: data.revenue,
         customers: data.users,
+        aov: data.orders > 0 ? data.revenue / data.orders : 0,
     };
 
     return (
@@ -110,7 +134,7 @@ export default async function ReportsPage() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card className="bg-card border border-border p-6 rounded-sm text-foreground shadow-sm">
                     <div className="flex justify-between items-start mb-6">
                         <div className="flex gap-4">
@@ -168,6 +192,26 @@ export default async function ReportsPage() {
                     </div>
                     <div className="h-16">
                         <SparklineChart data={sparkData3} color="#E11D48" />
+                    </div>
+                </Card>
+
+                <Card className="bg-card border border-border p-6 rounded-sm text-foreground shadow-sm">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="flex gap-4">
+                            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center border border-border">
+                                <ShoppingCart className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                            <div>
+                                <p className="text-muted-foreground text-[10px] uppercase tracking-widest font-medium">Avg Order Value</p>
+                                <h3 className="text-2xl font-light text-foreground mt-1">{formatPrice(counts.aov)}</h3>
+                            </div>
+                        </div>
+                        <div className="flex items-center text-emerald-600 text-[10px] font-bold gap-1 mt-1">
+                            <ArrowUpRight className="w-3 h-3" /> 4.2%
+                        </div>
+                    </div>
+                    <div className="h-16">
+                        <SparklineChart data={sparkData1} color="#3B82F6" />
                     </div>
                 </Card>
             </div>
