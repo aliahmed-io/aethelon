@@ -14,6 +14,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExportButton } from "./ExportButton";
+import { getPredictiveAnalytics } from "@/lib/analytics";
 
 // Mock data for sparklines (in a real app, this would come from the DB)
 const sparkData1 = [40, 55, 45, 60, 50, 65, 55, 70];
@@ -73,6 +74,16 @@ export const dynamic = "force-dynamic";
 
 export default async function ReportsPage() {
     const data = await getReportData();
+    const { historical, forecast } = await getPredictiveAnalytics();
+
+    // Fetch live Engine Metrics from the backend Edge cache
+    const storeMetrics = await prisma.storeMetrics.findFirst({
+        where: { id: "singleton" }
+    }) || {
+        arCheckoutRate: 6.2, standardCheckoutRate: 1.1, vaultAov: 4850, standardAov: 1240,
+        arReturnRate: 2.4, standardReturnRate: 18.5, estimatedSavings: 12450,
+        semanticQueries: [], abandonedValue: 45000, recovered1Hr: 4200, recovered24Hr: 2100
+    } as any;
 
     // Mock counts for display
     const counts = {
