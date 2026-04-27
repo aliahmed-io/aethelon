@@ -9,7 +9,7 @@ import { useGLTF } from '@react-three/drei';
 function Particles() {
     const mesh = useRef<THREE.InstancedMesh>(null);
     const { scrollProgress } = useScrollStore();
-    const count = 10000;
+    const count = 5000;
 
     const [windowWidth, setWindowWidth] = useState(1024);
 
@@ -40,35 +40,49 @@ function Particles() {
     const { scene: lampScene } = useGLTF('/landing_lamp.glb');
     const { scene: decorScene } = useGLTF('/landing_decor.glb');
 
-    const buildTransform = (scene: THREE.Group, count: number, scaleFactor: number, xOffset: number, yOffset: number, jitterStrength: number = 0) => {
-        const positions: THREE.Vector3[] = [];
-        scene.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-                const geometry = (child as THREE.Mesh).geometry;
-                const posAttr = geometry.attributes.position;
-                if (posAttr) {
-                    child.updateMatrixWorld(true);
-                    for (let i = 0; i < posAttr.count; i++) {
-                        const p = new THREE.Vector3().fromBufferAttribute(posAttr as THREE.BufferAttribute, i);
-                        p.applyMatrix4(child.matrixWorld);
-                        positions.push(p);
-                    }
-                }
-            }
-        });
-
-        const box = new THREE.Box3();
-        positions.forEach(p => box.expandByPoint(p));
+    const buildTransform = (scene: THREE.Group, targetCount: number, scaleFactor: number, xOffset: number, yOffset: number, jitterStrength: number = 0) => {
+        // Optimize AABB calculation
+        const box = new THREE.Box3().setFromObject(scene);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
 
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = maxDim > 0 ? scaleFactor / maxDim : 1;
 
-        const sampled = [];
-        for (let i = 0; i < count; i++) {
-            if (positions.length > 0) {
-                const p = positions[Math.floor(Math.random() * positions.length)].clone();
+        // Collect attributes to avoid massive Vector allocations
+        const geometries: { attr: THREE.BufferAttribute, matrix: THREE.Matrix4, count: number }[] = [];
+        let totalVertices = 0;
+        scene.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+                const geometry = (child as THREE.Mesh).geometry;
+                const posAttr = geometry.attributes.position;
+                if (posAttr) {
+                    child.updateMatrixWorld(true);
+                    geometries.push({ attr: posAttr as THREE.BufferAttribute, matrix: child.matrixWorld, count: posAttr.count });
+                    totalVertices += posAttr.count;
+                }
+            }
+        });
+
+        const sampled: THREE.Vector3[] = new Array(targetCount);
+        for (let i = 0; i < targetCount; i++) {
+            if (geometries.length > 0) {
+                // Weighted geometry selection for even distribution
+                let rand = Math.random() * totalVertices;
+                let targetGeom = geometries[0];
+                for (const g of geometries) {
+                    rand -= g.count;
+                    if (rand <= 0) {
+                        targetGeom = g;
+                        break;
+                    }
+                }
+
+                // Sample vertex without creating intermediary objects
+                const vertexIndex = Math.floor(Math.random() * targetGeom.count);
+                const p = new THREE.Vector3().fromBufferAttribute(targetGeom.attr, vertexIndex);
+                p.applyMatrix4(targetGeom.matrix);
+
                 p.sub(center).multiplyScalar(scale);
 
                 if (jitterStrength > 0) {
@@ -80,9 +94,9 @@ function Particles() {
 
                 p.x += xOffset;
                 p.y += yOffset;
-                sampled.push(p);
+                sampled[i] = p;
             } else {
-                sampled.push(new THREE.Vector3(xOffset, yOffset, 0));
+                sampled[i] = new THREE.Vector3(xOffset, yOffset, 0);
             }
         }
         return sampled;
@@ -115,6 +129,9 @@ function Particles() {
         currentMesh.rotation.y = scrollProgress * Math.PI * 0.5;
         currentMesh.rotation.z = scrollProgress * 0.2;
 
+        const [b1, b2, b3, b4, b5, b6, b7, b8] = bps;
+        const currentScroll = scrollProgress || 0;
+
         particles.forEach((particle, i) => {
             const { factor, speed, xFactor, yFactor, zFactor } = particle;
             particle.t += speed / 2; // Update time
@@ -123,11 +140,6 @@ function Particles() {
             const a = Math.cos(t) + Math.sin(t * 1) / 10;
             const b = Math.sin(t) + Math.cos(t * 2) / 10;
             const s = Math.cos(t);
-
-            // Morph logic based on scroll (simplified for now)
-            // At scroll 0: Swirl
-            // At scroll 1: Sphere-ish
-            const currentScroll = scrollProgress || 0;
 
             const x = (particle.mx / 10) * a + xFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 1) * factor) / 10;
             const y = (particle.my / 10) * b + yFactor + Math.sin((t / 10) * factor) + (Math.cos(t * 2) * factor) / 10;
@@ -139,16 +151,13 @@ function Particles() {
             const sphereY = Math.cos(i) * sphereRadius;
             const sphereZ = Math.tan(i) * sphereRadius; // messy sphere for effect
 
-            // Breakpoints computed responsively between mobile and desktop mappings
-            const [b1, b2, b3, b4, b5, b6, b7, b8] = bps;
-
             let finalX = x;
             let finalY = y;
             let finalZ = z;
 
-            const pos1 = targetPositions1[i % targetPositions1.length];
-            const pos2 = targetPositions2[i % targetPositions2.length];
-            const pos3 = targetPositions3[i % targetPositions3.length];
+            const pos1 = targetPositions1[i];
+            const pos2 = targetPositions2[i];
+            const pos3 = targetPositions3[i];
 
             if (currentScroll < b1) {
                 finalX = x; finalY = y; finalZ = z;
@@ -196,7 +205,7 @@ function Particles() {
     return (
         <>
             <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-                <dodecahedronGeometry args={[0.35, 0]} />
+                <dodecahedronGeometry args={[0.45, 0]} />
                 <meshStandardMaterial
                     color="#C9912B"
                     emissive="#C9912B"
@@ -212,7 +221,7 @@ function Particles() {
 export default function ParticleCanvas() {
     return (
         <div className="fixed inset-0 z-[4] pointer-events-none">
-            <Canvas camera={{ position: [0, 0, 100], fov: 75 }}>
+            <Canvas camera={{ position: [0, 0, 100], fov: 75 }} dpr={[1, 1.5]} performance={{ min: 0.5 }}>
                 <ambientLight intensity={0.5} />
                 <pointLight position={[10, 10, 10]} intensity={1} />
                 <React.Suspense fallback={null}>

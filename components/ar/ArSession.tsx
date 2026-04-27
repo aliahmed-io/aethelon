@@ -142,6 +142,14 @@ export function ArSession({
         };
     }, [activeModelUrl, hasLaunched]);
 
+    // Prevent background scrolling while AR Session is open
+    useEffect(() => {
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, []);
+
     const handleSnapshot = () => {
         const el = mvRef.current;
         if (!el) return;
@@ -155,7 +163,7 @@ export function ArSession({
     };
 
     return (
-        <div className="fixed inset-0 z-50 bg-black flex flex-col">
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col overscroll-none">
             {/* Minimal Header Stats Layer */}
             {!arUnavailable && (
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-2">

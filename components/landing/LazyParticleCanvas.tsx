@@ -24,8 +24,8 @@ export default function LazyParticleCanvas() {
 
     return (
         <div
-            className="fixed inset-0 z-0 bg-background transition-opacity duration-[2000ms]"
-            style={{ opacity: shouldMount ? 1 : 0 }}
+            className={`fixed inset-0 z-0 bg-background transition-opacity`}
+            style={{ opacity: shouldMount ? 1 : 0, transitionDuration: '2000ms' }}
         >
             {shouldMount && <ParticleCanvas />}
         </div>
