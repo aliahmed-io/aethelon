@@ -85,6 +85,8 @@ export function SearchOverlay() {
                             <div className="flex items-center border-b border-border px-4 md:px-6 py-4 md:py-6 bg-muted/30">
                                 <Search className="mr-4 h-5 w-5 text-muted-foreground" />
                                 <input
+                                    id="search-input"
+                                    name="search"
                                     ref={inputRef}
                                     type="text"
                                     value={query}

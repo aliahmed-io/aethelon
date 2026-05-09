@@ -164,6 +164,8 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="flex items-center gap-4 px-6 py-5 border-b border-white/10">
                     <Search className="w-5 h-5 text-white/40" />
                     <input
+                        id="search-modal-input"
+                        name="search-modal"
                         ref={inputRef}
                         type="text"
                         value={query}

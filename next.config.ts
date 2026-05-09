@@ -29,13 +29,13 @@ const nextConfig: NextConfig = {
                         key: 'Content-Security-Policy',
                         value: `
                             default-src 'self';
-                            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://va.vercel-scripts.com;
+                            script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://va.vercel-scripts.com https://vercel.live;
                             style-src 'self' 'unsafe-inline';
-                            img-src 'self' blob: data: https://*.meshy.ai https://res.cloudinary.com https://*.stripe.com https://utfs.io https://images.unsplash.com https://*.googleusercontent.com;
-                            connect-src 'self' blob: https://api.meshy.ai https://api.stripe.com https://vitals.vercel-insights.com https://uploadthing.com https://utfs.io https://accelerate.prisma-data.net;
+                            img-src 'self' blob: data: https://*.meshy.ai https://res.cloudinary.com https://*.stripe.com https://utfs.io https://images.unsplash.com https://*.googleusercontent.com https://vercel.live;
+                            connect-src 'self' blob: https://api.meshy.ai https://api.stripe.com https://vitals.vercel-insights.com https://uploadthing.com https://utfs.io https://accelerate.prisma-data.net https://vercel.live wss://ws-us3.pusher.com;
                             worker-src 'self' blob:;
-                            font-src 'self' data:;
-                            frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
+                            font-src 'self' data: https://vercel.live;
+                            frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://vercel.live;
                             object-src 'none';
                             base-uri 'self';
                             form-action 'self';

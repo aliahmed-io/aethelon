@@ -353,6 +353,8 @@ export default function Chatbot() {
                         <div className="p-3 border-t border-border bg-muted/20">
                             <div className="flex items-center gap-2 bg-background rounded-full px-4 py-2 border border-border focus-within:border-accent/40 transition-colors shadow-sm">
                                 <input
+                                    id="chatbot-input"
+                                    name="chatbot-message"
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
