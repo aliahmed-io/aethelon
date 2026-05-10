@@ -151,6 +151,7 @@ export function ArSession({
     }, []);
 
     const handleSnapshot = () => {
+        if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(50);
         const el = mvRef.current;
         if (!el) return;
         const canvas = el.shadowRoot?.querySelector("canvas") ?? el.querySelector("canvas");
@@ -242,8 +243,10 @@ export function ArSession({
                 ar-placement="floor"
                 camera-controls
                 auto-rotate
-                shadow-intensity="1"
-                shadow-softness="1"
+                autoplay
+                interpolation-decay="200"
+                shadow-intensity="1.5"
+                shadow-softness="1.2"
                 exposure="1"
                 environment-image="neutral"
                 loading="eager"

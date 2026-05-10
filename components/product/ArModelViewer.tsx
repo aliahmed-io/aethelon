@@ -32,17 +32,19 @@ export default function ArModelViewer({ src, iosSrc, poster, alt }: ArModelViewe
                 {...(iosSrc ? { "ios-src": iosSrc } : {})}
                 {...(poster ? { poster } : {})}
                 alt={alt || "A 3D model of the product"}
-                shadow-intensity="1"
                 camera-controls
                 auto-rotate
+                autoplay
+                interpolation-decay="200"
                 ar
                 ar-modes="scene-viewer quick-look"
                 ar-scale="auto"
                 ar-placement="floor"
                 reveal="auto"
-                loading="eager"
+                loading="lazy"
                 exposure="1"
-                shadow-softness="1"
+                shadow-intensity="1.5"
+                shadow-softness="1.2"
                 environment-image="neutral"
                 crossorigin="anonymous"
                 style={{ width: "100%", height: "100%", backgroundColor: "#0A0A0C" }}

@@ -146,7 +146,10 @@ export function MobileVisualizer({
             {isArOpen && selectedProduct && (
                 <div className="fixed inset-0 z-50">
                     <button
-                        onClick={() => setIsArOpen(false)}
+                        onClick={() => {
+                            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(50);
+                            setIsArOpen(false);
+                        }}
                         className="absolute top-4 right-4 z-[60] p-2.5 rounded-full bg-black/60 text-white"
                         aria-label="Close AR"
                     >
@@ -304,17 +307,20 @@ export function MobileVisualizer({
                             ref={viewerRef}
                             src={selectedProduct.modelUrl}
                             ios-src={selectedProduct.usdzUrl ?? undefined}
+                            poster={selectedProduct.images[0] ?? undefined}
                             alt={`3D model of ${selectedProduct.name}`}
                             camera-controls
                             touch-action="pan-y"
                             auto-rotate
+                            autoplay
+                            interpolation-decay="200"
                             shadow-intensity={getShadowIntensityForMode(lightingMode)}
-                            shadow-softness="1"
+                            shadow-softness="1.2"
                             exposure={getExposureForMode(lightingMode)}
                             environment-image="neutral"
                             scale={`${modelScale} ${modelScale} ${modelScale}`}
                             reveal="auto"
-                            loading="eager"
+                            loading="lazy"
                             ar
                             ar-modes="webxr scene-viewer quick-look"
                             ar-scale="auto"
@@ -431,8 +437,11 @@ export function MobileVisualizer({
                             Fix #3: no longer gated behind isWebXrSupported. */}
                         {isMobile && (
                             <button
-                                onClick={() => setIsArOpen(true)}
-                                className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest"
+                                onClick={() => {
+                                    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(50);
+                                    setIsArOpen(true);
+                                }}
+                                className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2.5 rounded-sm text-xs font-bold uppercase tracking-widest active:scale-95 transition-transform"
                             >
                                 <Smartphone className="w-3.5 h-3.5" />
                                 AR
