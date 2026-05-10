@@ -32,7 +32,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                     className="md:animate-in md:fade-in md:slide-in-from-bottom-4 md:duration-500 md:fill-mode-backwards"
                     style={idx === 0 ? undefined : { animationDelay: `${idx * 100}ms` }}
                 >
-                    <ProductCard item={product} />
+                    <ProductCard item={product} priority={idx < 4} />
                 </div>
             ))}
         </div>

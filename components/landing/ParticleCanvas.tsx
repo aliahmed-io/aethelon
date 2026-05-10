@@ -109,6 +109,7 @@ function Particles() {
     // Generate random initial positions
     const particles = useMemo(() => {
         const temp = [];
+        const sphereRadius = 30;
         for (let i = 0; i < count; i++) {
             const t = Math.random() * 100;
             const factor = 20 + Math.random() * 100;
@@ -116,7 +117,13 @@ function Particles() {
             const xFactor = -50 + Math.random() * 100;
             const yFactor = -50 + Math.random() * 100;
             const zFactor = -50 + Math.random() * 100;
-            temp.push({ t, factor, speed, xFactor, yFactor, zFactor, mx: 0, my: 0 });
+
+            // Precompute sphere target positions to save math per frame
+            const sphereX = Math.sin(i) * sphereRadius;
+            const sphereY = Math.cos(i) * sphereRadius;
+            const sphereZ = Math.tan(i) * sphereRadius;
+
+            temp.push({ t, factor, speed, xFactor, yFactor, zFactor, sphereX, sphereY, sphereZ });
         }
         return temp;
     }, [count]);
@@ -133,23 +140,16 @@ function Particles() {
         const currentScroll = scrollProgress || 0;
 
         particles.forEach((particle, i) => {
-            const { factor, speed, xFactor, yFactor, zFactor } = particle;
+            const { factor, speed, xFactor, yFactor, zFactor, sphereX, sphereY, sphereZ } = particle;
             particle.t += speed / 2; // Update time
             const t = particle.t;
 
-            const a = Math.cos(t) + Math.sin(t * 1) / 10;
-            const b = Math.sin(t) + Math.cos(t * 2) / 10;
             const s = Math.cos(t);
+            const tf = (t / 10) * factor;
 
-            const x = (particle.mx / 10) * a + xFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 1) * factor) / 10;
-            const y = (particle.my / 10) * b + yFactor + Math.sin((t / 10) * factor) + (Math.cos(t * 2) * factor) / 10;
-            const z = (particle.my / 10) * b + zFactor + Math.cos((t / 10) * factor) + (Math.sin(t * 3) * factor) / 10;
-
-            // Lerp to sphere shape based on scroll
-            const sphereRadius = 30;
-            const sphereX = Math.sin(i) * sphereRadius;
-            const sphereY = Math.cos(i) * sphereRadius;
-            const sphereZ = Math.tan(i) * sphereRadius; // messy sphere for effect
+            const x = xFactor + Math.cos(tf) + (Math.sin(t) * factor) / 10;
+            const y = yFactor + Math.sin(tf) + (Math.cos(t * 2) * factor) / 10;
+            const z = zFactor + Math.cos(tf) + (Math.sin(t * 3) * factor) / 10;
 
             let finalX = x;
             let finalY = y;

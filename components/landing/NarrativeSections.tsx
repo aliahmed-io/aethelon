@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 
 export default function NarrativeSections() {
@@ -166,7 +167,7 @@ export default function NarrativeSections() {
                                 transition={{ delay: idx * 0.1 }}
                                 className="group relative overflow-hidden rounded-2xl aspect-[3/4] shadow-lg hover:shadow-xl transition-shadow"
                             >
-                                <img src={collection.image} alt={collection.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                <Image src={collection.image} alt={collection.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors z-10" />
                                 <div className="absolute inset-0 flex items-center justify-center z-20">
                                     <h3 className="font-display text-3xl text-white tracking-widest translate-y-4 group-hover:translate-y-0 transition-transform duration-500 shadow-sm">

@@ -11,13 +11,11 @@ export default function LazyParticleCanvas() {
     const [shouldMount, setShouldMount] = useState(false);
 
     useEffect(() => {
-        // Radical performance optimization:
-        // By deferring the heavy React Three Fiber WebGL mount by 1000ms,
-        // we guarantee the browser paints the texts and Navbar instantly.
-        // The canvas will then elegantly fade in from behind.
+        // Mount immediately after hydration, relying on next/dynamic to defer loading,
+        // instead of artificially waiting 1000ms which spikes TBT during Lighthouse tests.
         const timer = setTimeout(() => {
             setShouldMount(true);
-        }, 1000);
+        }, 50);
 
         return () => clearTimeout(timer);
     }, []);
