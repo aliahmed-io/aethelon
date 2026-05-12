@@ -22,7 +22,7 @@ export async function Reviews({ productId }: { productId: string }) {
                             <div className="bg-white/5 p-6 border border-white/10 rounded-sm text-center">
                                 <p className="text-white/60 mb-4 text-sm">Please sign in to leave a review.</p>
                                 <Button asChild className="w-full bg-white text-black hover:bg-white/90">
-                                    <Link href="/api/auth/login">Sign In</Link>
+                                    <Link href="/login">Sign In</Link>
                                 </Button>
                             </div>
                         )}

@@ -17,7 +17,7 @@ export default async function BagPage() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user) return redirect("/api/auth/login");
+    if (!user) return redirect("/login");
 
     const currency = await CurrencyService.getCurrency();
     const fmt = (cents: number) => CurrencyService.format(cents, currency);

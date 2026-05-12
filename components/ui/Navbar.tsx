@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearch } from '@/components/search/SearchContext';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
-import { LoginLink } from '@kinde-oss/kinde-auth-nextjs/components';
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);

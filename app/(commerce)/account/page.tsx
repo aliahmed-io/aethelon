@@ -26,7 +26,7 @@ export default async function AccountPage() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user) return redirect("/api/auth/login");
+    if (!user) return redirect("/login");
     const orders = await getUserOrders(user?.id as string);
 
     return (

@@ -5,6 +5,7 @@ import { SearchProvider } from "@/components/search/SearchContext";
 import { ClientProviders } from "@/components/providers/ClientProviders";
 import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
 import SmoothScroll from "@/components/ui/SmoothScroll";
+import { AuthPromptProvider } from "@/components/auth/AuthPromptProvider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -111,7 +112,9 @@ export default function RootLayout({
                 <SmoothScroll>
                     <SearchProvider>
                         <ClientProviders>
-                            {children}
+                            <AuthPromptProvider>
+                                {children}
+                            </AuthPromptProvider>
                         </ClientProviders>
                         <CookieConsentProvider />
                     </SearchProvider>

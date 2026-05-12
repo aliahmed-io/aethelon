@@ -43,7 +43,7 @@ export function MobileNav() {
                     }
 
                     // Handle account link based on auth
-                    const href = item.href === "/account" && !isAuthenticated ? "/api/auth/login" : item.href;
+                    const href = item.href === "/account" && !isAuthenticated ? "/login" : item.href;
 
                     return (
                         <Link

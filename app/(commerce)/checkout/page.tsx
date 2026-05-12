@@ -14,7 +14,7 @@ export default async function CheckoutPage() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user) return redirect("/api/auth/login");
+    if (!user) return redirect("/login");
 
     let cart: Cart | null = null;
     if (redis) {

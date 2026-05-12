@@ -20,7 +20,7 @@ export default async function AccountWishlistPage() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user) return redirect("/api/auth/login?post_login_redirect_url=/account/wishlist");
+    if (!user) return redirect("/login?post_login_redirect_url=/account/wishlist");
 
     const rawItems = await prisma.wishlistItem.findMany({
         where: { userId: user.id },

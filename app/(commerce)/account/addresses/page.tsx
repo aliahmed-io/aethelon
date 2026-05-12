@@ -13,7 +13,7 @@ export default async function AccountAddressesPage() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user) return redirect("/api/auth/login?post_login_redirect_url=/account/addresses");
+    if (!user) return redirect("/login?post_login_redirect_url=/account/addresses");
 
     const addresses = await prisma.address.findMany({
         where: { userId: user.id },

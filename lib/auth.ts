@@ -12,7 +12,7 @@ export async function requireUser() {
     const user = await getUser();
 
     if (!user) {
-        redirect("/api/auth/login");
+        redirect("/login");
     }
 
     return user;
@@ -31,7 +31,7 @@ export async function requireAdmin() {
     const kindeUser = await getUser();
 
     if (!kindeUser) {
-        redirect("/api/auth/login");
+        redirect("/login");
     }
 
     // Check environment variable for hardcoded admins

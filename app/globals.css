@@ -99,6 +99,15 @@ body.custom-cursor [role="button"] {
   cursor: none;
 }
 
+/* Restore native cursor inside modal overlays */
+[data-cursor-restore],
+[data-cursor-restore] *,
+[data-cursor-restore] a,
+[data-cursor-restore] button,
+[data-cursor-restore] [role="button"] {
+  cursor: auto !important;
+}
+
 /* ── Keyframes used by Tailwind arbitrary animations ────────────────────────
    animate-[fadeIn_*], animate-[slideUp_*], animate-[ping_*] etc.
    These MUST be defined globally – Tailwind cannot generate @keyframes for

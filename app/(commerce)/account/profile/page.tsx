@@ -14,7 +14,7 @@ export default async function AccountProfilePage() {
     const kindeUser = await getUser();
 
     if (!kindeUser || !kindeUser.id) {
-        return redirect("/api/auth/login?post_login_redirect_url=/account/profile");
+        return redirect("/login?post_login_redirect_url=/account/profile");
     }
 
     const user = await prisma.user.findUnique({

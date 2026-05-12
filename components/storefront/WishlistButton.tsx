@@ -7,15 +7,14 @@ import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-
-import { useRouter } from "next/navigation";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 
 interface WishlistButtonProps {
     productId: string;
 }
 
 export function WishlistButton({ productId }: WishlistButtonProps) {
-    const router = useRouter();
+    const { showAuthPrompt } = useAuthPrompt();
     const [isPending, startTransition] = useTransition();
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +33,7 @@ export function WishlistButton({ productId }: WishlistButtonProps) {
     }, [productId]);
 
     const handleToggle = (e: React.MouseEvent) => {
-        e.preventDefault(); // Prevent linking to product page if button is clicked
+        e.preventDefault();
         e.stopPropagation();
 
         startTransition(async () => {
@@ -44,8 +43,7 @@ export function WishlistButton({ productId }: WishlistButtonProps) {
                 toast.success(res.isWishlisted ? "Added to wishlist" : "Removed from wishlist");
             } else {
                 if (res.error === "Must be logged in") {
-                    toast.error("Please sign in to save items to your wishlist");
-                    router.push("/api/auth/login");
+                    showAuthPrompt("Sign in to save this piece to your personal wishlist and track price changes.");
                     return;
                 }
                 toast.error(res.error || "Something went wrong");
