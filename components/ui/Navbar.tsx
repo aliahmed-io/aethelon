@@ -157,10 +157,10 @@ export default function Navbar() {
                             <User className="w-5 h-5" />
                         </Link>
                     ) : (
-                        <LoginLink className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
+                        <Link href="/login" className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
                             <User className="w-4 h-4" />
                             <span>Sign In</span>
-                        </LoginLink>
+                        </Link>
                     )}
                     <button
                         className="md:hidden transition-colors p-2"
@@ -196,9 +196,9 @@ export default function Navbar() {
                                 </Link>
                             ))}
                             {!isAuthenticated && (
-                                <LoginLink className="mt-4 bg-accent text-accent-foreground px-8 py-3 rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-accent/90 transition-colors">
+                                <Link href="/login" className="mt-4 bg-accent text-accent-foreground px-8 py-3 rounded-sm text-sm font-bold uppercase tracking-widest hover:bg-accent/90 transition-colors">
                                     Sign In
-                                </LoginLink>
+                                </Link>
                             )}
                         </nav>
                     </motion.div>

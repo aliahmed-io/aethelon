@@ -6,6 +6,7 @@ import { Cuboid } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Tilt } from "@/components/ui/Tilt";
 
 interface iAppProps {
   item: {
@@ -72,42 +73,44 @@ export function ProductCard({ item, priority = false }: iAppProps) {
     >
       <div className="transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]">
         {/* Image Section */}
-        <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary">
-          <Image
-            src={item.images[0]}
-            alt={item.name}
-            fill
-            sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 50vw"
-            className="object-contain p-4 transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
-            priority={priority}
-            quality={70}
-          />
+        <Tilt>
+          <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary">
+            <Image
+              src={item.images[0]}
+              alt={item.name}
+              fill
+              sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 50vw"
+              className="object-contain p-4 transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
+              priority={priority}
+              quality={70}
+            />
 
-          {/* Discount Badge */}
-          {item.discountPercentage > 0 && (
-            <Badge className="absolute top-3 left-3 bg-red-600 text-white hover:bg-red-700 border-none px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm">
-              -{item.discountPercentage}%
-            </Badge>
-          )}
+            {/* Discount Badge */}
+            {item.discountPercentage > 0 && (
+              <Badge className="absolute top-3 left-3 bg-red-600 text-white hover:bg-red-700 border-none px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                -{item.discountPercentage}%
+              </Badge>
+            )}
 
-          {/* 3D Model Available Badge */}
-          {item.modelUrl && (
-            <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[9px] font-mono uppercase tracking-[0.2em] px-2 py-1 rounded-sm flex items-center gap-1.5 shadow-sm border border-white/10 pointer-events-none">
-              <Cuboid className="w-3 h-3" strokeWidth={1.5} />
-              <span>3D</span>
-            </div>
-          )}
+            {/* 3D Model Available Badge */}
+            {item.modelUrl && (
+              <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[9px] font-mono uppercase tracking-[0.2em] px-2 py-1 rounded-sm flex items-center gap-1.5 shadow-sm border border-white/10 pointer-events-none">
+                <Cuboid className="w-3 h-3" strokeWidth={1.5} />
+                <span>3D</span>
+              </div>
+            )}
 
-          {/* Wishlist */}
-          <div
-            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-          >
-            <div className="bg-white rounded-full p-2 shadow-md border border-neutral-200 hover:bg-neutral-50 transition-colors">
-              <WishlistButton productId={item.id} />
+            {/* Wishlist */}
+            <div
+              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            >
+              <div className="bg-white rounded-full p-2 shadow-md border border-neutral-200 hover:bg-neutral-50 transition-colors">
+                <WishlistButton productId={item.id} />
+              </div>
             </div>
           </div>
-        </div>
+        </Tilt>
 
         {/* Product Info */}
         <div className="pt-4 pb-2 space-y-1">

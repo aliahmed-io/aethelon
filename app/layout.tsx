@@ -4,6 +4,7 @@ import "./globals.css";
 import { SearchProvider } from "@/components/search/SearchContext";
 import { ClientProviders } from "@/components/providers/ClientProviders";
 import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -98,7 +99,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className="scroll-smooth">
+        <html lang="en">
             <body className={`${inter.variable} ${playfair.variable} bg-background text-foreground antialiased`}>
                 {/* Skip to content — WCAG AA keyboard accessibility */}
                 <a
@@ -107,12 +108,14 @@ export default function RootLayout({
                 >
                     Skip to main content
                 </a>
-                <SearchProvider>
-                    <ClientProviders>
-                        {children}
-                    </ClientProviders>
-                    <CookieConsentProvider />
-                </SearchProvider>
+                <SmoothScroll>
+                    <SearchProvider>
+                        <ClientProviders>
+                            {children}
+                        </ClientProviders>
+                        <CookieConsentProvider />
+                    </SearchProvider>
+                </SmoothScroll>
             </body>
         </html>
     );

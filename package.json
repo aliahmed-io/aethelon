@@ -45,6 +45,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@react-three/xr": "^6.6.29",
+    "@studio-freight/react-lenis": "^0.0.47",
     "@types/papaparse": "^5.5.2",
     "@types/pg": "^8.16.0",
     "@uploadthing/react": "^7.3.3",

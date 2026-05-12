@@ -30,12 +30,12 @@ export function MobileMenu({ user }: { user: { given_name?: string | null; famil
                     {!user ? (
                         <div className="flex flex-col gap-3">
                             <Button variant="outline" asChild className="justify-start border-border text-foreground hover:bg-muted w-full">
-                                <LoginLink postLoginRedirectURL={pathname}>Sign in</LoginLink>
+                                <Link href="/login">Sign in</Link>
                             </Button>
                             <Button asChild className="justify-start bg-accent text-accent-foreground hover:bg-accent/90 w-full">
-                                <RegisterLink postLoginRedirectURL={pathname}>
+                                <Link href="/register">
                                     Create Account
-                                </RegisterLink>
+                                </Link>
                             </Button>
                         </div>
                     ) : (

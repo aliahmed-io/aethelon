@@ -23,18 +23,23 @@ export function ProductGrid({ products }: ProductGridProps) {
 
     return (
         <div
-            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8 md:animate-in md:fade-in md:slide-in-from-bottom-8 md:duration-700"
+            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-x-8 md:gap-y-16 md:animate-in md:fade-in md:slide-in-from-bottom-8 md:duration-700"
             data-testid="product-grid"
         >
-            {products.map((product, idx) => (
-                <div
-                    key={product.id}
-                    className="md:animate-in md:fade-in md:slide-in-from-bottom-4 md:duration-500 md:fill-mode-backwards"
-                    style={idx === 0 ? undefined : { animationDelay: `${idx * 100}ms` }}
-                >
-                    <ProductCard item={product} priority={idx < 4} />
-                </div>
-            ))}
+            {products.map((product, idx) => {
+                // Editorial stagger: offset alternate items on desktop
+                const isStaggered = idx % 2 !== 0;
+                
+                return (
+                    <div
+                        key={product.id}
+                        className={`md:animate-in md:fade-in md:slide-in-from-bottom-4 md:duration-500 md:fill-mode-backwards transition-transform ${isStaggered ? 'md:mt-16' : ''}`}
+                        style={idx === 0 ? undefined : { animationDelay: `${idx * 100}ms` }}
+                    >
+                        <ProductCard item={product} priority={idx < 4} />
+                    </div>
+                );
+            })}
         </div>
     );
 }

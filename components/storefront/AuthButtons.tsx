@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function AuthButtons() {
     const pathname = usePathname();
@@ -10,11 +11,11 @@ export function AuthButtons() {
     return (
         <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:space-x-2">
             <Button variant="ghost" asChild>
-                <LoginLink postLoginRedirectURL={pathname}>Sign in</LoginLink>
+                <Link href="/login">Sign in</Link>
             </Button>
             <span className="h-6 w-px bg-gray-200"></span>
             <Button variant="ghost" asChild>
-                <RegisterLink postLoginRedirectURL={pathname}>Create Account</RegisterLink>
+                <Link href="/register">Create Account</Link>
             </Button>
         </div>
     );

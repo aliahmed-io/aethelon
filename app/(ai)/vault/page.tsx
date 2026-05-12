@@ -5,6 +5,7 @@ import { PremiumProductCard, LoadingPremiumProductCard } from "@/components/stor
 import { PremiumSort } from "./PremiumSort";
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
+import { SplitTextReveal } from "@/components/ui/SplitTextReveal";
 
 export const dynamic = "force-dynamic";
 
@@ -74,15 +75,15 @@ export default async function VaultPage({
                 Rare &amp; Exceptional · Private Collection
               </p>
 
-              <h1
-                className="text-5xl lg:text-8xl font-light tracking-[0.06em] uppercase mb-3"
+              <SplitTextReveal
+                text="The Vault"
+                type="chars"
+                stagger={0.15}
+                className="text-5xl lg:text-8xl font-light tracking-[0.06em] uppercase mb-3 flex"
                 style={{
                   color: "var(--vault-fg)",
-                  animation: "vault-reveal 0.9s ease-out both",
                 }}
-              >
-                The Vault
-              </h1>
+              />
 
               {/* Thin gold rule */}
               <div

@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { SplitTextReveal } from '@/components/ui/SplitTextReveal';
+import { Magnetic } from '@/components/ui/Magnetic';
 
 export default function NarrativeSections() {
     return (
@@ -16,12 +18,20 @@ export default function NarrativeSections() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, delay: 0.5 }}
                     >
-                        <h1 className="font-display text-6xl md:text-8xl lg:text-9xl tracking-tight mb-6 text-primary">
-                            AETHELON
-                        </h1>
-                        <p className="font-sans text-xl md:text-2xl text-muted-foreground mb-8 tracking-wide">
-                            Furniture for the Soul
-                        </p>
+                        <SplitTextReveal
+                            text="AETHELON"
+                            type="chars"
+                            stagger={0.1}
+                            delay={0.5}
+                            className="justify-center font-display text-6xl md:text-8xl lg:text-9xl tracking-tight mb-6 text-primary"
+                        />
+                        <SplitTextReveal
+                            text="Furniture for the Soul"
+                            type="words"
+                            delay={1.2}
+                            stagger={0.05}
+                            className="justify-center font-sans text-xl md:text-2xl text-muted-foreground mb-8 tracking-wide"
+                        />
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -203,18 +213,22 @@ export default function NarrativeSections() {
                             Experience the future of interior design. Visualize our collection in your space instantly with AI.
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 justify-center">
-                            <Link
-                                href="/ar"
-                                className="bg-accent text-accent-foreground px-8 py-4 rounded-full font-medium hover:scale-105 transition-transform"
-                            >
-                                Try Room Visualizer
-                            </Link>
-                            <Link
-                                href="/ai-search"
-                                className="bg-white/10 backdrop-blur border border-white/20 text-white px-8 py-4 rounded-full font-medium hover:bg-white/20 transition-colors"
-                            >
-                                Ask Aethelon AI
-                            </Link>
+                            <Magnetic strength={0.3}>
+                                <Link
+                                    href="/ar"
+                                    className="bg-accent text-accent-foreground px-8 py-4 rounded-full font-medium hover:scale-105 transition-transform inline-block"
+                                >
+                                    Try Room Visualizer
+                                </Link>
+                            </Magnetic>
+                            <Magnetic strength={0.3}>
+                                <Link
+                                    href="/ai-search"
+                                    className="bg-white/10 backdrop-blur border border-white/20 text-white px-8 py-4 rounded-full font-medium hover:bg-white/20 transition-colors inline-block"
+                                >
+                                    Ask Aethelon AI
+                                </Link>
+                            </Magnetic>
                         </div>
                     </motion.div>
                 </div>
