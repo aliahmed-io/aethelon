@@ -1,8 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, ArrowUpRight } from "lucide-react";
+import { X } from "lucide-react";
 
 interface AuthPromptContextType {
     showAuthPrompt: (message?: string) => void;
@@ -21,6 +22,7 @@ export function useAuthPrompt() {
 export function AuthPromptProvider({ children }: { children: ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("");
+    const router = useRouter();
 
     const showAuthPrompt = useCallback((msg?: string) => {
         setMessage(
@@ -33,6 +35,11 @@ export function AuthPromptProvider({ children }: { children: ReactNode }) {
     const hideAuthPrompt = useCallback(() => {
         setIsOpen(false);
     }, []);
+
+    const handleContinue = useCallback(() => {
+        setIsOpen(false);
+        router.push("/");
+    }, [router]);
 
     return (
         <AuthPromptContext.Provider value={{ showAuthPrompt, hideAuthPrompt }}>
@@ -75,10 +82,9 @@ export function AuthPromptProvider({ children }: { children: ReactNode }) {
                                 </button>
 
                                 <div className="p-8 md:p-10 space-y-6">
-                                    {/* Icon + Brand header */}
+                                    {/* Brand header */}
                                     <div className="space-y-4">
-                                        <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1.5">
-                                            <Sparkles className="w-3.5 h-3.5 text-accent" />
+                                        <div className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1.5">
                                             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent">
                                                 Live Demo
                                             </span>
@@ -114,22 +120,12 @@ export function AuthPromptProvider({ children }: { children: ReactNode }) {
                                     </div>
 
                                     {/* CTA */}
-                                    <div className="space-y-3 pt-1">
-                                        <button
-                                            onClick={hideAuthPrompt}
-                                            className="flex w-full items-center justify-center gap-2 rounded-sm bg-foreground px-4 py-3 text-sm font-bold uppercase tracking-widest text-background transition-all duration-200 hover:bg-foreground/90 active:scale-[0.98]"
-                                        >
-                                            Continue Exploring
-                                        </button>
-
-                                        <a
-                                            href="mailto:contact@aethelonlabs.com"
-                                            className="flex w-full items-center justify-center gap-2 rounded-sm border border-border px-4 py-3 text-sm font-medium text-foreground transition-all duration-200 hover:border-accent/50 hover:bg-secondary active:scale-[0.98]"
-                                        >
-                                            Inquire About This Build
-                                            <ArrowUpRight className="w-3.5 h-3.5" />
-                                        </a>
-                                    </div>
+                                    <button
+                                        onClick={handleContinue}
+                                        className="flex w-full items-center justify-center gap-2 rounded-sm bg-foreground px-4 py-3 text-sm font-bold uppercase tracking-widest text-background transition-all duration-200 hover:bg-foreground/90 active:scale-[0.98]"
+                                    >
+                                        Continue Exploring
+                                    </button>
 
                                     {/* Footer */}
                                     <p className="text-center text-[11px] text-muted-foreground/50">
