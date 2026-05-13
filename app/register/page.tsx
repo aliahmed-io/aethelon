@@ -7,10 +7,10 @@ import LazyAuthScene from "@/components/auth/LazyAuthScene";
 import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 
 export default function RegisterPage() {
-  const { showAuthPrompt } = useAuthPrompt();
+  const { showDemoNotice } = useAuthPrompt();
 
   const handleAuth = () => {
-    showAuthPrompt(
+    showDemoNotice(
       "Account creation is not available in this demo. This is a design showcase demonstrating a complete e-commerce experience — from product discovery to checkout."
     );
   };
