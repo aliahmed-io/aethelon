@@ -1,13 +1,23 @@
-import { RegisterLink, LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Magnetic } from "@/components/ui/Magnetic";
 import LazyAuthScene from "@/components/auth/LazyAuthScene";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 
 export default function RegisterPage() {
+  const { showAuthPrompt } = useAuthPrompt();
+
+  const handleAuth = () => {
+    showAuthPrompt(
+      "Account creation is not available in this demo. This is a design showcase demonstrating a complete e-commerce experience — from product discovery to checkout."
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full font-sans bg-background">
-      {/* LEFT PANEL - 3D Canvas Placeholder / Immersive Side */}
+      {/* LEFT PANEL - 3D Canvas / Immersive Side */}
       <div className="relative hidden md:flex md:w-1/2 bg-foreground items-center justify-center p-8 overflow-hidden">
         {/* Subtle background glow effect */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(201,145,43,0.1)_0%,_transparent_50%)]" />
@@ -22,7 +32,7 @@ export default function RegisterPage() {
         <LazyAuthScene />
       </div>
 
-      {/* RIGHT PANEL - Authentication Container */}
+      {/* RIGHT PANEL - Registration Container */}
       <div className="w-full md:w-1/2 bg-background flex items-center justify-center p-8 md:p-16 lg:p-24 min-h-screen">
         <div className="w-full max-w-sm space-y-8">
           {/* Header */}
@@ -40,12 +50,11 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-4 pt-4">
+            {/* Google Register Button */}
             <div className="w-full">
               <Magnetic strength={0.15} className="w-full block">
-                <RegisterLink
-                  authUrlParams={{
-                    connection_id: "conn_019ac8fa661c8891a110c5ea8b4f6dc7"
-                  }}
+                <button
+                  onClick={handleAuth}
                   className="flex w-full items-center justify-center gap-3 rounded-sm border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:border-accent/50 hover:bg-secondary active:scale-[0.98]"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -67,7 +76,7 @@ export default function RegisterPage() {
                     />
                   </svg>
                   Sign up with Google
-                </RegisterLink>
+                </button>
               </Magnetic>
             </div>
 
@@ -80,13 +89,15 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Email Register Button */}
             <div className="w-full">
               <Magnetic strength={0.1} className="w-full block">
-                <RegisterLink
+                <button
+                  onClick={handleAuth}
                   className="flex w-full items-center justify-center rounded-sm bg-foreground px-4 py-3 text-sm font-bold uppercase tracking-widest text-background shadow-md transition-all duration-200 hover:bg-foreground/90 active:scale-[0.98]"
                 >
                   Sign up with Email
-                </RegisterLink>
+                </button>
               </Magnetic>
             </div>
           </div>
@@ -102,7 +113,7 @@ export default function RegisterPage() {
 
           <div className="pt-4 text-center">
             <p className="text-xs text-muted-foreground/60 leading-relaxed">
-              By creating an account, you agree to Aethelon's{" "}
+              By creating an account, you agree to Aethelon&apos;s{" "}
               <Link href="/terms" className="underline underline-offset-2 hover:text-foreground transition-colors">
                 Terms of Service
               </Link>{" "}

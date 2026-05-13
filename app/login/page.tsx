@@ -1,13 +1,23 @@
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Magnetic } from "@/components/ui/Magnetic";
 import LazyAuthScene from "@/components/auth/LazyAuthScene";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 
 export default function LoginPage() {
+  const { showAuthPrompt } = useAuthPrompt();
+
+  const handleAuth = () => {
+    showAuthPrompt(
+      "Authentication is not available in this demo. This is a design showcase demonstrating a complete e-commerce experience — from product discovery to checkout."
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full font-sans bg-background">
-      {/* LEFT PANEL - 3D Canvas Placeholder / Immersive Side */}
+      {/* LEFT PANEL - 3D Canvas / Immersive Side */}
       <div className="relative hidden md:flex md:w-1/2 bg-foreground items-center justify-center p-8 overflow-hidden">
         {/* Subtle background glow effect */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(201,145,43,0.1)_0%,_transparent_50%)]" />
@@ -40,14 +50,11 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-4 pt-4">
-            {/* Primary Google Login Button (Bypasses email/password screen) */}
-            {/* Kinde Google Connection ID pasted below in authUrlParams */}
+            {/* Google Login Button */}
             <div className="w-full">
               <Magnetic strength={0.15} className="w-full block">
-                <LoginLink
-                  authUrlParams={{
-                    connection_id: "conn_019ac8fa661c8891a110c5ea8b4f6dc7"
-                  }}
+                <button
+                  onClick={handleAuth}
                   className="flex w-full items-center justify-center gap-3 rounded-sm border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-sm transition-all duration-200 hover:border-accent/50 hover:bg-secondary active:scale-[0.98]"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -69,7 +76,7 @@ export default function LoginPage() {
                     />
                   </svg>
                   Continue with Google
-                </LoginLink>
+                </button>
               </Magnetic>
             </div>
 
@@ -82,21 +89,22 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Secondary Fallback Email Login */}
+            {/* Email Login Button */}
             <div className="w-full">
               <Magnetic strength={0.1} className="w-full block">
-                <LoginLink
+                <button
+                  onClick={handleAuth}
                   className="flex w-full items-center justify-center rounded-sm bg-foreground px-4 py-3 text-sm font-bold uppercase tracking-widest text-background shadow-md transition-all duration-200 hover:bg-foreground/90 active:scale-[0.98]"
                 >
                   Continue with Email
-                </LoginLink>
+                </button>
               </Magnetic>
             </div>
           </div>
 
           <div className="pt-6 text-center">
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/register" className="font-medium text-foreground hover:text-accent transition-colors underline-offset-4 hover:underline">
                 Sign up
               </Link>
@@ -105,7 +113,7 @@ export default function LoginPage() {
 
           <div className="pt-10 text-center">
             <p className="text-xs text-muted-foreground/60 leading-relaxed">
-              By continuing, you agree to Aethelon's{" "}
+              By continuing, you agree to Aethelon&apos;s{" "}
               <Link href="/terms" className="underline underline-offset-2 hover:text-foreground transition-colors">
                 Terms of Service
               </Link>{" "}
