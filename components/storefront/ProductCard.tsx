@@ -111,7 +111,7 @@ export function ProductCard({ item, priority = false }: iAppProps) {
                 e.stopPropagation();
               }}
             >
-              <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md border border-neutral-200 hover:bg-white transition-colors">
+              <div className="bg-white/90 backdrop-blur-sm rounded-full p-1 sm:p-2 shadow-md border border-neutral-200 hover:bg-white transition-colors">
                 <WishlistButton productId={item.id} />
               </div>
             </div>
