@@ -159,7 +159,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                 categoryId: product.categories[0]?.id || "" // Fallback to first category or empty string
             }} />
 
-            <div className="container mx-auto px-6 lg:px-12 py-24 lg:py-32">
+            <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-24 lg:py-32">
                 {/* Back Link */}
                 <div className="mb-8">
                     <Link href="/categories" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">

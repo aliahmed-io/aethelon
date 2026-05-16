@@ -32,9 +32,11 @@ export function WishlistButton({ productId }: WishlistButtonProps) {
             });
     }, [productId]);
 
-    const handleToggle = (e: React.MouseEvent) => {
+    const handleToggle = (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if (isPending) return;
 
         startTransition(async () => {
             const res = await toggleWishlist(productId);
@@ -64,8 +66,9 @@ export function WishlistButton({ productId }: WishlistButtonProps) {
             variant="ghost"
             size="icon"
             onClick={handleToggle}
+            onTouchEnd={handleToggle}
             disabled={isPending}
-            className="rounded-full hover:bg-muted"
+            className="rounded-full hover:bg-muted active:scale-95 transition-transform"
         >
             <Heart
                 className={cn(

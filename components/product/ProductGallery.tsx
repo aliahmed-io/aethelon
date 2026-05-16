@@ -41,9 +41,9 @@ export function ProductGallery({ productId, images, productName, modelUrl, usdzU
     if (validImages.length === 0) return null;
 
     return (
-        <div className="w-full flex flex-col-reverse md:flex-row gap-4 lg:gap-8">
+        <div className="w-full flex flex-col-reverse md:flex-row gap-4 lg:gap-8 items-center md:items-start">
             {/* Thumbnail Strip (Left on Desktop, Bottom on Mobile) */}
-            <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[600px] scrollbar-hide py-1 px-1 snap-x md:w-24 lg:w-28 flex-shrink-0">
+            <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[600px] scrollbar-hide py-1 px-1 snap-x md:w-24 lg:w-28 flex-shrink-0 justify-center md:justify-start">
                 {validImages.map((img, idx) => (
                     <button
                         key={idx}

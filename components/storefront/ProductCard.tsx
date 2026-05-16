@@ -102,10 +102,16 @@ export function ProductCard({ item, priority = false }: iAppProps) {
 
             {/* Wishlist */}
             <div
-              className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              className="absolute top-3 right-3 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 z-30"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+              }}
             >
-              <div className="bg-white rounded-full p-2 shadow-md border border-neutral-200 hover:bg-neutral-50 transition-colors">
+              <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md border border-neutral-200 hover:bg-white transition-colors">
                 <WishlistButton productId={item.id} />
               </div>
             </div>
