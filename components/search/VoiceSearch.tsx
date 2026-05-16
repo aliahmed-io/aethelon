@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 
 interface VoiceSearchProps {
     onResult: (text: string) => void;
@@ -12,6 +13,7 @@ interface VoiceSearchProps {
 export function VoiceSearch({ onResult, className }: VoiceSearchProps) {
     const [isListening, setIsListening] = useState(false);
     const [isSupported, setIsSupported] = useState(false);
+    const { showDemoNotice } = useAuthPrompt();
 
     useEffect(() => {
         if (typeof window !== "undefined" && ("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -20,49 +22,14 @@ export function VoiceSearch({ onResult, className }: VoiceSearchProps) {
     }, []);
 
     const startListening = () => {
+        showDemoNotice("Voice Search and AI Semantic Expansion are disabled in this demo showcase.");
+        return;
+        
+        // Original logic preserved if needed for re-enablement
+        /*
         if (!isSupported) return;
-
-        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "en-US";
-
-        recognition.onstart = () => {
-            setIsListening(true);
-            toast.info("Listening...", { duration: 2000 });
-        };
-
-        recognition.onresult = (event: any) => {
-            const transcript = event.results[0][0].transcript;
-            onResult(transcript);
-            setIsListening(false);
-            toast.success("Voice command recognized");
-        };
-
-        recognition.onerror = (event: any) => {
-            setIsListening(false);
-            if (event.error === 'not-allowed') {
-                toast.error("Microphone access denied. Please allow microphone access in your browser settings.");
-            } else if (event.error === 'no-speech') {
-                toast.error("No speech detected. Please try again.");
-            } else {
-                toast.error("Voice search failed. Please try again.");
-                console.error("Speech recognition error", event.error);
-            }
-        };
-
-        recognition.onend = () => {
-            setIsListening(false);
-        };
-
-        try {
-            recognition.start();
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to start voice recognition");
-        }
+        ...
+        */
     };
 
     if (!isSupported) return null;

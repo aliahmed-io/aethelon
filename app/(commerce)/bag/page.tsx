@@ -8,6 +8,7 @@ import { delItem } from "@/app/store/actions";
 import { redis } from "@/lib/redis";
 import { Cart } from "@/lib/interfaces";
 import { CurrencyService } from "@/modules/currency/currency.service";
+import { CheckoutButton } from "@/components/cart/CheckoutButton";
 
 export const metadata = {
     title: "Your Bag | Aethelon",
@@ -125,11 +126,9 @@ export default async function BagPage() {
                                     </div>
                                 </div>
 
-                                <Link href="/checkout" className="block w-full">
-                                    <Button className="w-full h-14 bg-accent text-accent-foreground font-bold uppercase tracking-widest hover:bg-accent/90 flex items-center justify-between px-6">
-                                        Checkout <ArrowRight className="w-4 h-4" />
-                                    </Button>
-                                </Link>
+                                <div className="block w-full">
+                                    <CheckoutButton />
+                                </div>
 
                                 <div className="mt-8 flex items-start gap-3 p-4 bg-muted/50 rounded-sm">
                                     <Tag className="w-4 h-4 text-muted-foreground mt-0.5" />

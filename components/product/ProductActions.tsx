@@ -8,6 +8,8 @@ import { addItem } from "@/app/store/actions";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProductVariant } from "@prisma/client";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 interface ProductActionsProps {
     productId: string;
@@ -23,6 +25,8 @@ interface ProductActionsProps {
 export function ProductActions({ productId, price, stock, currencyCode = "USD", exchangeRate = 1, variants = [] }: ProductActionsProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { showAuthPrompt } = useAuthPrompt();
+    const { isAuthenticated } = useKindeBrowserClient();
     const colorParam = searchParams.get('color');
 
     const [quantity, setQuantity] = useState(1);
@@ -48,6 +52,11 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
 
     const handleAddToCart = () => {
         if (isOutOfStock) return;
+
+        if (!isAuthenticated) {
+            showAuthPrompt("Sign in to add this piece to your bag and start your curation.");
+            return;
+        }
 
         const formData = new FormData();
         formData.append("quantity", quantity.toString());

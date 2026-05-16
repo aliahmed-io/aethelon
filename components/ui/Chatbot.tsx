@@ -11,6 +11,7 @@ import { chatWithConcierge } from '@/app/store/concierge-actions';
 import { Product } from '@/lib/assistantTypes';
 import { formatPrice } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { useAuthPrompt } from '@/components/auth/AuthPromptProvider';
 
 interface Message {
     id: number;
@@ -53,6 +54,7 @@ function AethelonGemIcon({ className }: { className?: string }) {
 
 export default function Chatbot() {
     const pathname = usePathname();
+    const { showDemoNotice } = useAuthPrompt();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         { id: 1, type: 'ai', text: "Welcome to Aethelon. I'm your personal concierge — ask me anything about our collections, materials, or styling." }
@@ -179,7 +181,7 @@ export default function Chatbot() {
                         exit={{ scale: 0, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                         className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 bg-accent text-accent-foreground rounded-full shadow-lg hover:shadow-xl transition-shadow group"
-                        onClick={() => setIsOpen(true)}
+                        onClick={() => showDemoNotice("The AI Concierge and interactive support features are disabled in this demo showcase.")}
                         aria-label="Open concierge chat"
                     >
                         <div className="relative w-14 h-14 flex items-center justify-center">

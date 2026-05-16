@@ -6,6 +6,7 @@ import { Home, Search, ShoppingBag, User } from "lucide-react";
 import { useSearch } from "@/components/search/SearchContext";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import clsx from "clsx";
+import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
 
 const navItems = [
     { href: "/", icon: Home, label: "Home" },
@@ -18,6 +19,7 @@ export function MobileNav() {
     const pathname = usePathname();
     const { openSearch } = useSearch();
     const { isAuthenticated } = useKindeBrowserClient();
+    const { showAuthPrompt } = useAuthPrompt();
 
     // Don't show on dashboard pages
     if (pathname?.startsWith("/dashboard")) return null;
@@ -43,12 +45,23 @@ export function MobileNav() {
                     }
 
                     // Handle account link based on auth
-                    const href = item.href === "/account" && !isAuthenticated ? "/login" : item.href;
+                    if (item.href === "/account" && !isAuthenticated) {
+                        return (
+                            <button
+                                key="account-trigger"
+                                onClick={() => showAuthPrompt("Sign in to access your curated collection and exclusive vault pieces.")}
+                                className="flex flex-col items-center justify-center gap-1 w-16 h-full text-white/50 hover:text-white transition-colors"
+                            >
+                                <Icon className="w-5 h-5" />
+                                <span className="text-[9px] uppercase tracking-widest">{item.label}</span>
+                            </button>
+                        );
+                    }
 
                     return (
                         <Link
                             key={item.href}
-                            href={href!}
+                            href={item.href!}
                             className={clsx(
                                 "flex flex-col items-center justify-center gap-1 w-16 h-full transition-colors",
                                 isActive ? "text-white" : "text-white/50 hover:text-white"
