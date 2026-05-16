@@ -4,7 +4,7 @@ export const metadata = {
 
 export default function ReturnsPage() {
     return (
-        <article className="prose prose-stone dark:prose-invert max-w-none">
+        <article>
             <h1>Returns & Refunds</h1>
             <p className="lead">We want you to love your Aethelon piece. If not, you have 30 days to return it.</p>
 

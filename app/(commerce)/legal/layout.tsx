@@ -25,7 +25,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
                         ))}
                     </nav>
                 </div>
-                <div className="lg:col-span-3 prose dark:prose-invert max-w-none">
+                <div className="lg:col-span-3 prose prose-stone max-w-none">
                     {children}
                 </div>
             </div>
