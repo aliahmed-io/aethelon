@@ -144,10 +144,10 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
             </div>
 
             {/* Total & Action */}
-            <div className="flex items-center gap-6 pt-4">
-                <div className="flex-1">
-                    <span className="block text-sm text-muted-foreground mb-1">Total Price</span>
-                    <span className="text-3xl font-bold tracking-tight">
+            <div className="flex items-center justify-between gap-4 sm:gap-6 pt-4">
+                <div className="flex-1 min-w-0">
+                    <span className="block text-xs sm:text-sm text-muted-foreground mb-1">Total Price</span>
+                    <span className="text-2xl sm:text-3xl font-bold tracking-tight truncate block">
                         {formattedTotal}
                     </span>
                 </div>
@@ -155,7 +155,7 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
                 <Button
                     onClick={handleAddToCart}
                     disabled={isOutOfStock || isPending}
-                    className="flex-[2] h-16 rounded-2xl text-lg font-bold tracking-widest uppercase bg-foreground text-background hover:bg-zinc-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1"
+                    className="flex-[2] min-w-[140px] h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold tracking-widest uppercase bg-foreground text-background hover:bg-zinc-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-[0.98]"
                 >
                     {isPending ? (
                         <span className="animate-pulse">Adding...</span>

@@ -74,9 +74,9 @@ export default function Navbar() {
                 borderColor: isVault ? '#57412A' : 'hsl(var(--border))',
             } : {}}
         >
-            <div className="container mx-auto px-6 flex items-center justify-between">
+            <div className="container mx-auto px-6 flex items-center justify-between gap-4 min-w-0">
                 {/* Logo */}
-                <Link href="/" className="z-50 relative group">
+                <Link href="/" className="z-50 relative group shrink-0">
                     <span
                         className="font-display text-2xl tracking-widest font-bold transition-colors duration-300"
                         style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
@@ -90,13 +90,13 @@ export default function Navbar() {
                 </Link>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center gap-8">
+                <nav className="hidden lg:flex items-center gap-6 xl:gap-8 shrink-0">
                     {navLinks.map((link) => (
                         <Link
                             key={link.href}
                             href={link.href}
                             className={cn(
-                                'text-sm font-medium tracking-wide transition-colors hover:text-accent relative py-2',
+                                'text-sm font-medium tracking-wide transition-colors hover:text-accent relative py-2 whitespace-nowrap',
                             )}
                             style={{
                                 color: pathname === link.href
@@ -156,13 +156,13 @@ export default function Navbar() {
                             <User className="w-5 h-5" />
                         </Link>
                     ) : (
-                        <Link href="/login" className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
+                        <Link href="/login" className="hidden lg:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-accent transition-colors whitespace-nowrap">
                             <User className="w-4 h-4" />
                             <span>Sign In</span>
                         </Link>
                     )}
                     <button
-                        className="md:hidden transition-colors p-2"
+                        className="lg:hidden transition-colors p-2"
                         style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Menu"
@@ -179,7 +179,7 @@ export default function Navbar() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: '100vh' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="fixed inset-0 pt-24 px-6 md:hidden overflow-hidden"
+                        className="fixed inset-0 pt-24 px-6 lg:hidden overflow-hidden"
                         style={{ background: isVault ? '#131009' : 'hsl(var(--background))' }}
                     >
                         <nav className="flex flex-col gap-6 items-center">

@@ -50,6 +50,12 @@
     @apply border-border;
   }
 
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground selection:bg-accent/20 selection:text-accent font-sans;
     /* Custom cursor hide if needed, but managing via component */

@@ -71,7 +71,7 @@ const TAXONOMY = [
         name: 'Lighting', slug: 'lighting',
         image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200',
         children: [
-            { name: 'Floor Lamps', slug: 'floor-lamps', image: 'https://images.unsplash.com/photo-1513506003901-1e6a35b98687?auto=format&fit=crop&q=80&w=1200' },
+            { name: 'Floor Lamps', slug: 'floor-lamps', image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200' },
             { name: 'Pendant Lights', slug: 'pendant-lights', image: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&q=80&w=1200' },
             { name: 'Table Lamps', slug: 'table-lamps', image: 'https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&q=80&w=1200' },
         ]
@@ -199,7 +199,7 @@ const PRODUCTS = [
         name: 'Arc Floor Lamp', cat: 'floor-lamps', extras: ['best-sellers'], isFeatured: false, price: 89900, rating: 4.6, reviews: 37, stock: 20,
         modelUrl: `/models/floor_lamp.glb`,
         usdzUrl: `/models/floor_lamp.usdz`,
-        images: ['https://images.unsplash.com/photo-1513506003901-1e6a35b98687?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200'],
+        images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1524484488521-3ffd3ff30f71?auto=format&fit=crop&q=80&w=1200'],
         tags: ['lamp', 'arc', 'bronze', 'ar'], features: ['2m arc radius', 'Linen shade', 'Dimmable', 'Brushed bronze'],
         desc: 'Statement arc lamp in brushed bronze with hand-spun linen shade. Casts warm diffused light across a 2-metre arc.'
     },

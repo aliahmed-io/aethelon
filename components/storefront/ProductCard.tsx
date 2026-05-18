@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Cuboid } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Tilt } from "@/components/ui/Tilt";
+import { isListPagePath, saveListReturn } from "@/lib/navigation/list-return";
+import { getScrollY } from "@/lib/navigation/scroll-position";
 
 interface iAppProps {
   item: {
@@ -26,6 +28,14 @@ export function ProductCard({ item, priority = false }: iAppProps) {
   const [currency, setCurrency] = useState("USD");
   const [rate, setRate] = useState(1);
   const [locale, setLocale] = useState("en-US");
+  const [imageSrc, setImageSrc] = useState(item.images[0] || "/assets/placeholder.svg");
+
+  const handleListNavigate = useCallback(() => {
+    const { pathname, search } = window.location;
+    if (!isListPagePath(pathname)) return;
+    const path = search ? `${pathname}${search}` : pathname;
+    saveListReturn(path, getScrollY());
+  }, []);
 
   useEffect(() => {
     const handleCurrencyChange = (e?: Event) => {
@@ -70,19 +80,21 @@ export function ProductCard({ item, priority = false }: iAppProps) {
       href={`/shop/${item.id}`}
       className="group block"
       data-testid="product-card"
+      onClick={handleListNavigate}
     >
       <div className="transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]">
         {/* Image Section */}
         <Tilt>
           <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary">
             <Image
-              src={item.images[0]}
+              src={imageSrc}
               alt={item.name}
               fill
               sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 50vw"
               className="object-contain p-4 transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
               priority={priority}
               quality={70}
+              onError={() => setImageSrc("/assets/placeholder.svg")}
             />
 
             {/* Discount Badge */}

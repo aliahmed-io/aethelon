@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { addToRecentlyViewed } from "@/components/product/RecentlyViewed";
-import { trackProductView } from "@/app/actions/personalization";
 
 interface ProductTrackerProps {
     product: {
@@ -17,8 +16,22 @@ interface ProductTrackerProps {
 export function ProductTracker({ product }: ProductTrackerProps) {
     useEffect(() => {
         addToRecentlyViewed(product);
-        // Fire and forget server action
-        trackProductView(product.id, product.categoryId);
+
+        const payload = JSON.stringify({
+            productId: product.id,
+            categoryId: product.categoryId,
+        });
+
+        if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+            navigator.sendBeacon("/api/analytics/view", new Blob([payload], { type: "application/json" }));
+        } else {
+            fetch("/api/analytics/view", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload,
+                keepalive: true,
+            }).catch(() => {});
+        }
     }, [product]);
 
     return null;

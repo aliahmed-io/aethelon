@@ -1,0 +1,629 @@
+diff --git a/app/(commerce)/categories/[slug]/page.tsx b/app/(commerce)/categories/[slug]/page.tsx
+index 5e54b62..73d04fa 100644
+--- a/app/(commerce)/categories/[slug]/page.tsx
++++ b/app/(commerce)/categories/[slug]/page.tsx
+@@ -4,6 +4,7 @@ import { ProductGrid } from "@/components/storefront/ProductGrid";
+ import { getSmartCollection } from "@/actions/get-collection";
+ import { CollectionHero } from "@/components/collections/CollectionHero";
+ import { CollectionFilterBar } from "@/components/collections/CollectionFilterBar";
++import { ListScrollRestore } from "@/components/storefront/ListScrollRestore";
+ 
+ export const dynamic = "force-dynamic";
+ 
+@@ -62,6 +63,7 @@ export default async function CategoryPage({
+ 
+     return (
+         <main className="min-h-screen bg-background text-foreground pb-20">
++            <ListScrollRestore />
+             {/* Category Hero */}
+             <CollectionHero
+                 title={categoryName}
+diff --git a/app/(commerce)/shop/[id]/page.tsx b/app/(commerce)/shop/[id]/page.tsx
+index 2f4ec9f..0c986a1 100644
+--- a/app/(commerce)/shop/[id]/page.tsx
++++ b/app/(commerce)/shop/[id]/page.tsx
+@@ -6,7 +6,7 @@ import { ProductInfo } from "@/components/product/ProductInfo";
+ import { ProductActions } from "@/components/product/ProductActions";
+ import { ProductTrackerLazy } from "@/components/product/ProductClientWrappers";
+ import Link from "next/link";
+-import { ChevronLeft } from "lucide-react";
++import { ProductBackLink } from "@/components/product/ProductBackLink";
+ import { Metadata, ResolvingMetadata } from "next";
+ import { CurrencyService, SUPPORTED_CURRENCIES } from "@/modules/currency/currency.service";
+ import { productSchema, breadcrumbSchema } from "@/lib/structured-data";
+@@ -162,10 +162,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
+             <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-24 lg:py-32">
+                 {/* Back Link */}
+                 <div className="mb-8">
+-                    <Link href="/categories" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">
+-                        <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+-                        Back to Categories
+-                    </Link>
++                    <ProductBackLink />
+                 </div>
+ 
+                 {/* Main Split Layout */}
+@@ -173,7 +170,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
+ 
+                     {/* Left: Info & Actions (Desktop Order: Info -> Actions) */}
+                     {/* On Mobile: Order 2 */}
+-                    <div className="order-2 lg:order-1 flex flex-col gap-10 lg:sticky lg:top-32 h-fit">
++                    <div className="order-2 lg:order-1 flex flex-col gap-10 lg:sticky lg:top-32 h-fit w-full min-w-0">
+                         <ProductInfo product={productForComponents} />
+                         <ProductActions
+                             productId={product.id}
+@@ -198,7 +195,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
+ 
+                     {/* Right: Gallery (Desktop Order: Gallery) */}
+                     {/* On Mobile: Order 1 (Visuals First) */}
+-                    <div className="order-1 lg:order-2">
++                    <div className="order-1 lg:order-2 w-full min-w-0">
+                         <ProductGallery
+                             productId={product.id}
+                             images={displayImages}
+diff --git a/app/(commerce)/shop/page.tsx b/app/(commerce)/shop/page.tsx
+index 800b018..737f281 100644
+--- a/app/(commerce)/shop/page.tsx
++++ b/app/(commerce)/shop/page.tsx
+@@ -1,6 +1,7 @@
+ import type { Metadata } from "next";
+ import { FurnitureFilterBar } from "@/components/shop/FurnitureFilterBar";
+ import { ProductGrid } from "@/components/storefront/ProductGrid";
++import { ListScrollRestore } from "@/components/storefront/ListScrollRestore";
+ import prisma from "@/lib/db";
+ import { ProductStatus, Prisma } from "@prisma/client";
+ 
+@@ -162,6 +163,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
+ 
+     return (
+         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
++            <ListScrollRestore />
+             <div className="container mx-auto px-6 lg:px-12">
+                 {/* Header */}
+                 <div className="mb-10 text-center">
+diff --git a/app/globals.css b/app/globals.css
+index 1e74f56..5a51dc4 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -50,6 +50,12 @@
+     @apply border-border;
+   }
+ 
++  html,
++  body {
++    max-width: 100vw;
++    overflow-x: hidden;
++  }
++
+   body {
+     @apply bg-background text-foreground selection:bg-accent/20 selection:text-accent font-sans;
+     /* Custom cursor hide if needed, but managing via component */
+diff --git a/components/ar/useCapabilities.ts b/components/ar/useCapabilities.ts
+index b3c57ac..85e9eb1 100644
+--- a/components/ar/useCapabilities.ts
++++ b/components/ar/useCapabilities.ts
+@@ -1,49 +1,126 @@
+ "use client";
+ 
++
++
+ import { useState, useEffect } from "react";
+ 
++
++
+ export interface DeviceCapabilities {
++
++    isWebXrSupported: boolean;
++
+     isSecureContext: boolean;
++
+     isMobile: boolean;
++
+     loading: boolean;
++
+ }
+ 
++
++
+ export function useCapabilities() {
++
+     const [caps, setCaps] = useState<DeviceCapabilities>({
++
++        isWebXrSupported: false,
++
+         isSecureContext: false,
++
+         isMobile: false,
++
+         loading: true,
++
+     });
+ 
++
++
+     useEffect(() => {
++
+         const checkCapabilities = async () => {
++
+             const isSecure = window.isSecureContext;
+ 
++
++
+             function detectMobile(): boolean {
++
+                 if (typeof window === "undefined") return false;
+ 
++
++
+                 // Check touch + screen width (most reliable combo)
++
+                 const hasTouch = navigator.maxTouchPoints > 0;
++
+                 const isNarrow = window.innerWidth <= 1024;
+ 
++
++
+                 // UA fallback for edge cases
++
+                 const ua = navigator.userAgent;
++
+                 const uaMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+ 
++
++
+                 return (hasTouch && isNarrow) || uaMobile;
++
+             }
+ 
++
++
+             const isMobile = detectMobile();
+ 
++
++
++            let isWebXr = false;
++
++            // @ts-ignore - navigator.xr is not fully typed in standard lib yet
++
++            if (navigator.xr && navigator.xr.isSessionSupported) {
++
++                try {
++
++                    // @ts-ignore
++
++                    isWebXr = await navigator.xr.isSessionSupported("immersive-ar");
++
++                } catch (e) {
++
++                    console.warn("WebXR check failed", e);
++
++                }
++
++            }
++
++
++
+             setCaps({
++
++                isWebXrSupported: isWebXr,
++
+                 isSecureContext: isSecure,
++
+                 isMobile,
++
+                 loading: false,
++
+             });
++
+         };
+ 
++
++
+         checkCapabilities();
++
+     }, []);
+ 
++
++
+     return caps;
++
+ }
++
+diff --git a/components/layout/MobileNav.tsx b/components/layout/MobileNav.tsx
+index 63a80d2..ca5b528 100644
+--- a/components/layout/MobileNav.tsx
++++ b/components/layout/MobileNav.tsx
+@@ -25,7 +25,7 @@ export function MobileNav() {
+     if (pathname?.startsWith("/dashboard")) return null;
+ 
+     return (
+-        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black/90 backdrop-blur-xl border-t border-white/10 safe-area-pb">
++        <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-black/90 backdrop-blur-xl border-t border-white/10 safe-area-pb">
+             <div className="flex items-center justify-around h-16">
+                 {navItems.map((item) => {
+                     const isActive = item.href === pathname;
+diff --git a/components/product/ProductActions.tsx b/components/product/ProductActions.tsx
+index 6ccacee..57dd42f 100644
+--- a/components/product/ProductActions.tsx
++++ b/components/product/ProductActions.tsx
+@@ -144,10 +144,10 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD",
+             </div>
+ 
+             {/* Total & Action */}
+-            <div className="flex items-center gap-6 pt-4">
+-                <div className="flex-1">
+-                    <span className="block text-sm text-muted-foreground mb-1">Total Price</span>
+-                    <span className="text-3xl font-bold tracking-tight">
++            <div className="flex items-center justify-between gap-4 sm:gap-6 pt-4">
++                <div className="flex-1 min-w-0">
++                    <span className="block text-xs sm:text-sm text-muted-foreground mb-1">Total Price</span>
++                    <span className="text-2xl sm:text-3xl font-bold tracking-tight truncate block">
+                         {formattedTotal}
+                     </span>
+                 </div>
+@@ -155,7 +155,7 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD",
+                 <Button
+                     onClick={handleAddToCart}
+                     disabled={isOutOfStock || isPending}
+-                    className="flex-[2] h-16 rounded-2xl text-lg font-bold tracking-widest uppercase bg-foreground text-background hover:bg-zinc-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1"
++                    className="flex-[2] min-w-[140px] h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold tracking-widest uppercase bg-foreground text-background hover:bg-zinc-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-[0.98]"
+                 >
+                     {isPending ? (
+                         <span className="animate-pulse">Adding...</span>
+diff --git a/components/product/ProductGallery.tsx b/components/product/ProductGallery.tsx
+index a47fb29..4223d81 100644
+--- a/components/product/ProductGallery.tsx
++++ b/components/product/ProductGallery.tsx
+@@ -43,7 +43,7 @@ export function ProductGallery({ productId, images, productName, modelUrl, usdzU
+     return (
+         <div className="w-full flex flex-col-reverse md:flex-row gap-4 lg:gap-8 items-center md:items-start">
+             {/* Thumbnail Strip (Left on Desktop, Bottom on Mobile) */}
+-            <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[600px] scrollbar-hide py-1 px-1 snap-x md:w-24 lg:w-28 flex-shrink-0 justify-center md:justify-start">
++            <div className="w-full flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[600px] scrollbar-hide py-1 px-1 snap-x md:w-24 lg:w-28 flex-shrink-0 justify-center md:justify-start">
+                 {validImages.map((img, idx) => (
+                     <button
+                         key={idx}
+diff --git a/components/product/ProductTracker.tsx b/components/product/ProductTracker.tsx
+index 347dcc5..fc25659 100644
+--- a/components/product/ProductTracker.tsx
++++ b/components/product/ProductTracker.tsx
+@@ -2,7 +2,6 @@
+ 
+ import { useEffect } from "react";
+ import { addToRecentlyViewed } from "@/components/product/RecentlyViewed";
+-import { trackProductView } from "@/app/actions/personalization";
+ 
+ interface ProductTrackerProps {
+     product: {
+@@ -17,8 +16,22 @@ interface ProductTrackerProps {
+ export function ProductTracker({ product }: ProductTrackerProps) {
+     useEffect(() => {
+         addToRecentlyViewed(product);
+-        // Fire and forget server action
+-        trackProductView(product.id, product.categoryId);
++
++        const payload = JSON.stringify({
++            productId: product.id,
++            categoryId: product.categoryId,
++        });
++
++        if (typeof navigator !== "undefined" && navigator.sendBeacon) {
++            navigator.sendBeacon("/api/analytics/view", new Blob([payload], { type: "application/json" }));
++        } else {
++            fetch("/api/analytics/view", {
++                method: "POST",
++                headers: { "Content-Type": "application/json" },
++                body: payload,
++                keepalive: true,
++            }).catch(() => {});
++        }
+     }, [product]);
+ 
+     return null;
+diff --git a/components/storefront/ProductCard.tsx b/components/storefront/ProductCard.tsx
+index a44bb79..12fd884 100644
+--- a/components/storefront/ProductCard.tsx
++++ b/components/storefront/ProductCard.tsx
+@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
+ import { Cuboid } from "lucide-react";
+ import Link from "next/link";
+ import Image from "next/image";
+-import { useEffect, useState } from "react";
++import { useEffect, useState, useCallback } from "react";
+ import { Tilt } from "@/components/ui/Tilt";
++import { isListPagePath, saveListReturn } from "@/lib/navigation/list-return";
++import { getScrollY } from "@/lib/navigation/scroll-position";
+ 
+ interface iAppProps {
+   item: {
+@@ -26,6 +28,14 @@ export function ProductCard({ item, priority = false }: iAppProps) {
+   const [currency, setCurrency] = useState("USD");
+   const [rate, setRate] = useState(1);
+   const [locale, setLocale] = useState("en-US");
++  const [imageSrc, setImageSrc] = useState(item.images[0] || "/assets/placeholder.svg");
++
++  const handleListNavigate = useCallback(() => {
++    const { pathname, search } = window.location;
++    if (!isListPagePath(pathname)) return;
++    const path = search ? `${pathname}${search}` : pathname;
++    saveListReturn(path, getScrollY());
++  }, []);
+ 
+   useEffect(() => {
+     const handleCurrencyChange = (e?: Event) => {
+@@ -70,19 +80,21 @@ export function ProductCard({ item, priority = false }: iAppProps) {
+       href={`/shop/${item.id}`}
+       className="group block"
+       data-testid="product-card"
++      onClick={handleListNavigate}
+     >
+       <div className="transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]">
+         {/* Image Section */}
+         <Tilt>
+           <div className="relative aspect-square overflow-hidden rounded-sm bg-secondary">
+             <Image
+-              src={item.images[0]}
++              src={imageSrc}
+               alt={item.name}
+               fill
+               sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 50vw"
+               className="object-contain p-4 transition-transform duration-700 ease-out will-change-transform group-hover:scale-105"
+               priority={priority}
+               quality={70}
++              onError={() => setImageSrc("/assets/placeholder.svg")}
+             />
+ 
+             {/* Discount Badge */}
+diff --git a/components/ui/CustomCursor.tsx b/components/ui/CustomCursor.tsx
+index aee3c56..260b02d 100644
+--- a/components/ui/CustomCursor.tsx
++++ b/components/ui/CustomCursor.tsx
+@@ -1,80 +1,83 @@
+ 'use client';
+ 
+-import { useEffect, useRef, useCallback } from 'react';
++import { useEffect, useLayoutEffect, useRef, useCallback, useState } from 'react';
+ import { gsap } from 'gsap';
+ 
+ interface CustomCursorProps {
+     enabled?: boolean;
+ }
+ 
++/** Fine-pointer devices only (mouse/trackpad) — not tied to viewport width */
++function shouldEnableCustomCursor(): boolean {
++    if (typeof window === 'undefined') return false;
++    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
++}
++
+ /**
+- * Premium custom cursor system for Aethelon
+- * Features:
+- * - Custom dot + ring design
+- * - Magnetic pull to interactive elements
+- * - State variations (default, hover, click, drag, text)
+- * - Smooth position interpolation with GSAP
+- * - Automatically disabled on touch devices
++ * Premium custom cursor — fine-pointer desktops at any viewport width; off on touch-primary devices.
+  */
+ export default function CustomCursor({ enabled = true }: CustomCursorProps) {
+     const dotRef = useRef<HTMLDivElement>(null);
+     const ringRef = useRef<HTMLDivElement>(null);
+-    const isTouch = useRef(false);
++    const isActive = useRef(false);
+     const mousePosition = useRef({ x: 0, y: 0 });
+     const currentPosition = useRef({ x: 0, y: 0 });
++    const rafId = useRef<number | null>(null);
++    const [showCursor, setShowCursor] = useState(false);
+ 
+     const updateCursor = useCallback(() => {
+-        if (!dotRef.current || !ringRef.current || isTouch.current) return;
++        rafId.current = requestAnimationFrame(updateCursor);
++
++        if (!dotRef.current || !ringRef.current || !isActive.current) return;
+ 
+-        // Smooth interpolation for the ring
+-        // Lower factor = smoother/slower trail
+         const easeFactor = 0.15;
+ 
+         currentPosition.current.x += (mousePosition.current.x - currentPosition.current.x) * easeFactor;
+         currentPosition.current.y += (mousePosition.current.y - currentPosition.current.y) * easeFactor;
+ 
+-        // Direct position for dot (more responsive)
+         gsap.set(dotRef.current, {
+             x: mousePosition.current.x,
+             y: mousePosition.current.y,
+         });
+ 
+-        // Slightly delayed position for ring (smooth trailing effect)
+         gsap.set(ringRef.current, {
+             x: currentPosition.current.x,
+             y: currentPosition.current.y,
+         });
+-
+-        requestAnimationFrame(updateCursor);
+     }, []);
+ 
++    // Sync body class + visibility from pointer capabilities (not viewport)
+     useEffect(() => {
+         if (!enabled) return;
+ 
+-        // Detect touch device (only disable if primary input is touch)
+-        const checkTouch = () => {
+-            isTouch.current = window.matchMedia("(pointer: coarse)").matches;
+-            if (isTouch.current) {
+-                document.body.classList.remove('custom-cursor');
+-            } else {
+-                document.body.classList.add('custom-cursor');
+-            }
++        const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
++
++        const syncCursorMode = () => {
++            const active = shouldEnableCustomCursor();
++            isActive.current = active;
++            setShowCursor(active);
++            document.body.classList.toggle('custom-cursor', active);
+         };
+ 
+-        checkTouch();
+-        window.addEventListener('resize', checkTouch);
++        syncCursorMode();
++        mediaQuery.addEventListener('change', syncCursorMode);
++
++        return () => {
++            mediaQuery.removeEventListener('change', syncCursorMode);
++            document.body.classList.remove('custom-cursor', 'cursor-hover', 'cursor-text', 'cursor-click');
++        };
++    }, [enabled]);
+ 
+-        if (isTouch.current) return;
++    // Attach listeners and animation only after cursor DOM exists
++    useLayoutEffect(() => {
++        if (!enabled || !showCursor) return;
+ 
+-        // Start animation loop
+-        requestAnimationFrame(updateCursor);
++        rafId.current = requestAnimationFrame(updateCursor);
+ 
+-        // Mouse move handler
+         const handleMouseMove = (e: MouseEvent) => {
+             mousePosition.current = { x: e.clientX, y: e.clientY };
+         };
+ 
+-        // Mouse enter/leave handlers for interactive elements
+         const handleDelegateOver = (e: MouseEvent) => {
+             const target = e.target as HTMLElement;
+             const interactive = target.closest('a, button, [role="button"], .cursor-pointer, [data-cursor="pointer"]');
+@@ -92,9 +95,6 @@ export default function CustomCursor({ enabled = true }: CustomCursorProps) {
+             }
+         };
+ 
+-        document.addEventListener('mouseover', handleDelegateOver);
+-
+-        // Mouse down/up handlers
+         const handleMouseDown = () => {
+             document.body.classList.add('cursor-click');
+             gsap.to(ringRef.current, { scale: 0.8, duration: 0.1 });
+@@ -105,34 +105,36 @@ export default function CustomCursor({ enabled = true }: CustomCursorProps) {
+             gsap.to(ringRef.current, { scale: 1, duration: 0.1 });
+         };
+ 
++        document.addEventListener('mouseover', handleDelegateOver);
+         window.addEventListener('mousemove', handleMouseMove);
+         window.addEventListener('mousedown', handleMouseDown);
+         window.addEventListener('mouseup', handleMouseUp);
+ 
+-        // Cleanup
+         return () => {
+-            document.body.classList.remove('custom-cursor', 'cursor-hover', 'cursor-text', 'cursor-click');
++            if (rafId.current !== null) {
++                cancelAnimationFrame(rafId.current);
++                rafId.current = null;
++            }
++            document.body.classList.remove('cursor-hover', 'cursor-text', 'cursor-click');
+             window.removeEventListener('mousemove', handleMouseMove);
+             window.removeEventListener('mousedown', handleMouseDown);
+             window.removeEventListener('mouseup', handleMouseUp);
+-            window.removeEventListener('resize', checkTouch);
+             document.removeEventListener('mouseover', handleDelegateOver);
+         };
+-    }, [enabled, updateCursor]);
++    }, [enabled, showCursor, updateCursor]);
+ 
+-    // Don't render on touch devices or when disabled
+-    if (!enabled) return null;
++    if (!enabled || !showCursor) return null;
+ 
+     return (
+         <>
+             <div
+                 ref={dotRef}
+-                className="fixed top-0 left-0 w-2 h-2 bg-accent rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 will-change-transform hidden md:block"
++                className="fixed top-0 left-0 w-2 h-2 bg-accent rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 will-change-transform"
+                 aria-hidden="true"
+             />
+             <div
+                 ref={ringRef}
+-                className="fixed top-0 left-0 w-10 h-10 border border-accent rounded-full pointer-events-none z-[9998] -translate-x-1/2 -translate-y-1/2 opacity-50 will-change-transform hidden md:block"
++                className="fixed top-0 left-0 w-10 h-10 border border-accent rounded-full pointer-events-none z-[9998] -translate-x-1/2 -translate-y-1/2 opacity-50 will-change-transform"
+                 aria-hidden="true"
+             />
+         </>
+diff --git a/components/ui/Navbar.tsx b/components/ui/Navbar.tsx
+index 50dc2eb..ee382f9 100644
+--- a/components/ui/Navbar.tsx
++++ b/components/ui/Navbar.tsx
+@@ -74,9 +74,9 @@ export default function Navbar() {
+                 borderColor: isVault ? '#57412A' : 'hsl(var(--border))',
+             } : {}}
+         >
+-            <div className="container mx-auto px-6 flex items-center justify-between">
++            <div className="container mx-auto px-6 flex items-center justify-between gap-4 min-w-0">
+                 {/* Logo */}
+-                <Link href="/" className="z-50 relative group">
++                <Link href="/" className="z-50 relative group shrink-0">
+                     <span
+                         className="font-display text-2xl tracking-widest font-bold transition-colors duration-300"
+                         style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
+@@ -90,13 +90,13 @@ export default function Navbar() {
+                 </Link>
+ 
+                 {/* Desktop Navigation */}
+-                <nav className="hidden md:flex items-center gap-8">
++                <nav className="hidden lg:flex items-center gap-6 xl:gap-8 shrink-0">
+                     {navLinks.map((link) => (
+                         <Link
+                             key={link.href}
+                             href={link.href}
+                             className={cn(
+-                                'text-sm font-medium tracking-wide transition-colors hover:text-accent relative py-2',
++                                'text-sm font-medium tracking-wide transition-colors hover:text-accent relative py-2 whitespace-nowrap',
+                             )}
+                             style={{
+                                 color: pathname === link.href
+@@ -156,13 +156,13 @@ export default function Navbar() {
+                             <User className="w-5 h-5" />
+                         </Link>
+                     ) : (
+-                        <Link href="/login" className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-accent transition-colors">
++                        <Link href="/login" className="hidden lg:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-accent transition-colors whitespace-nowrap">
+                             <User className="w-4 h-4" />
+                             <span>Sign In</span>
+                         </Link>
+                     )}
+                     <button
+-                        className="md:hidden transition-colors p-2"
++                        className="lg:hidden transition-colors p-2"
+                         style={{ color: isVault ? 'var(--vault-fg, #EDE0CC)' : 'hsl(var(--foreground))' }}
+                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                         aria-label="Menu"
+@@ -179,7 +179,7 @@ export default function Navbar() {
+                         initial={{ opacity: 0, height: 0 }}
+                         animate={{ opacity: 1, height: '100vh' }}
+                         exit={{ opacity: 0, height: 0 }}
+-                        className="fixed inset-0 pt-24 px-6 md:hidden overflow-hidden"
++                        className="fixed inset-0 pt-24 px-6 lg:hidden overflow-hidden"
+                         style={{ background: isVault ? '#131009' : 'hsl(var(--background))' }}
+                     >
+                         <nav className="flex flex-col gap-6 items-center">
+diff --git a/seed_master.ts b/seed_master.ts
+index 1e4da2c..ec75d20 100644
+--- a/seed_master.ts
++++ b/seed_master.ts
+@@ -71,7 +71,7 @@ const TAXONOMY = [
+         name: 'Lighting', slug: 'lighting',
+         image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200',
+         children: [
+-            { name: 'Floor Lamps', slug: 'floor-lamps', image: 'https://images.unsplash.com/photo-1513506003901-1e6a35b98687?auto=format&fit=crop&q=80&w=1200' },
++            { name: 'Floor Lamps', slug: 'floor-lamps', image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200' },
+             { name: 'Pendant Lights', slug: 'pendant-lights', image: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&q=80&w=1200' },
+             { name: 'Table Lamps', slug: 'table-lamps', image: 'https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&q=80&w=1200' },
+         ]
+@@ -199,7 +199,7 @@ const PRODUCTS = [
+         name: 'Arc Floor Lamp', cat: 'floor-lamps', extras: ['best-sellers'], isFeatured: false, price: 89900, rating: 4.6, reviews: 37, stock: 20,
+         modelUrl: `/models/floor_lamp.glb`,
+         usdzUrl: `/models/floor_lamp.usdz`,
+-        images: ['https://images.unsplash.com/photo-1513506003901-1e6a35b98687?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200'],
++        images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=1200', 'https://images.unsplash.com/photo-1524484488521-3ffd3ff30f71?auto=format&fit=crop&q=80&w=1200'],
+         tags: ['lamp', 'arc', 'bronze', 'ar'], features: ['2m arc radius', 'Linen shade', 'Dimmable', 'Brushed bronze'],
+         desc: 'Statement arc lamp in brushed bronze with hand-spun linen shade. Casts warm diffused light across a 2-metre arc.'
+     },

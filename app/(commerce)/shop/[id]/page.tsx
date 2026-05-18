@@ -6,7 +6,7 @@ import { ProductInfo } from "@/components/product/ProductInfo";
 import { ProductActions } from "@/components/product/ProductActions";
 import { ProductTrackerLazy } from "@/components/product/ProductClientWrappers";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ProductBackLink } from "@/components/product/ProductBackLink";
 import { Metadata, ResolvingMetadata } from "next";
 import { CurrencyService, SUPPORTED_CURRENCIES } from "@/modules/currency/currency.service";
 import { productSchema, breadcrumbSchema } from "@/lib/structured-data";
@@ -162,10 +162,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-24 lg:py-32">
                 {/* Back Link */}
                 <div className="mb-8">
-                    <Link href="/categories" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">
-                        <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                        Back to Categories
-                    </Link>
+                    <ProductBackLink />
                 </div>
 
                 {/* Main Split Layout */}
@@ -173,7 +170,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
                     {/* Left: Info & Actions (Desktop Order: Info -> Actions) */}
                     {/* On Mobile: Order 2 */}
-                    <div className="order-2 lg:order-1 flex flex-col gap-10 lg:sticky lg:top-32 h-fit">
+                    <div className="order-2 lg:order-1 flex flex-col gap-10 lg:sticky lg:top-32 h-fit w-full min-w-0">
                         <ProductInfo product={productForComponents} />
                         <ProductActions
                             productId={product.id}
@@ -198,7 +195,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
                     {/* Right: Gallery (Desktop Order: Gallery) */}
                     {/* On Mobile: Order 1 (Visuals First) */}
-                    <div className="order-1 lg:order-2">
+                    <div className="order-1 lg:order-2 w-full min-w-0">
                         <ProductGallery
                             productId={product.id}
                             images={displayImages}

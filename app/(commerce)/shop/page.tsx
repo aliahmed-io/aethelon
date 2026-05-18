@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FurnitureFilterBar } from "@/components/shop/FurnitureFilterBar";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
+import { ListScrollRestore } from "@/components/storefront/ListScrollRestore";
 import prisma from "@/lib/db";
 import { ProductStatus, Prisma } from "@prisma/client";
 
@@ -162,6 +163,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
     return (
         <main className="min-h-screen bg-background text-foreground pt-32 pb-20">
+            <ListScrollRestore />
             <div className="container mx-auto px-6 lg:px-12">
                 {/* Header */}
                 <div className="mb-10 text-center">

@@ -4,6 +4,7 @@ import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { getSmartCollection } from "@/actions/get-collection";
 import { CollectionHero } from "@/components/collections/CollectionHero";
 import { CollectionFilterBar } from "@/components/collections/CollectionFilterBar";
+import { ListScrollRestore } from "@/components/storefront/ListScrollRestore";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +63,7 @@ export default async function CategoryPage({
 
     return (
         <main className="min-h-screen bg-background text-foreground pb-20">
+            <ListScrollRestore />
             {/* Category Hero */}
             <CollectionHero
                 title={categoryName}
