@@ -120,7 +120,7 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
             <div className="flex items-center justify-between gap-4 sm:gap-6 pt-4">
                 <div className="flex-1 min-w-0">
                     <span className="block text-xs sm:text-sm text-muted-foreground mb-1">Total Price</span>
-                    <span className="text-2xl sm:text-3xl font-bold tracking-tight truncate block">
+                    <span className="text-2xl sm:text-3xl font-bold tracking-tight break-words">
                         {formattedTotal}
                     </span>
                 </div>
