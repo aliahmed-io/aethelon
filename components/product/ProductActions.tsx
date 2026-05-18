@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { addItem } from "@/app/store/actions";
-import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProductVariant } from "@prisma/client";
 import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { DEMO_MESSAGES } from "@/lib/demo-messages";
 
 interface ProductActionsProps {
     productId: string;
@@ -25,8 +23,7 @@ interface ProductActionsProps {
 export function ProductActions({ productId, price, stock, currencyCode = "USD", exchangeRate = 1, variants = [] }: ProductActionsProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { showAuthPrompt } = useAuthPrompt();
-    const { isAuthenticated } = useKindeBrowserClient();
+    const { showDemoNotice } = useAuthPrompt();
     const colorParam = searchParams.get('color');
 
     const [quantity, setQuantity] = useState(1);
@@ -34,8 +31,6 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
     // Determine initial color
     const initialMatched = variants.find(v => v.colorName === colorParam) || variants[0];
     const [selectedColor, setSelectedColor] = useState<ProductVariant | undefined>(initialMatched);
-
-    const [isPending, startTransition] = useTransition();
 
     const isOutOfStock = stock <= 0;
 
@@ -53,29 +48,7 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
     const handleAddToCart = () => {
         if (isOutOfStock) return;
 
-        if (!isAuthenticated) {
-            showAuthPrompt("Sign in to add this piece to your bag and start your curation.");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("quantity", quantity.toString());
-        if (selectedColor) {
-            formData.append("color", selectedColor.colorName);
-        }
-        formData.append("size", ""); // Ensure size is always present for furniture items
-
-        startTransition(async () => {
-            try {
-                await addItem(productId, formData);
-                toast.success("Added to cart", {
-                    description: `${quantity}x ${selectedColor?.colorName || "Item"} added.`,
-                    icon: <ShoppingBag className="w-4 h-4 text-emerald-500" />,
-                });
-            } catch (err) {
-                toast.error("Failed to add to cart");
-            }
-        });
+        showDemoNotice(DEMO_MESSAGES.addToBag);
     };
 
     // Currency Formatting Logic (Client Side)
@@ -126,14 +99,14 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
                         <div className="flex gap-1">
                             <button
                                 onClick={() => handleQuantity(-1)}
-                                disabled={quantity <= 1 || isPending}
+                                disabled={quantity <= 1}
                                 className="w-10 h-10 flex items-center justify-center rounded-full bg-background hover:bg-muted text-foreground transition-colors disabled:opacity-50"
                             >
                                 <Minus size={16} />
                             </button>
                             <button
                                 onClick={() => handleQuantity(1)}
-                                disabled={quantity >= stock || isPending}
+                                disabled={quantity >= stock}
                                 className="w-10 h-10 flex items-center justify-center rounded-full bg-background hover:bg-muted text-foreground transition-colors disabled:opacity-50"
                             >
                                 <Plus size={16} />
@@ -154,12 +127,10 @@ export function ProductActions({ productId, price, stock, currencyCode = "USD", 
 
                 <Button
                     onClick={handleAddToCart}
-                    disabled={isOutOfStock || isPending}
+                    disabled={isOutOfStock}
                     className="flex-[2] min-w-[140px] h-14 sm:h-16 rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold tracking-widest uppercase bg-foreground text-background hover:bg-zinc-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-[0.98]"
                 >
-                    {isPending ? (
-                        <span className="animate-pulse">Adding...</span>
-                    ) : isOutOfStock ? (
+                    {isOutOfStock ? (
                         "Out of Stock"
                     ) : (
                         "Add to Cart"

@@ -5,14 +5,13 @@ import { ArrowLeft } from "lucide-react";
 import { Magnetic } from "@/components/ui/Magnetic";
 import LazyAuthScene from "@/components/auth/LazyAuthScene";
 import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
+import { DEMO_MESSAGES } from "@/lib/demo-messages";
 
 export default function RegisterPage() {
   const { showDemoNotice } = useAuthPrompt();
 
   const handleAuth = () => {
-    showDemoNotice(
-      "Account creation is not available in this demo. This is a design showcase demonstrating a complete e-commerce experience — from product discovery to checkout."
-    );
+    showDemoNotice(DEMO_MESSAGES.auth);
   };
 
   return (
@@ -114,11 +113,11 @@ export default function RegisterPage() {
           <div className="pt-4 text-center">
             <p className="text-xs text-muted-foreground/60 leading-relaxed">
               By creating an account, you agree to Aethelon&apos;s{" "}
-              <Link href="/terms" className="underline underline-offset-2 hover:text-foreground transition-colors">
+              <Link href="/legal/terms" className="underline underline-offset-2 hover:text-foreground transition-colors">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground transition-colors">
+              <Link href="/legal/privacy" className="underline underline-offset-2 hover:text-foreground transition-colors">
                 Privacy Policy
               </Link>.
             </p>

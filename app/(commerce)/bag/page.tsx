@@ -3,7 +3,6 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ShoppingBag, Trash2, Tag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { delItem } from "@/app/store/actions";
 import { redis } from "@/lib/redis";
 import { Cart } from "@/lib/interfaces";
@@ -18,13 +17,11 @@ export default async function BagPage() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user) return redirect("/login");
-
     const currency = await CurrencyService.getCurrency();
     const fmt = (cents: number) => CurrencyService.format(cents, currency);
 
     let cart: Cart | null = null;
-    if (redis) {
+    if (user && redis) {
         try {
             const cartData = await redis.get(`cart-${user.id}`);
             if (typeof cartData === 'string') {
@@ -60,7 +57,8 @@ export default async function BagPage() {
                             <ShoppingBag className="w-8 h-8 text-muted-foreground" />
                         </div>
                         <h2 className="text-xl font-light mb-4">Your bag is empty</h2>
-                        <p className="text-muted-foreground mb-8 max-w-sm">Discover our collection of premium furniture and accessories.</p>
+                        <p className="text-muted-foreground mb-4 max-w-sm">Discover our collection of premium furniture and accessories.</p>
+                        <p className="text-muted-foreground/70 text-xs mb-8 max-w-sm">This preview shows the bag layout — saving items requires the full release.</p>
                         <Link href="/shop">
                             <Button className="h-12 px-8 bg-accent text-accent-foreground font-bold uppercase tracking-widest hover:bg-accent/90">
                                 Explore Collection

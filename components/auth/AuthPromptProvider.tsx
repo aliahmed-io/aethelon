@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight } from "lucide-react";
+import { DEMO_MESSAGES } from "@/lib/demo-messages";
 
 type ModalVariant = "auth" | "demo";
 
@@ -39,10 +40,7 @@ export function AuthPromptProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const showDemoNotice = useCallback((msg?: string) => {
-        setMessage(
-            msg ||
-            "Aethelon is currently in showcase mode. Authentication and AI-powered services are restricted to demonstrate interface design and core architectural patterns."
-        );
+        setMessage(msg || DEMO_MESSAGES.default);
         setVariant("demo");
         setIsOpen(true);
     }, []);
@@ -154,46 +152,22 @@ export function AuthPromptProvider({ children }: { children: ReactNode }) {
                                             </div>
 
                                             {/* Feature Status Section */}
-                                            <div className="rounded-sm border border-border/50 bg-secondary/20 p-5 space-y-5">
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                                                        Infrastructure Note
-                                                    </p>
-                                                    <div className="p-3 bg-accent/5 border border-accent/20 rounded-sm">
-                                                        <p className="text-[11px] text-accent font-medium leading-relaxed uppercase tracking-wider">
-                                                            Auth & AI features are disabled: the concierge and semantic search require live backend services not active in this demo.
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="grid grid-cols-2 gap-6">
-                                                    <div className="space-y-2">
-                                                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                                                            Available
-                                                        </p>
-                                                        <ul className="space-y-2 text-[12px] text-foreground/80">
-                                                            {["3D/AR View", "Collections", "Layouts", "Theme"].map((item) => (
-                                                                <li key={item} className="flex items-center gap-2">
-                                                                    <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
-                                                                    {item}
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                                                            Disabled
-                                                        </p>
-                                                        <ul className="space-y-2 text-[12px] text-muted-foreground/60">
-                                                            {["Auth Flow", "AI Chat", "Checkout", "Cart Sync"].map((item) => (
-                                                                <li key={item} className="flex items-center gap-2">
-                                                                    <span className="h-1 w-1 rounded-full bg-border shrink-0" />
-                                                                    {item}
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                </div>
+                                            <div className="rounded-sm border border-border/50 bg-secondary/20 p-5">
+                                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-3">
+                                                    In this preview
+                                                </p>
+                                                <ul className="space-y-2 text-sm text-foreground/85">
+                                                    {[
+                                                        "Shop, categories & product detail",
+                                                        "3D gallery & AR try-on",
+                                                        "Curated layouts & navigation",
+                                                    ].map((item) => (
+                                                        <li key={item} className="flex items-center gap-2">
+                                                            <span className="h-1 w-1 rounded-full bg-accent shrink-0" />
+                                                            {item}
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
 
                                             <button
@@ -204,7 +178,7 @@ export function AuthPromptProvider({ children }: { children: ReactNode }) {
                                             </button>
 
                                             <p className="text-center text-[11px] text-muted-foreground/50">
-                                                Aethelon is a concept storefront demonstrating production-grade architecture.
+                                                Thank you for exploring Aethelon.
                                             </p>
                                         </>
                                     )}

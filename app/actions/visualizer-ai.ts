@@ -14,11 +14,13 @@ interface RoomAnalysisResponse {
 }
 
 export async function analyzeRoomImage(
-    imageBase64: string,
-    productName: string,
-    productCategory: string
+    formData: FormData
 ): Promise<RoomAnalysisResponse> {
     try {
+        const file = formData.get("file") as File;
+        const productName = formData.get("productName") as string;
+        const productCategory = formData.get("productCategory") as string;
+
         if (!process.env.GEMINI_API_KEY) {
             throw new Error("GEMINI_API_KEY is not set");
         }
@@ -40,8 +42,10 @@ export async function analyzeRoomImage(
             - colorHarmony: a short phrase describing the color palette match (e.g., "Warm neutrals match existing decor").
         `;
 
-        // Clean base64 string if needed
-        const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+        // Extract buffer from File
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64Data = buffer.toString("base64");
 
         const result = await model.generateContent([
             prompt,

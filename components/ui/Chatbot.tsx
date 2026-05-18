@@ -12,6 +12,7 @@ import { Product } from '@/lib/assistantTypes';
 import { formatPrice } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { useAuthPrompt } from '@/components/auth/AuthPromptProvider';
+import { DEMO_MESSAGES } from '@/lib/demo-messages';
 
 interface Message {
     id: number;
@@ -181,7 +182,7 @@ export default function Chatbot() {
                         exit={{ scale: 0, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                         className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 bg-accent text-accent-foreground rounded-full shadow-lg hover:shadow-xl transition-shadow group"
-                        onClick={() => showDemoNotice("The AI Concierge and interactive support features are disabled in this demo showcase.")}
+                        onClick={() => showDemoNotice(DEMO_MESSAGES.concierge)}
                         aria-label="Open concierge chat"
                     >
                         <div className="relative w-14 h-14 flex items-center justify-center">

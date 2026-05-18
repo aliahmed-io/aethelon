@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
+import { DEMO_MESSAGES } from "@/lib/demo-messages";
 
 interface VoiceSearchProps {
     onResult: (text: string) => void;
@@ -22,7 +23,7 @@ export function VoiceSearch({ onResult, className }: VoiceSearchProps) {
     }, []);
 
     const startListening = () => {
-        showDemoNotice("Voice Search and AI Semantic Expansion are disabled in this demo showcase.");
+        showDemoNotice(DEMO_MESSAGES.voiceSearch);
         return;
         
         // Original logic preserved if needed for re-enablement

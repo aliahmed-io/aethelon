@@ -17,8 +17,6 @@ export default function ArModelViewer({ src, iosSrc, poster, alt }: ArModelViewe
 
     useEffect(() => {
         setIsMounted(true);
-        if (src) console.log("[ArModelViewer] Rendering model:", src);
-        if (iosSrc) console.log("[ArModelViewer] iOS Source:", iosSrc);
     }, [src, iosSrc]);
 
     if (!isMounted) {

@@ -87,35 +87,34 @@ export function RoomVisualizerClient({
             const url = URL.createObjectURL(file);
             setCustomRoomUrl(url);
 
-            // Trigger AI Analysis
+                // Trigger AI Analysis
             if (selectedProduct) {
                 setIsAnalyzing(true);
-                const reader = new FileReader();
-                reader.onloadend = async () => {
-                    const base64 = reader.result as string;
-                    try {
-                        toast.info("Analyzing your room with Gemini AI...");
-                        const result = await analyzeRoomImage(
-                            base64,
-                            selectedProduct.name,
-                            selectedProduct.categories[0]?.name ?? "Furniture"
-                        );
-                        setAnalysisResult(result);
-                        toast.success("Room Analyzed!", {
-                            description: result.placementAdvice,
-                            action: {
-                                label: "Apply Lighting",
-                                onClick: () => setLightingMode(result.lightingMode),
-                            },
-                        });
-                    } catch (error) {
-                        toast.error("Failed to analyze room.");
-                        console.error(error);
-                    } finally {
-                        setIsAnalyzing(false);
-                    }
-                };
-                reader.readAsDataURL(file);
+                toast.info("Analyzing your room with Gemini AI...");
+                try {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("productName", selectedProduct.name);
+                    formData.append(
+                        "productCategory",
+                        selectedProduct.categories[0]?.name ?? "Furniture"
+                    );
+
+                    const result = await analyzeRoomImage(formData);
+                    setAnalysisResult(result);
+                    toast.success("Room Analyzed!", {
+                        description: result.placementAdvice,
+                        action: {
+                            label: "Apply Lighting",
+                            onClick: () => setLightingMode(result.lightingMode),
+                        },
+                    });
+                } catch (error) {
+                    toast.error("Failed to analyze room.");
+                    console.error(error);
+                } finally {
+                    setIsAnalyzing(false);
+                }
             }
         },
         [selectedProduct]

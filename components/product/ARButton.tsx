@@ -23,9 +23,8 @@ export function ARButton({ modelUrl, usdzUrl, productId, productName }: ARButton
     const viewerRef = useRef<HTMLElement>(null);
 
     // Analytics Helper
-    const track = (event: string, data?: any) => {
-        // Mock analytics - replace with actual implementation if available
-        console.log(`[Analytics] ${event}`, { ...data, timestamp: new Date().toISOString() });
+    const track = (_event: string, _data?: Record<string, unknown>) => {
+        /* analytics stub — wire in production */
     };
 
     const openAR = async () => {

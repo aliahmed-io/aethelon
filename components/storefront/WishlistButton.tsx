@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAuthPrompt } from "@/components/auth/AuthPromptProvider";
+import { DEMO_MESSAGES } from "@/lib/demo-messages";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 interface WishlistButtonProps {
@@ -15,24 +16,22 @@ interface WishlistButtonProps {
 }
 
 export function WishlistButton({ productId }: WishlistButtonProps) {
-    const { showAuthPrompt } = useAuthPrompt();
+    const { showDemoNotice } = useAuthPrompt();
     const { isAuthenticated } = useKindeBrowserClient();
     const [isPending, startTransition] = useTransition();
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            setIsLoading(false);
+            return;
+        }
         getWishlistStatus(productId)
-            .then((status) => {
-                setIsWishlisted(status);
-            })
-            .catch(() => {
-                setIsWishlisted(false);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    }, [productId]);
+            .then((status) => setIsWishlisted(status))
+            .catch(() => setIsWishlisted(false))
+            .finally(() => setIsLoading(false));
+    }, [productId, isAuthenticated]);
 
     const handleToggle = (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
@@ -42,7 +41,7 @@ export function WishlistButton({ productId }: WishlistButtonProps) {
 
         // Instant response for unauthenticated users in demo mode
         if (!isAuthenticated) {
-            showAuthPrompt("Sign in to save this piece to your personal wishlist and track price changes.");
+            showDemoNotice(DEMO_MESSAGES.wishlist);
             return;
         }
 
