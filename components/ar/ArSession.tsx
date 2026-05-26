@@ -37,10 +37,15 @@ type ModelViewerEl = HTMLElement & {
  *
  * Replaces the previous @react-three/xr WebXR implementation which was
  * incompatible with React 19 + @react-three/fiber v9. This approach:
- *  - Uses Google Scene Viewer on Android (via `ar-modes="scene-viewer"`)
+ *  - Uses WebXR first (in-browser, no external app launch required)
+ *  - Falls back to Google Scene Viewer on Android if WebXR is unavailable
  *  - Uses Quick Look on iOS (via `ios-src` / `ar-modes="quick-look"`)
- *  - Requires no WebXR browser flag
  *  - Works on ~95 % of mobile AR-capable devices
+ *
+ * IMPORTANT: ar-modes order matters. "webxr" must be first so AR runs
+ * in-browser. "scene-viewer" as fallback requires the model URL to be
+ * publicly reachable from Google's servers — putting it first caused
+ * the "redirect and immediate bounce back" bug on Android.
  */
 export function ArSession({
     modelUrl,
@@ -238,15 +243,13 @@ export function ArSession({
                 ios-src={activeUsdzUrl ?? undefined}
                 alt="3D model in AR"
                 ar
-                ar-modes="scene-viewer webxr quick-look"
+                ar-modes="webxr scene-viewer quick-look"
                 ar-scale="auto"
                 ar-placement="floor"
                 camera-controls
                 auto-rotate
-                autoplay
-                interpolation-decay="200"
-                shadow-intensity="1.5"
-                shadow-softness="1.2"
+                shadow-intensity="1"
+                shadow-softness="1"
                 exposure="1"
                 environment-image="neutral"
                 loading="eager"
