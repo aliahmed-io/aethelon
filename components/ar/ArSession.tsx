@@ -81,6 +81,27 @@ export function ArSession({
         return [main, ...rest];
     }, [modelUrl, related3DProducts, usdzUrl]);
 
+    const activeModel = useMemo(() => {
+        return models.find((m) => m.modelUrl === activeModelUrl);
+    }, [models, activeModelUrl]);
+
+    const arPlacement = useMemo(() => {
+        const name = activeModel?.name?.toLowerCase() ?? "";
+        if (
+            name.includes("wall") ||
+            name.includes("mirror") ||
+            name.includes("closet") ||
+            name.includes("shelf") ||
+            name.includes("poster") ||
+            name.includes("frame") ||
+            name.includes("cabinet") ||
+            name.includes("storage system")
+        ) {
+            return "wall";
+        }
+        return "floor";
+    }, [activeModel]);
+
     // Reset on model swap
     useEffect(() => {
         setModelReady(false);
@@ -245,7 +266,7 @@ export function ArSession({
                 ar
                 ar-modes="webxr scene-viewer quick-look"
                 ar-scale="auto"
-                ar-placement="floor"
+                ar-placement={arPlacement}
                 camera-controls
                 auto-rotate
                 shadow-intensity="1"

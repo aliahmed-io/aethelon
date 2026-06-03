@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Box, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Vector3 } from "three";
-import { useGLTF } from "@react-three/drei";
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
@@ -30,17 +29,10 @@ export function ThreeDViewer({ modelUrl, usdzUrl, images, altTitle = "Product Im
     const [orbitRadius, setOrbitRadius] = useState<number | null>(null);
     const [isModelReady, setIsModelReady] = useState(false);
 
-    // Progressive Loading: Silently preload the model
+    // Progressive Loading: Set model ready immediately
     useEffect(() => {
         if (!modelUrl) return;
 
-        useGLTF.preload(modelUrl);
-
-        // Simple check to simulate readiness or wait for preload callback
-        // In R3F, preload is void, but cached. We can try to fetch it or just assume quick load 
-        // after a timeout or use a loader. For this "luxury feel", let's set it ready 
-        // immediately if cached, or fake a small delay to prevent layout jump.
-        // Better yet, just set ready.
         setIsModelReady(true);
 
     }, [modelUrl]);

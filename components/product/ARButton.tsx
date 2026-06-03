@@ -22,6 +22,23 @@ interface ARButtonProps {
 export function ARButton({ modelUrl, usdzUrl, productId, productName }: ARButtonProps) {
     const viewerRef = useRef<HTMLElement>(null);
 
+    const arPlacement = React.useMemo(() => {
+        const name = productName.toLowerCase();
+        if (
+            name.includes("wall") ||
+            name.includes("mirror") ||
+            name.includes("closet") ||
+            name.includes("shelf") ||
+            name.includes("poster") ||
+            name.includes("frame") ||
+            name.includes("cabinet") ||
+            name.includes("storage system")
+        ) {
+            return "wall";
+        }
+        return "floor";
+    }, [productName]);
+
     // Analytics Helper
     const track = (_event: string, _data?: Record<string, unknown>) => {
         /* analytics stub — wire in production */
@@ -71,6 +88,7 @@ export function ARButton({ modelUrl, usdzUrl, productId, productName }: ARButton
                 ar
                 ar-modes="webxr scene-viewer quick-look"
                 ar-scale="auto"
+                ar-placement={arPlacement}
                 camera-controls
                 shadow-intensity="1"
                 style={{ display: "none" }}

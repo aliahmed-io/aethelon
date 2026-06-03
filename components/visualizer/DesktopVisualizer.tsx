@@ -71,6 +71,19 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
         setCategoryFilter,
     } = props;
 
+    const arPlacement = selectedProduct
+        ? (selectedProduct.name.toLowerCase().includes("wall") ||
+          selectedProduct.name.toLowerCase().includes("mirror") ||
+          selectedProduct.name.toLowerCase().includes("closet") ||
+          selectedProduct.name.toLowerCase().includes("shelf") ||
+          selectedProduct.name.toLowerCase().includes("poster") ||
+          selectedProduct.name.toLowerCase().includes("frame") ||
+          selectedProduct.name.toLowerCase().includes("cabinet") ||
+          selectedProduct.name.toLowerCase().includes("storage system")
+            ? "wall"
+            : "floor")
+        : "floor";
+
     // Load model-viewer only on client — it references `self` at module level
     useEffect(() => {
         import("@google/model-viewer").catch(() => null);
@@ -245,6 +258,7 @@ export function DesktopVisualizer(props: VisualizerSharedProps) {
                                     reveal="auto"
                                     loading="eager"
                                     interaction-prompt="none"
+                                    ar-placement={arPlacement}
                                     style={{
                                         width: "100%",
                                         height: "100%",

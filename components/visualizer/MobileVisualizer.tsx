@@ -140,6 +140,19 @@ export function MobileVisualizer({
             image: p.images[0] ?? "",
         }));
 
+    const arPlacement = selectedProduct
+        ? (selectedProduct.name.toLowerCase().includes("wall") ||
+          selectedProduct.name.toLowerCase().includes("mirror") ||
+          selectedProduct.name.toLowerCase().includes("closet") ||
+          selectedProduct.name.toLowerCase().includes("shelf") ||
+          selectedProduct.name.toLowerCase().includes("poster") ||
+          selectedProduct.name.toLowerCase().includes("frame") ||
+          selectedProduct.name.toLowerCase().includes("cabinet") ||
+          selectedProduct.name.toLowerCase().includes("storage system")
+            ? "wall"
+            : "floor")
+        : "floor";
+
     return (
         <div className="h-[100dvh] flex flex-col bg-background text-foreground relative">
             {/* ── AR Session Overlay ─────────────────────────────────── */}
@@ -324,6 +337,7 @@ export function MobileVisualizer({
                             ar
                             ar-modes="webxr scene-viewer quick-look"
                             ar-scale="auto"
+                            ar-placement={arPlacement}
                             style={{
                                 width: "100%",
                                 height: "100%",
